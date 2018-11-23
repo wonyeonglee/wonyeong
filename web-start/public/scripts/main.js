@@ -16,53 +16,131 @@
 'use strict';
 
 // Signs-in Friendly Chat.
-function signIn() {
-  // TODO 1: Sign in Firebase with credential from the Google user.
-}
 
 // Signs-out of Friendly Chat.
 function signOut() {
+  firebase.auth().signOut();
   // TODO 2: Sign out of Firebase.
 }
 
+var userPicElement = document.getElementById('profile-img');
+var signOutButtonElement = document.getElementById('sign-out');
+
+var userNameElement = document.getElementById('user-name');
+signOutButtonElement.addEventListener('click', signOut);
+
 // Initiate firebase auth.
 function initFirebaseAuth() {
+  firebase.auth().onAuthStateChanged(authStateObserver);
   // TODO 3: Initialize Firebase.
 }
+function authStateObserver(user) {
+  if (user) { // User is signed in!
+    // Get the signed-in user's profile pic and name.
+    var profilePicUrl = getProfilePicUrl();
+    var userName = getUserName();
 
-// Returns the signed-in user's profile Pic URL.
-function getProfilePicUrl() {
-  // TODO 4: Return the user's profile pic URL.
+    // Set the user's profile pic and name.
+    userPicElement.src=profilePicUrl;
+    userNameElement.textContent = userName;
+
+
+    // We save the Firebase Messaging Device token and enable notifications.
+    //saveMessagingDeviceToken();*/
+  } else { // 로그아웃 됐을 때
+    location.href="/login.html";
+  }
 }
 
-// Returns the signed-in user's display name.
-function getUserName() {
+function getUserName() { //현재 로그인 되어 있는 유저의 이름 가져오기
+  return firebase.auth().currentUser.displayName;
   // TODO 5: Return the user's display name.
 }
 
+function getProfilePicUrl() { //현재 로그인 한 유저의 프로필 사진 불러오기, 없을 시 기본 사진 불러오기
+  return firebase.auth().currentUser.photoURL || 'https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg';
+  // TODO 4: Return the user's profile pic URL.
+}
+
+/*
+// Returns the signed-in user's profile Pic URL.
+
+
+// Returns the signed-in user's display name.
+
+
 // Returns true if a user is signed-in.
 function isUserSignedIn() {
+
+  return !!firebase.auth().currentUser;
   // TODO 6: Return true if a user is signed-in.
 }
 
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages() {
+  var callback = function(snap) {
+    var data = snap.val();
+    displayMessage(snap.key, data.name, data.text, data.profilePicUrl, data.imageUrl);
+  };
+  firebase.database().ref('/messages/').limitToLast(12).on('child_added', callback);
+  firebase.database().ref('/messages/').limitToLast(12).on('child_changed', callback);
   // TODO 7: Load and listens for new messages.
 }
 
 // Saves a new message on the Firebase DB.
 function saveMessage(messageText) {
+   // Adds a new message entry to the Realtime Database.
+   return firebase.database().ref('/messages/').push({
+    name: getUserName(),
+    text: messageText,
+    profilePicUrl: getProfilePicUrl()
+  }).catch(function(error) {
+    console.error('Error writing new message to Realtime Database:', error);
+  });
   // TODO 8: Push a new message to Firebase.
 }
 
 // Saves a new message containing an image in Firebase.
 // This first saves the image in Firebase storage.
 function saveImageMessage(file) {
+  firebase.database().ref('/messages/').push({
+    name: getUserName(),
+    imageUrl: LOADING_IMAGE_URL,
+    profilePicUrl: getProfilePicUrl()
+  }).then(function(messageRef) {
+    // 2 - Upload the image to Cloud Storage.
+    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
+    return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
+      // 3 - Generate a public URL for the image file.
+      return fileSnapshot.ref.getDownloadURL().then((url) => {
+        // 4 - Update the chat message placeholder with the image's URL.
+        return messageRef.update({
+          imageUrl: url,
+          storageUri: fileSnapshot.metadata.fullPath
+        });
+      });
+    });
+  }).catch(function(error) {
+    console.error('There was an error uploading a file to Cloud Storage:', error);
+  });
   // TODO 9: Posts a new image as a message.
 }
 
 // Saves the messaging device token to the datastore.
 function saveMessagingDeviceToken() {
+  firebase.messaging().getToken().then(function(currentToken) {
+    if (currentToken) {
+      console.log('Got FCM device token:', currentToken);
+      // Save the device token to the Realtime Database.
+      firebase.database().ref('/fcmTokens').child(currentToken)
+          .set(firebase.auth().currentUser.uid);
+    } else {
+      // Need to request permissions to show notifications.
+      requestNotificationsPermissions();
+    }
+  }).catch(function(error){
+    console.error('Unable to get messaging device token:', error);
+  });
   // TODO 10: Save the device token in the realtime datastore
 }
 
@@ -104,38 +182,6 @@ function onMessageFormSubmit(e) {
       resetMaterialTextfield(messageInputElement);
       toggleButton();
     });
-  }
-}
-
-// Triggers when the auth state change for instance when the user signs-in or signs-out.
-function authStateObserver(user) {
-  if (user) { // User is signed in!
-    // Get the signed-in user's profile pic and name.
-    var profilePicUrl = getProfilePicUrl();
-    var userName = getUserName();
-
-    // Set the user's profile pic and name.
-    userPicElement.style.backgroundImage = 'url(' + profilePicUrl + ')';
-    userNameElement.textContent = userName;
-
-    // Show user's profile and sign-out button.
-    userNameElement.removeAttribute('hidden');
-    userPicElement.removeAttribute('hidden');
-    signOutButtonElement.removeAttribute('hidden');
-
-    // Hide sign-in button.
-    signInButtonElement.setAttribute('hidden', 'true');
-
-    // We save the Firebase Messaging Device token and enable notifications.
-    saveMessagingDeviceToken();
-  } else { // User is signed out!
-    // Hide user's profile and sign-out button.
-    userNameElement.setAttribute('hidden', 'true');
-    userPicElement.setAttribute('hidden', 'true');
-    signOutButtonElement.setAttribute('hidden', 'true');
-
-    // Show sign-in button.
-    signInButtonElement.removeAttribute('hidden');
   }
 }
 
@@ -245,16 +291,11 @@ var submitButtonElement = document.getElementById('submit');
 var imageButtonElement = document.getElementById('submitImage');
 var imageFormElement = document.getElementById('image-form');
 var mediaCaptureElement = document.getElementById('mediaCapture');
-var userPicElement = document.getElementById('user-pic');
-var userNameElement = document.getElementById('user-name');
-var signInButtonElement = document.getElementById('sign-in');
-var signOutButtonElement = document.getElementById('sign-out');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 
 // Saves message on form submit.
 messageFormElement.addEventListener('submit', onMessageFormSubmit);
-signOutButtonElement.addEventListener('click', signOut);
-signInButtonElement.addEventListener('click', signIn);
+
 
 // Toggle for the button.
 messageInputElement.addEventListener('keyup', toggleButton);
@@ -266,9 +307,9 @@ imageButtonElement.addEventListener('click', function(e) {
   mediaCaptureElement.click();
 });
 mediaCaptureElement.addEventListener('change', onMediaFileSelected);
-
+*/
 // initialize Firebase
 initFirebaseAuth();
 
 // We load currently existing chat messages and listen to new ones.
-loadMessages();
+//loadMessages();
