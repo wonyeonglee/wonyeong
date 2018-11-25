@@ -72,3 +72,77 @@
 [info] ✔  hosting: Local server: http://localhost:5000
 [debug] [2018-11-23T14:17:29.586Z] Parsing function triggers
 [info] i  functions: No HTTPS functions found. Use firebase functions:shell if you would like to emulate other types of functions.
+[debug] [2018-11-25T12:28:26.650Z] ----------------------------------------------------------------------
+[debug] [2018-11-25T12:28:26.652Z] Command:       /usr/local/Cellar/node/11.2.0/bin/node /usr/local/bin/firebase serve
+[debug] [2018-11-25T12:28:26.653Z] CLI Version:   6.1.1
+[debug] [2018-11-25T12:28:26.653Z] Platform:      darwin
+[debug] [2018-11-25T12:28:26.653Z] Node Version:  v11.2.0
+[debug] [2018-11-25T12:28:26.653Z] Time:          Sun Nov 25 2018 21:28:26 GMT+0900 (대한민국 표준시)
+[debug] [2018-11-25T12:28:26.654Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-11-25T12:28:26.672Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-11-25T12:28:26.672Z] > authorizing via signed-in user
+[debug] [2018-11-25T12:28:26.672Z] [iam] checking project chat-50161 for permissions ["firebase.projects.get"]
+[debug] [2018-11-25T12:28:26.674Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-11-25T12:28:26.674Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2018-11-25T12:28:27.173Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-25T12:28:27.182Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/chat-50161:testIamPermissions  
+
+[debug] [2018-11-25T12:28:28.788Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-25T12:28:28.790Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/chat-50161  
+ 
+[debug] [2018-11-25T12:28:30.319Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/jungsoo/Desktop/friendlychat-web/web-start'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-11-25T12:28:42.464Z] Fetching environment
+[debug] [2018-11-25T12:28:42.518Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/706586139868:getServerAppConfig  
+ 
+[debug] [2018-11-25T12:28:42.518Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/706586139868/clients/_:getWebAppConfig  
+ 
+[debug] [2018-11-25T12:28:43.529Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-25T12:28:43.530Z] Starting @google-cloud/functions-emulator
+[debug] [2018-11-25T12:28:43.666Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ./public
+[info] ✔  hosting: Local server: http://localhost:5000
+[debug] [2018-11-25T12:28:47.138Z] Parsing function triggers
+[info] i  functions: No HTTPS functions found. Use firebase functions:shell if you would like to emulate other types of functions.
+[debug] [2018-11-25T13:13:45.524Z] ----------------------------------------------------------------------
+[debug] [2018-11-25T13:13:45.527Z] Command:       /usr/local/Cellar/node/11.2.0/bin/node /usr/local/bin/firebase serve
+[debug] [2018-11-25T13:13:45.527Z] CLI Version:   6.1.1
+[debug] [2018-11-25T13:13:45.527Z] Platform:      darwin
+[debug] [2018-11-25T13:13:45.527Z] Node Version:  v11.2.0
+[debug] [2018-11-25T13:13:45.528Z] Time:          Sun Nov 25 2018 22:13:45 GMT+0900 (대한민국 표준시)
+[debug] [2018-11-25T13:13:45.528Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-11-25T13:13:45.542Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-11-25T13:13:45.542Z] > authorizing via signed-in user
+[debug] [2018-11-25T13:13:45.543Z] [iam] checking project chat-50161 for permissions ["firebase.projects.get"]
+[debug] [2018-11-25T13:13:45.544Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-11-25T13:13:45.545Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2018-11-25T13:13:46.099Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-25T13:13:46.114Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/chat-50161:testIamPermissions  
+
+[debug] [2018-11-25T13:13:47.719Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-25T13:13:47.720Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/chat-50161  
+ 
+[debug] [2018-11-25T13:13:49.253Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/jungsoo/Desktop/friendlychat-web/web-start'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-11-25T13:13:56.244Z] Fetching environment
+[debug] [2018-11-25T13:13:56.285Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/706586139868:getServerAppConfig  
+ 
+[debug] [2018-11-25T13:13:56.286Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/706586139868/clients/_:getWebAppConfig  
+ 
+[debug] [2018-11-25T13:13:57.547Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-25T13:13:57.548Z] Starting @google-cloud/functions-emulator
+[debug] [2018-11-25T13:13:57.565Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ./public
+[info] ✔  hosting: Local server: http://localhost:5000
+[debug] [2018-11-25T13:14:01.128Z] Parsing function triggers
+[info] i  functions: No HTTPS functions found. Use firebase functions:shell if you would like to emulate other types of functions.

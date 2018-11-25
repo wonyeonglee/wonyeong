@@ -44,7 +44,8 @@ function authStateObserver(user) {
     userPicElement.src=profilePicUrl;
     userNameElement.textContent = userName;
 
-
+    
+    getChatList();
     // We save the Firebase Messaging Device token and enable notifications.
     //saveMessagingDeviceToken();*/
   } else { // 로그아웃 됐을 때
@@ -54,12 +55,43 @@ function authStateObserver(user) {
 
 function getUserName() { //현재 로그인 되어 있는 유저의 이름 가져오기
   return firebase.auth().currentUser.displayName;
-  // TODO 5: Return the user's display name.
 }
 
-function getProfilePicUrl() { //현재 로그인 한 유저의 프로필 사진 불러오기, 없을 시 기본 사진 불러오기
+function getProfilePicUrl() { // 현재 로그인 한 유저의 프로필 사진 불러오기, 없을 시 기본 사진 불러오기
   return firebase.auth().currentUser.photoURL || 'https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg';
-  // TODO 4: Return the user's profile pic URL.
+}
+
+
+function getUserUid(){ //현재 로그인 한 유저의 uid 불러오기
+  return firebase.auth().currentUser.uid
+}
+
+
+function getChatList(){ // 현재 로그인 한 유저의 채팅방 리스트 불러오기
+  var callback = function(snap) {
+    var data = snap.val(); // 불러온 정보(snap)를 javascript로 사용할 수 있게 변경
+    displayChatlist(snap.key, data.room_name);
+  }
+  var chatListRef = firebase.database().ref('/user_list/'+getUserUid()+'/room_list/').on('child_added', callback); // 자기 정보에 존재하는 채팅방 리스트 불러오기
+                                                                                                                   // child_added 는 해당 데이터베이스에 데이터가 추가 됐을 시 callback 함수를 실행하라는 의미
+}
+
+function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 함수
+  var CHAT_LIST_TEMPLATE =  // 채팅방 이름이 들어갈 리스트 템플릿. html과 같음.
+      '<div class="wrap"><div class="meta">' +
+      '<p class="name"></p>' +
+      '</div></div>';
+  var chatListElement = document.getElementById("chat_list");
+  
+    var container = document.createElement('li');
+    container.setAttribute('class', 'contact');
+    container.setAttribute('id', key);
+    container.innerHTML = CHAT_LIST_TEMPLATE;
+    var div = container.firstChild;
+  
+  var nameElement = div.querySelector('.name');
+  nameElement.textContent = name;
+  chatListElement.appendChild(container);
 }
 
 /*
@@ -293,6 +325,7 @@ var imageFormElement = document.getElementById('image-form');
 var mediaCaptureElement = document.getElementById('mediaCapture');
 var signInSnackbarElement = document.getElementById('must-signin-snackbar');
 
+
 // Saves message on form submit.
 messageFormElement.addEventListener('submit', onMessageFormSubmit);
 
@@ -308,8 +341,59 @@ imageButtonElement.addEventListener('click', function(e) {
 });
 mediaCaptureElement.addEventListener('change', onMediaFileSelected);
 */
+
+var addClassElement = document.getElementById('addclass'); // add class 버튼 불러오기
+
+addClassElement.addEventListener('click', function(e){ // add class 버튼이 클릭됐을때 채팅방 추가하는 알림창 띄우기
+    $("#myModal").modal('show')
+});
+
+$("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창에서 추가하기 버튼 클릭했을 시
+  var chatListRef = firebase.database().ref('chat_list/'+$("#chat-name-input").val()); 
+  chatListRef.once('value', function(snapshot) { // 해당 목록에 존재하는 데이터 한번만 불러오기 https://firebase.google.com/docs/database/web/read-and-write?hl=ko 
+    if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
+      if(snapshot.val().code== $("#chat-code-input").val()){ // 해당 채팅방의 코드와 입력한 코드가 일치 할 시
+        addRoomListInMyInfo($("#chat-name-input").val());
+      } else{ // 해당 채팅방의 코드와 입력한 코드가 일치하지 않을 시
+        $("#myModal").modal('hide');
+        alert("코드가 일치 하지 않습니다. 다시 시도 해 주세요")
+      }
+    } else { // 해당 이름을 가진 채팅방이 존재하지 않을 시
+      $("#myModal").modal('hide');
+      $("#confirmModal").modal('show'); // 해당 코드로 채팅방 생성할 것 인지 묻는 알림창 띄우기
+    }
+  });
+});
+
+$("#create-class-modal-btn").on('click', function(){ // 생성 하기 클릭 시
+  firebase.database().ref('chat_list/'+$("#chat-name-input").val()+'/').set({ // 데이터 베이스에 Chat_list 항목에 해당 이름과 코드을 가진 채팅방 데이터베이스 생성 
+    code: $("#chat-code-input").val()                                         // set은 내가 정한 key값(과목이름)으로 데이터 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
+  },function(error) {
+    if (error) {  // 에러 생겼을 시
+     alert("에러 발생!");
+    } else { // 에러 없을 시
+      addRoomListInMyInfo($("#chat-name-input").val());
+    }
+  });
+});
+
+function addRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 추가 하기
+  firebase.database().ref('user_list/'+getUserUid()+'/room_list').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
+    room_name: name
+  }, function(err){
+    if(err){ // 에러 생겼을 시
+      alert("에러 발생!");
+    } else{ // 에러 없을 시
+      $("#myModal").modal('hide');
+      $("#confirmModal").modal('hide');
+    }
+  });
+}
+
+
 // initialize Firebase
 initFirebaseAuth();
+
 
 // We load currently existing chat messages and listen to new ones.
 //loadMessages();

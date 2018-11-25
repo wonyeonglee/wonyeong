@@ -34,14 +34,35 @@ function initFirebaseAuth() {
   firebase.auth().onAuthStateChanged(authStateObserver);
 
 }
+
 var signInButtonElement = document.getElementById('sign-in');
 signInButtonElement.addEventListener('click', signIn);
 function authStateObserver(user) {
   if (user) { // 로그인 되었을 때
-    location.href="/index.html";
-    // We save the Firebase Messaging Device token and enable notifications.
-  } else { // User is signed out!
-
+       firebase.database().ref('/user_list/'+getUserUid()).update({ // 로그아웃 후 로그인 시 정보가 전부 날아가는 버그 수정 https://firebase.google.com/docs/database/web/read-and-write?hl=ko
+          name: getUserName(),
+          profilePicUrl: getProfilePicUrl()
+        }).catch(function(error) {
+          console.error('Error writing new message to Realtime Database:', error);
+        }).then(function(){
+          location.href="/index.html";
+        });
   }
 }
 initFirebaseAuth();
+
+function getUserName() { //현재 로그인 되어 있는 유저의 이름 가져오기
+  return firebase.auth().currentUser.displayName;
+  // TODO 5: Return the user's display name.
+}
+
+function getProfilePicUrl() { //현재 로그인 한 유저의 프로필 사진 불러오기, 없을 시 기본 사진 불러오기
+  return firebase.auth().currentUser.photoURL || 'https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg';
+  // TODO 4: Return the user's profile pic URL.
+}
+
+function getUserUid(){ //현재 로그인 한 유저의 이메일 불러오기
+  return firebase.auth().currentUser.uid
+}
+
+

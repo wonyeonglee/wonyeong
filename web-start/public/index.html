@@ -1,7 +1,4 @@
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!--- Include the above in your HEAD tag ---------->
+<!------ Include the above in your HEAD tag ---------->
 
 
 
@@ -15,6 +12,8 @@
 
 <script src="https://use.typekit.net/hoy3lrg.js"></script>
 <script>try{Typekit.load({ async: true });}catch(e){}</script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
 <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
 <style class="cp-pen-styles">
 body {
@@ -22,11 +21,11 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #F6F6F6; /* 배경색 */
+  background: #F6F6F6;
   font-family: "proxima-nova", "Source Sans Pro", sans-serif;
   font-size: 1em;
   letter-spacing: 0.1px;
-  color: #32465a; /* 채팅방 남색글씨 */
+  color: #32465a; 
   text-rendering: optimizeLegibility;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
   -webkit-font-smoothing: antialiased;
@@ -73,7 +72,7 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 5px 0 0 0;
-    background: #32465a;
+    background: #32465a; 
   }
 }
 #frame #sidepanel #profile.expanded .wrap {
@@ -172,7 +171,7 @@ body {
 #frame #sidepanel #profile .wrap #expanded input {
   border: none;
   margin-bottom: 6px;
-  background: #32465A; /* 트위터계정입력하는부분 */
+  background: #32465A; 
   border-radius: 3px;
   color: #f5f5f5;
   padding: 7px;
@@ -557,7 +556,7 @@ body {
 #frame .content .message-input .wrap button:focus {
   outline: none;
 }
-</style>
+</style> 
 
 </head><body>
 <!--
@@ -596,8 +595,8 @@ Website: http://emilcarlsson.se/
 			<input type="text" placeholder="Search contacts..." />
 		</div>
 		<div id="contacts">
-			<ul>
-				<li class="contact">
+			<ul id="chat_list">
+				<!--<li class="contact">
 					<div class="wrap">
 						<div class="meta">
 							<p class="name">시스템소프트웨어</p>
@@ -651,8 +650,6 @@ Website: http://emilcarlsson.se/
 					<div class="wrap">
 						<div class="meta">
 							<p class="name">사용자경험과인간중심디자인</p>
-
-						<!--	<p class="preview">I've sent you the files for the Garrett trial.</p> -->
 						</div>
 					</div>
 				</li>
@@ -660,7 +657,6 @@ Website: http://emilcarlsson.se/
 					<div class="wrap">
 						<div class="meta">
 							<p class="name">고영</p>
-<!--              <p class="preview"></p> -->
 						</div>
 					</div>
 				</li>
@@ -668,15 +664,13 @@ Website: http://emilcarlsson.se/
 					<div class="wrap">
 						<div class="meta">
 							<p class="name">대영</p>
-
-				<!--			<p class=""><span>You:</span> That's bullshit. This deal is solid.</p> -->
 						</div>
 					</div>
-				</li>
+				</li> main.js CHAT_LIST_TEMPLATE 으로 자동 생성-->
 			</ul>
 		</div>
 		<div id="bottom-bar">
-			<button id="addclass"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add class</span></button>
+			<button id="addclass" ><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add class</span></button>
 			<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
 		</div>
 	</div>
@@ -738,7 +732,50 @@ Website: http://emilcarlsson.se/
 		</div>
 	</div>
 </div>
-<script >
+<div class="modal" id="myModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">채팅방 추가</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>추가할 채팅방 이름을 적어주세요.</p>
+        <input type="text" class="form-control" id="chat-name-input">
+        <p>채팅방 코드를 입력해주세요</p>
+        <input type="text" class="form-control" id="chat-code-input">
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="add-class-modal-btn" class="btn btn-primary">추가</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="confirmModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">채팅방 추가</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>채팅방이 존재하지 않아 새로 생성해야 합니다. 해당 코드로 생성 하시겠습니까?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="create-class-modal-btn" class="btn btn-primary">생성</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
 
 $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
@@ -770,6 +807,7 @@ $(window).on('keydown', function(e) {
 });
 //# sourceURL=pen.js
 </script>
+
 <script src="/__/firebase/5.5.9/firebase-app.js"></script>
 <script src="/__/firebase/5.5.9/firebase-auth.js"></script>
 <script src="/__/firebase/5.5.9/firebase-database.js"></script>
