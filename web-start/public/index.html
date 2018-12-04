@@ -1,9 +1,5 @@
-<!------ Include the above in your HEAD tag ---------->
-
-
-
 <!DOCTYPE html>
-<html class=''>
+<html>
 <head>
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 
@@ -25,7 +21,7 @@ body {
   font-family: "proxima-nova", "Source Sans Pro", sans-serif;
   font-size: 1em;
   letter-spacing: 0.1px;
-  color: #32465a; 
+  color: #32465a;
   text-rendering: optimizeLegibility;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
   -webkit-font-smoothing: antialiased;
@@ -72,7 +68,7 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 5px 0 0 0;
-    background: #32465a; 
+    background: #32465a;
   }
 }
 #frame #sidepanel #profile.expanded .wrap {
@@ -171,7 +167,7 @@ body {
 #frame #sidepanel #profile .wrap #expanded input {
   border: none;
   margin-bottom: 6px;
-  background: #32465A; 
+  background: #32465A;
   border-radius: 3px;
   color: #f5f5f5;
   padding: 7px;
@@ -322,7 +318,7 @@ body {
   bottom: 0;
 }
 #frame #sidepanel #bottom-bar button {
-  float: left;
+  float: left;     /*아래 add class, settings 버튼*/
   border: none;
   width: 50%;
   padding: 10px 0;
@@ -402,7 +398,7 @@ body {
 }
 #frame .content .contact-profile .ranking i {
   margin-left: 14px;
-  margin-top: 14px;
+  margin-top: 10px;
   cursor: pointer;
 }
 #frame .content .contact-profile .ranking i:nth-last-child(1) {
@@ -451,16 +447,33 @@ body {
   background: #435f7a;
   color: #f5f5f5;
 }
+#frame .content .messages ul li.sent i {
+  float: right;
+  margin-right: 3px;
+  margin-top: 14px;
+  cursor: pointer;
+}
+#frame .content .messages ul li.sent i:link {
+  color: #32465a;
+}
+#frame .content .messages ul li.sent i:visited {
+  color: #FF0000;
+}
+#frame .content .messages ul li.sent i:hover {
+  color: #435f7a;
+}
+
+#frame .content .messages ul li.sent .send_name { /* 현재 메세지 보내는 유저. main.js에서 사용. */
+  float: right;
+}
 #frame .content .messages ul li.replies img {
     margin: 6px 8px 0 0;
-
 }
 #frame .content .messages ul li.replies p {
   background: #f5f5f5;
-
 }
 #frame .content .messages ul li.replies i {
-  margin-right: 3px;
+  margin-left: 3px;
   margin-top: 5px;
   cursor: pointer;
 }
@@ -473,6 +486,7 @@ body {
 #frame .content .messages ul li.replies i:hover {
   color: #435f7a;
 }
+
 
 #frame .content .messages ul li img {
   width: 22px;
@@ -556,7 +570,27 @@ body {
 #frame .content .message-input .wrap button:focus {
   outline: none;
 }
-</style> 
+
+
+#frame .content .contact-profile button {
+  float: right;   /*로그아웃버튼*/
+  border: none;
+  border-radius: 6px;
+  width: 100px;
+  height: 40px;
+  margin-left: 10px;
+  margin-top: 10px;
+  line-height:1.5;
+  vertical-align:middle;
+
+
+  background: #32465a;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+}
+</style>
 
 </head><body>
 <!--
@@ -677,15 +711,16 @@ Website: http://emilcarlsson.se/
 	<div class="content">
 		<div class="contact-profile">
 			<p>오픈SW플랫폼</p>
-      <button id="sign-out">로그아웃</button>
 			<div class="ranking">
-        <i class="fa fa-list-ol" style="font-size:36px; " aria-hidden="true"></i>
-			</div>
+        <i class="fa fa-list-ol" style="font-size:28px; " aria-hidden="true"></i>
+      </div>
+      <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
 		</div>
-		<div class="messages">
-			<ul>
-				<li class="sent">
-					<img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
+		<div class="messages" id="messages-list">
+			<ul id="message-box">
+				<!--<li class="sent">
+          <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
+          <div>sd</div>
 					<p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
 				</li>
 				<li class="replies">
@@ -720,35 +755,37 @@ Website: http://emilcarlsson.se/
 					<img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
         	<p>Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
           <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-				</li>
+				</li>-->
 			</ul>
-		</div>
+    </div>
+    <form id="message-form">
 		<div class="message-input">
 			<div class="wrap">
-			<input type="text" placeholder="Write your message..." />
+			<input id="message" type="text" placeholder="Write your message..." />
 			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-			<button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+			<button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 			</div>
-		</div>
+    </div>
+    </form>
 	</div>
 </div>
 <div class="modal" id="myModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">채팅방 추가</h5>
+        <h5 class="modal-title"  style="color:#FF007F">채팅방 추가</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <p>추가할 채팅방 이름을 적어주세요.</p>
+        <p style="font-size:90%">추가할 채팅방 이름을 적어주세요.</p>
         <input type="text" class="form-control" id="chat-name-input">
-        <p>채팅방 코드를 입력해주세요</p>
+        <p style="font-size:90%">채팅방 코드를 입력해주세요</p>
         <input type="text" class="form-control" id="chat-code-input">
       </div>
       <div class="modal-footer">
-        <button type="button" id="add-class-modal-btn" class="btn btn-primary">추가</button>
+        <button style="background:#FF007F"  type="button" id="add-class-modal-btn" class="btn btn-primary">추가</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
       </div>
     </div>
@@ -784,7 +821,7 @@ $(".expand-button").click(function() {
 	  $("#contacts").toggleClass("expanded");
 });
 
-
+/*
 function newMessage() {
 	message = $(".message-input input").val();
 	if($.trim(message) == '') {
@@ -804,7 +841,7 @@ $(window).on('keydown', function(e) {
     newMessage();
     return false;
   }
-});
+});*/
 //# sourceURL=pen.js
 </script>
 
