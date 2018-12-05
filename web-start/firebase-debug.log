@@ -1,0 +1,87 @@
+[debug] [2018-11-27T17:46:59.703Z] ----------------------------------------------------------------------
+[debug] [2018-11-27T17:46:59.708Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\eg\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve --only hosting
+[debug] [2018-11-27T17:46:59.709Z] CLI Version:   6.1.1
+[debug] [2018-11-27T17:46:59.709Z] Platform:      win32
+[debug] [2018-11-27T17:46:59.709Z] Node Version:  v10.13.0
+[debug] [2018-11-27T17:46:59.716Z] Time:          Wed Nov 28 2018 02:46:59 GMT+0900 (GMT+09:00)
+[debug] [2018-11-27T17:46:59.716Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-11-27T17:46:59.761Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-11-27T17:46:59.763Z] > authorizing via signed-in user
+[debug] [2018-11-27T17:46:59.764Z] [iam] checking project openswteam for permissions ["firebase.projects.get"]
+[debug] [2018-11-27T17:46:59.768Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-11-27T17:46:59.769Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2018-11-27T17:47:00.430Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-27T17:47:00.448Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/openswteam:testIamPermissions  
+
+[debug] [2018-11-27T17:47:01.767Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-27T17:47:01.770Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/openswteam  
+ 
+[debug] [2018-11-27T17:47:03.229Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\eg\Desktop\friendlychat-web\web-start'...
+[info] 
+[debug] [2018-11-27T17:47:03.255Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/850353280123/clients/_:getWebAppConfig  
+ 
+[debug] [2018-11-27T17:47:04.477Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ./public
+[info] +  hosting: Local server: http://localhost:5000
+[debug] [2018-11-28T06:40:04.896Z] ----------------------------------------------------------------------
+[debug] [2018-11-28T06:40:04.901Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\eg\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve --only hosting
+[debug] [2018-11-28T06:40:04.901Z] CLI Version:   6.1.1
+[debug] [2018-11-28T06:40:04.902Z] Platform:      win32
+[debug] [2018-11-28T06:40:04.902Z] Node Version:  v10.13.0
+[debug] [2018-11-28T06:40:04.909Z] Time:          Wed Nov 28 2018 15:40:04 GMT+0900 (GMT+09:00)
+[debug] [2018-11-28T06:40:04.909Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-11-28T06:40:04.946Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-11-28T06:40:04.948Z] > authorizing via signed-in user
+[debug] [2018-11-28T06:40:04.948Z] [iam] checking project openswteam for permissions ["firebase.projects.get"]
+[debug] [2018-11-28T06:40:04.953Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-11-28T06:40:04.953Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2018-11-28T06:40:06.129Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-28T06:40:06.150Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/openswteam:testIamPermissions  
+
+[debug] [2018-11-28T06:40:07.615Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-28T06:40:07.616Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/openswteam  
+ 
+[debug] [2018-11-28T06:40:08.747Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\eg\Desktop\friendlychat-web\web-start'...
+[info] 
+[debug] [2018-11-28T06:40:08.756Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/850353280123/clients/_:getWebAppConfig  
+ 
+[debug] [2018-11-28T06:40:10.297Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ./public
+[info] +  hosting: Local server: http://localhost:5000
+[debug] [2018-12-05T02:44:18.485Z] ----------------------------------------------------------------------
+[debug] [2018-12-05T02:44:18.492Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\eg\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve --only hosting
+[debug] [2018-12-05T02:44:18.493Z] CLI Version:   6.1.1
+[debug] [2018-12-05T02:44:18.493Z] Platform:      win32
+[debug] [2018-12-05T02:44:18.493Z] Node Version:  v10.13.0
+[debug] [2018-12-05T02:44:18.502Z] Time:          Wed Dec 05 2018 11:44:18 GMT+0900 (GMT+09:00)
+[debug] [2018-12-05T02:44:18.502Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-12-05T02:44:18.558Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-12-05T02:44:18.561Z] > authorizing via signed-in user
+[debug] [2018-12-05T02:44:18.561Z] [iam] checking project openswteam for permissions ["firebase.projects.get"]
+[debug] [2018-12-05T02:44:18.569Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-12-05T02:44:18.570Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2018-12-05T02:44:19.175Z] <<< HTTP RESPONSE 200
+[debug] [2018-12-05T02:44:19.189Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/openswteam:testIamPermissions  
+
+[debug] [2018-12-05T02:44:20.380Z] <<< HTTP RESPONSE 200
+[debug] [2018-12-05T02:44:20.384Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/openswteam  
+ 
+[debug] [2018-12-05T02:44:21.303Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\eg\Desktop\friendlychat-web\web-start'...
+[info] 
+[debug] [2018-12-05T02:44:21.309Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/850353280123/clients/_:getWebAppConfig  
+ 
+[debug] [2018-12-05T02:44:21.985Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: ./public
+[info] +  hosting: Local server: http://localhost:5000
