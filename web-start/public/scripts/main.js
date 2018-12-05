@@ -160,7 +160,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl) { // 메세지 �
     var li = document.createElement('li');
     li.innerHTML = '<img class="pic" src="">'+
                           '<div class="send_name"></div>'+
-                          '<p class="message"></p>'+
+                          '<p class="message"></p></div>'+
                           '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>';
     li.setAttribute('id', key);
     if(send){
