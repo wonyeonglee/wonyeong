@@ -238,7 +238,7 @@ body {
   background: #2c3e50;
 }
 #frame #sidepanel #contacts::-webkit-scrollbar-thumb {
-  background-color:#5CD1E5; /*채팅목록스크롤바색깔 */
+  background-color:#32465A; /*채팅목록스크롤바색깔 */
 }
 #frame #sidepanel #contacts ul li.contact {
   text-align:center;
@@ -397,8 +397,8 @@ body {
   float: right;
 }
 #frame .content .contact-profile .wordCloud i {
-  margin-left: 14px;
-  margin-top: 10px;
+  margin-left: 20px;
+  vertical-align:middle;
   cursor: pointer;
 }
 #frame .content .contact-profile .wordCloud i:nth-last-child(1) {
@@ -435,18 +435,46 @@ body {
   width: calc(100% - 25px);
   font-size: 0.9em;
 }
+
+#frame .content .messages ul li img {
+  width: 22px;
+  border-radius: 50%;
+  float: left;
+}
+#frame .content .messages ul li p {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 205px;
+  line-height: 130%;
+}
+
+@media screen and (min-width: 735px) {
+  #frame .content .messages ul li p {
+    max-width: 300px;
+  }
+}
+
 #frame .content .messages ul li:nth-last-child(1) {
   margin-bottom: 20px;
 }
-#frame .content .messages ul li.sent img {
+
+#frame .content .messages ul li.sent img {	/*프사*/
   float: right;
   margin: 6px 0 0 8px;
 }
-#frame .content .messages ul li.sent p {
-  float: right;
-  background: #435f7a;
-  color: #f5f5f5;
+
+#frame .content .messages ul li.sent .send_name { /* 현재 메세지 보내는 유저. main.js에서 사용. */
+  float: right;	/*보내는 사람 이름*/
+
 }
+#frame .content .messages ul li.sent p {	/*메세지 내용*/
+  float: right;
+  position:relative;
+  background: #435f7a;
+  color: #f5f5f5;	/*하얀글씨*/
+}
+
 #frame .content .messages ul li.sent i {
   float: right;
   margin-right: 3px;
@@ -463,9 +491,7 @@ body {
   color: #435f7a;
 }
 
-#frame .content .messages ul li.sent .send_name { /* 현재 메세지 보내는 유저. main.js에서 사용. */
-  float: right;
-}
+
 #frame .content .messages ul li.replies img {
     margin: 6px 8px 0 0;
 }
@@ -488,23 +514,6 @@ body {
 }
 
 
-#frame .content .messages ul li img {
-  width: 22px;
-  border-radius: 50%;
-  float: left;
-}
-#frame .content .messages ul li p {
-  display: inline-block;
-  padding: 10px 15px;
-  border-radius: 20px;
-  max-width: 205px;
-  line-height: 130%;
-}
-@media screen and (min-width: 735px) {
-  #frame .content .messages ul li p {
-    max-width: 300px;
-  }
-}
 #frame .content .message-input {
   position: absolute;
   bottom: 0;
@@ -712,9 +721,9 @@ Website: http://emilcarlsson.se/
 		<div class="contact-profile">
 			<p>오픈SW플랫폼</p>
 			<div class="wordCloud">
-        <i class="fa fa-cloud" style="font-size:28px; " aria-hidden="true"></i>
-      </div>
-      <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
+      	    <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i>
+            </div>
+            <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
 		</div>
 		<div class="messages" id="messages-list">
 			<ul id="message-box">
