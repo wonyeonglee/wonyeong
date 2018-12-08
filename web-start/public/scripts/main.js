@@ -17,7 +17,7 @@
 
 var currentChatKey = "";
 var currentChatUserInfo = [];
-
+ 
 // Signs-in Friendly Chat.
 
 // Signs-out of Friendly Chat.
@@ -145,12 +145,13 @@ function loadMessages(chatKey) {
         if(data.user == getUserUid()){
           send = true
         }
+        var count;
         if(data.likeUserList==null){
-
+          count = 0;
         } else{
-          console.log(data.likeUserList);
+          count = Object.keys(data.likeUserList).length;
         }
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl);
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, count);
         break;
       }
     }
@@ -174,14 +175,15 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum) {
     } else{
       li.setAttribute('class','replies');
     }
-    var likeElement = li.querySelector('.like');
+    messageListElement.appendChild(li);
+  }
+  var likeElement = li.querySelector('.like');
+    likeElement.textContent = " "+likeNum;
     likeElement.addEventListener('click', function(e){
       firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/'+getUserUid()).update({
         temp:'temp'
       });
-    });
-    messageListElement.appendChild(li);
-  }
+  });
   if (picUrl) {
     li.querySelector('.pic').src=picUrl
   }
@@ -505,7 +507,6 @@ $("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창
     if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
       if(snapshot.val().code== $("#chat-code-input").val()){ // 해당 채팅방의 코드와 입력한 코드가 일치 할 시
         addRoomListInMyInfo($("#chat-name-input").val());
-        updateMyInfoInChatRoom($("#chat-name-input").val());
       } else{ // 해당 채팅방의 코드와 입력한 코드가 일치하지 않을 시
         $("#myModal").modal('hide');
         alert("코드가 일치 하지 않습니다. 다시 시도 해 주세요")
@@ -525,7 +526,6 @@ $("#create-class-modal-btn").on('click', function(){ // 생성 하기 클릭 시
      alert("에러 발생!");
     } else { // 에러 없을 시
       addRoomListInMyInfo($("#chat-name-input").val());
-      updateMyInfoInChatRoom($("#chat-name-input").val());
     }
   });
 });
@@ -543,6 +543,7 @@ function addRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 
       }
     }
     if(check){
+      updateMyInfoInChatRoom(name);
       firebase.database().ref('user_list/'+getUserUid()+'/room_list').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
         room_name: name
       }, function(err){
