@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+'use strict'; 
 
 var currentChatKey = "";
 var currentChatUserInfo = [];
- 
-// Signs-in Friendly Chat.
 
-// Signs-out of Friendly Chat.
+// Signs-in Friendly Chat. 
+
+// Signs-out of Friendly Chat. 
 function signOut() {
   firebase.auth().signOut();
   // TODO 2: Sign out of Firebase.
@@ -507,6 +507,7 @@ $("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창
     if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
       if(snapshot.val().code== $("#chat-code-input").val()){ // 해당 채팅방의 코드와 입력한 코드가 일치 할 시
         addRoomListInMyInfo($("#chat-name-input").val());
+        updateMyInfoInChatRoom($("#chat-name-input").val());
       } else{ // 해당 채팅방의 코드와 입력한 코드가 일치하지 않을 시
         $("#myModal").modal('hide');
         alert("코드가 일치 하지 않습니다. 다시 시도 해 주세요")
@@ -526,6 +527,7 @@ $("#create-class-modal-btn").on('click', function(){ // 생성 하기 클릭 시
      alert("에러 발생!");
     } else { // 에러 없을 시
       addRoomListInMyInfo($("#chat-name-input").val());
+      updateMyInfoInChatRoom($("#chat-name-input").val());
     }
   });
 });
@@ -543,7 +545,6 @@ function addRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 
       }
     }
     if(check){
-      updateMyInfoInChatRoom(name);
       firebase.database().ref('user_list/'+getUserUid()+'/room_list').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
         room_name: name
       }, function(err){
