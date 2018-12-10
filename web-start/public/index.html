@@ -5,14 +5,14 @@
 
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous'>
- 
+
 <script src="https://use.typekit.net/hoy3lrg.js"></script>
 <script>try{Typekit.load({ async: true });}catch(e){}</script>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
- 
+
 <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
 <style class="cp-pen-styles">
-body {
+body { 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,8 +178,27 @@ body {
   background: #435f7a;
 }
 
+#frame #sidepanel #profile .wrap #chat-like-list .chat-like{
+  font-size:80%;margin-left:10px;margin-bottom:10px
+}
+
+#frame #sidepanel #profile .wrap #chat-like-list .chat-like .like-num{
+  float : right;
+}
+#frame #sidepanel #profile .wrap #chat-like-list {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar {
+  width: 8px;
+  background: #2c3e50;
+}
+#frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar-thumb {
+  background-color:#32465A; /*채팅목록스크롤바색깔 */
+}
 #frame #sidepanel #contacts {
-  height: calc(100% - 177px);
+  height: calc(100% - 150px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -194,7 +213,7 @@ body {
   }
 }
 #frame #sidepanel #contacts.expanded {
-  height: calc(100% - 334px);
+  height: calc(100% - 390px);
 }
 #frame #sidepanel #contacts::-webkit-scrollbar {
   width: 8px;
@@ -602,13 +621,21 @@ Website: http://emilcarlsson.se/
             <h1 style="text-align:center;height:150%">My incentive</h1>
           </div>
           <div style="margin-top:3px">
-          <ul>
-            <li style="font-size:80%;margin-left:10px">자료구조            6</li>
-            <li style="font-size:80%;margin-left:10px; margin-top:10px">오픈플랫폼         10</li>
-            <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
-             <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
-              <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
+          <ul id="chat-like-list">
+            <!--<li class ="chat-like" >자료구조            <span class="like-num">6</span></li>
+            <li class ="chat-like">오픈플랫폼         <span class="like-num">10</span></li>
+            <li class ="chat-like">고전읽기와글쓰기   13</li>
+             <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+              <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+-->
           </ul>
         </div>
             </div>
@@ -699,9 +726,9 @@ Website: http://emilcarlsson.se/
    </div>
    <div class="content">
       <div class="contact-profile">
-         <p>오픈SW플랫폼</p>
+         <p id="chat-name"></p>
          <div class="wordCloud">
-             <button id="word-Cloud"><i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></button></i>
+             <button id="word-Cloud"><i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i></button>
             </div>
             <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
       </div>
@@ -755,7 +782,7 @@ Website: http://emilcarlsson.se/
          <button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
          </div>
     </div>
-    </form>
+    </form> 
    </div>
 </div>
 <div class="modal" id="myModal" tabindex="-1" role="dialog">
