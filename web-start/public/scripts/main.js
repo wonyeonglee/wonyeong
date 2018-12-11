@@ -15,13 +15,13 @@
  */
 'use strict';
 
-var currentChatKey = ""; // 현재 선택된 채팅방
-var currentChatUserInfo = []; // 위의 채팅방에 존재하는 유저들의 정보
+var currentChatKey = "";
+var currentChatUserInfo = [];
 
 // Signs-in Friendly Chat.
 
 // Signs-out of Friendly Chat.
-function signOut() { // 로그아웃.
+function signOut() {
   firebase.auth().signOut();
   // TODO 2: Sign out of Firebase.
 }
@@ -30,21 +30,22 @@ var userPicElement = document.getElementById('profile-img');
 var signOutButtonElement = document.getElementById('sign-out');
 
 var userNameElement = document.getElementById('user-name');
+var messageListDiv = document.getElementById('messages-list')
 var messageListElement = document.getElementById('message-box');
 var messageFormElement = document.getElementById('message-form');
 
 var messageInputElement = document.getElementById('message');
 var submitButtonElement = document.getElementById('submit');
 
-signOutButtonElement.addEventListener('click', signOut); // 로그아웃.
+signOutButtonElement.addEventListener('click', signOut);
 
 // Initiate firebase auth.
 function initFirebaseAuth() {
   firebase.auth().onAuthStateChanged(authStateObserver);
   // TODO 3: Initialize Firebase.
 }
-function authStateObserver(user) { // 유저 상태가 변했을 떄
-  if (user) { // User is signed in! // 로그인 상태일 때
+function authStateObserver(user) {
+  if (user) { // User is signed in!
     // Get the signed-in user's profile pic and name.
     var profilePicUrl = getProfilePicUrl();
     var userName = getUserName();
@@ -54,11 +55,11 @@ function authStateObserver(user) { // 유저 상태가 변했을 떄
     userNameElement.textContent = userName;
 
 
-    getChatList(); // 현재 로그인 한 유저의 채팅방 리스트 불러오기
+    getChatList();
     // We save the Firebase Messaging Device token and enable notifications.
     //saveMessagingDeviceToken();*/
   } else { // 로그아웃 됐을 때
-    location.href="/login.html"; // 로그인 페이지로 이동
+    location.href="/login.html";
   }
 }
 
@@ -80,9 +81,27 @@ function getChatList(){ // 현재 로그인 한 유저의 채팅방 리스트 �
   var callback = function(snap) {
     var data = snap.val(); // 불러온 정보(snap)를 javascript로 사용할 수 있게 변경
     displayChatlist(snap.key, data.room_name);
+
+    firebase.database().ref('/chat_list/'+data.room_name+'/user/'+getUserUid()+'/like_num').on('value',function(snapshot){//채티방 리스트에 존재하는 자기 아이디의 좋아요 갯수 불러오기
+      displayChatLikeList(snapshot.key, data.room_name,snapshot.val());
+    });
   }
-  var chatListRef = firebase.database().ref('/user_list/'+getUserUid()+'/room_list/').on('child_added', callback); // 자기 정보에 존재하는 채팅방 리스트 불러오기
-                                                                                                                   // child_added 는 해당 데이터베이스에 데이터가 추가된 상태. 추가 됐는지 아닌지 계속 체크하다 child_added 됐을 시 callback 함수를 실행.
+  firebase.database().ref('/user_list/'+getUserUid()+'/room_list/').on('child_added', callback); // 자기 정보에 존재하는 채팅방 리스트 불러오기
+                                                                                                                   // child_added 는 해당 데이터베이스에 데이터가 추가 됐을 시 callback 함수를 실행하라는 의미
+}
+function displayChatLikeList(key, name,number){ //채팅방 좋아요 요소 불러오는 부분
+  var chatLikeListElement = document.getElementById("chat-like-list"); // 채팅방 좋아요 리스트 넣는 요소 찾기
+  var likeContainer;
+  if(document.getElementById(name)){
+    likeContainer =  document.getElementById(name);
+  } else{
+    likeContainer = document.createElement('li'); //채팅방 좋아요 리스트 생성
+    likeContainer.setAttribute('class', 'chat-like');
+    likeContainer.setAttribute('id', name);
+  }
+
+  likeContainer.innerHTML = name+'<span class="like-num">'+number+'</span>' //채팅방 좋아요 관련 정보 업데이트
+  chatLikeListElement.appendChild(likeContainer);
 }
 
 function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 함수
@@ -90,30 +109,32 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
       '<div class="wrap"><div class="meta">' +
       '<p class="name"></p>' +
       '</div></div>';
+
   var chatListElement = document.getElementById("chat_list");
 
-    var container = document.createElement('li'); // 채팅방 HTML list element 생성 부분.
-    container.setAttribute('class', 'contact'); // 채팅방 HTML list element의 class에 contact 할당.
-    container.setAttribute('id', key); // 채팅방 HTML list element의 id에 key 할당.
-    container.innerHTML = CHAT_LIST_TEMPLATE; // container 안의 html을 CHAT_LIST_TEMPLATE으로.
-    var div = container.firstChild; // container의 첫번째 자식을 div 변수에 할당.
+  var container = document.createElement('li');
+  container.setAttribute('class', 'contact');
+  container.setAttribute('id', key);
+  container.innerHTML = CHAT_LIST_TEMPLATE;
+  var div = container.firstChild;
 
-  var nameElement = div.querySelector('.name'); // div안에서 name 클래스를 가진 element를 찾아 nameElement에 할당.
-  nameElement.textContent = name; // nameElement의 text부분에 name 할당.
-  container.addEventListener('click' , function(e){ // container(채팅방) 눌렸을 떄.
-    firebase.database().ref('/chat_list/'+currentChatKey+'/user/').off(); // firebase DB에서 유저 정보 가져옴.
-    firebase.database().ref('/chat_list/'+currentChatKey+'/message/').off(); // firebase DB에서 메세지 정보 가져옴.
-    $("#chat_list>li.active").removeClass("active"); // (CSS 조작) - 기존 눌렸던 채팅방. chat_list id를 가진 것 중에서(>) list element 중에서 클래스가 active인 element를 찾아서 active클래서 삭제.
-    $(this).addClass("active"); // (CSS 조작) - 새로 눌린 채팅방. 클래스에 active 추가.
-    $("#message-box").html(''); // 기존 눌렸던 채방의 채팅 정보 삭제. id가 message-box인 것을 찾아서 html을 빈 칸으로 바꿈.
-    currentChatKey = $(this).find(".name").text(); // 지금 현재 채팅 방의 이름을 변수로 할당.
-    currentChatUserInfo = []; // 기존 채팅방에 존재하는 유저의 정보를 삭제.
-    classClick(currentChatKey); // 새로 입장한 채팅방에 유저 정보를 삭제.
+  var nameElement = div.querySelector('.name');
+  nameElement.textContent = name;
+  container.addEventListener('click' , function(e){
+    firebase.database().ref('/chat_list/'+currentChatKey+'/user/').off();
+    firebase.database().ref('/chat_list/'+currentChatKey+'/message/').off();
+    $("#chat_list>li.active").removeClass("active");
+    $(this).addClass("active");
+    $("#message-box").html('');
+    currentChatKey = $(this).find(".name").text();
+    $("#chat-name").text(currentChatKey);
+    currentChatUserInfo = [];
+    classClick(currentChatKey);
   });
   chatListElement.appendChild(container);
 }
 
-function addUserInfo(snap){ // currentChatUserInfo에 현재 선택된 채팅방의 유저 정보 넣기.
+function addUserInfo(snap){
   var childData = snap.val();
       var info = {
         name : childData.name,
@@ -123,7 +144,7 @@ function addUserInfo(snap){ // currentChatUserInfo에 현재 선택된 채팅방
       currentChatUserInfo.push(info);
 }
 
-function classClick(chatKey){ // 현재 채팅방에 존재하는 유저의 정보 불러오기.
+function classClick(chatKey){
   firebase.database().ref('/chat_list/'+chatKey+'/user/').once('value',function(snapshot){
     snapshot.forEach(function(childSnapshot) {
       addUserInfo(childSnapshot);
@@ -135,7 +156,7 @@ function classClick(chatKey){ // 현재 채팅방에 존재하는 유저의 정�
   });
 }
 
-function loadMessages(chatKey) { // 현재 선택된 채팅방의 메세지 db에서 불러오기
+function loadMessages(chatKey) {
   var callback = function(snap){
     var data = snap.val();
     for(var i = 0 ; i < currentChatUserInfo.length;i++){
@@ -144,7 +165,13 @@ function loadMessages(chatKey) { // 현재 선택된 채팅방의 메세지 db�
         if(data.user == getUserUid()){
           send = true
         }
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl);
+        var count;
+        if(data.likeUserList==null){
+          count = 0;
+        } else{
+          count = Object.keys(data.likeUserList).length;
+        }
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, count,currentChatUserInfo[i]['uid']);
         break;
       }
     }
@@ -153,14 +180,14 @@ function loadMessages(chatKey) { // 현재 선택된 채팅방의 메세지 db�
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl) { // 메세지 보여주기.
+function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUid) {
   var li = document.getElementById(key);
   // If an element for that message does not exists yet we create it.
   if (!li) {
-    var li = document.createElement('li');
+    li = document.createElement('li');
     li.innerHTML = '<img class="pic" src="">'+
                           '<div class="send_name"></div>'+
-                          '<p class="message"></p></div>'+
+                          '<p class="message"></p>' +
                           '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>';
     li.setAttribute('id', key);
     if(send){
@@ -170,10 +197,39 @@ function displayMessage(key, name, text, picUrl, send,imageUrl) { // 메세지 �
     }
     messageListElement.appendChild(li);
   }
+  var likeElement = li.querySelector('.like');
+    likeElement.textContent = " "+likeNum;
+    likeElement.addEventListener('click', function(e){
+
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
+        if(result){
+          if(result[''+getUserUid()]){
+            likeElement.style.color="red";
+            return result;      // 메세지에 좋아한 유저 리스트의 자기가 없을때
+          } else{
+            result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저 리스트의 자기가 없을때
+          }
+        } else{
+          result = {};
+          result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
+        }
+        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) {
+          if (number) {
+            ++number;
+          } else{
+            number = 1;
+          }
+          return number;
+        });
+        return result;
+      });
+
+  });
   if (picUrl) {
     li.querySelector('.pic').src=picUrl
   }
   li.querySelector('.send_name').textContent = name;
+
   var messageElement = li.querySelector('.message');
   if (text) { // If the message is text.
     messageElement.textContent = text;
@@ -182,19 +238,20 @@ function displayMessage(key, name, text, picUrl, send,imageUrl) { // 메세지 �
   } else if (imageUrl) { // If the message is an image.
     var image = document.createElement('img');
     image.addEventListener('load', function() {
-      messageListElement.scrollTop = messageListElement.scrollHeight;
+      messageListDiv.scrollTop = messageListDiv.scrollHeight;
     });
     image.src = imageUrl + '&' + new Date().getTime();
     messageElement.innerHTML = '';
     messageElement.appendChild(image);
   }
+
   // Show the card fading-in and scroll to view the new message.
   setTimeout(function() {li.classList.add('visible')}, 1);
-  messageListElement.scrollTop = messageListElement.scrollHeight;
+  messageListDiv.scrollTop = messageListDiv.scrollHeight;
  // messageInputElement.focus();
 }
 
-function saveMessage(messageText) { // DB에 메세지 저장하기.
+function saveMessage(messageText) {
   // Adds a new message entry to the Realtime Database.
   return firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
    user: getUserUid(),
@@ -491,7 +548,6 @@ $("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창
     if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
       if(snapshot.val().code== $("#chat-code-input").val()){ // 해당 채팅방의 코드와 입력한 코드가 일치 할 시
         addRoomListInMyInfo($("#chat-name-input").val());
-        updateMyInfoInChatRoom($("#chat-name-input").val());
       } else{ // 해당 채팅방의 코드와 입력한 코드가 일치하지 않을 시
         $("#myModal").modal('hide');
         alert("코드가 일치 하지 않습니다. 다시 시도 해 주세요")
@@ -511,28 +567,47 @@ $("#create-class-modal-btn").on('click', function(){ // 생성 하기 클릭 시
      alert("에러 발생!");
     } else { // 에러 없을 시
       addRoomListInMyInfo($("#chat-name-input").val());
-      updateMyInfoInChatRoom($("#chat-name-input").val());
     }
   });
 });
 
 function addRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 추가 하기
-  firebase.database().ref('user_list/'+getUserUid()+'/room_list').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
-    room_name: name
-  }, function(err){
-    if(err){ // 에러 생겼을 시
-      alert("에러 발생!");
-    } else{ // 에러 없을 시
+  firebase.database().ref('user_list/'+getUserUid()+'/room_list').once('value', function(snapshot){
+    var myRoomarr = [];                   // 내가 가지고 있는 채팅방 임시 저장 배열
+    snapshot.forEach(function(childSnapshot) {  //내가 가지고있는 채팅방 이름 불러오기
+      myRoomarr.push(childSnapshot.val().room_name);
+    });
+    var check = true;
+    for(var i = 0 ; i < myRoomarr.length; i++){ // 만약 내가 가지고 있는 채팅방과 같은 이름의 채팅방 값이 들어왔을 시 false
+      if(myRoomarr[i]==name){
+        check = false;
+      }
+    }
+    if(check){
+      updateMyInfoInChatRoom(name);
+      firebase.database().ref('user_list/'+getUserUid()+'/room_list').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
+        room_name: name
+      }, function(err){
+        if(err){ // 에러 생겼을 시
+          alert("에러 발생!");
+        } else{ // 에러 없을 시
+          $("#myModal").modal('hide');
+          $("#confirmModal").modal('hide');
+        }
+      });
+    } else{
+      alert("이미 존재하는 채팅방입니다!");
       $("#myModal").modal('hide');
       $("#confirmModal").modal('hide');
-    }
+    };
   });
 }
 
 function updateMyInfoInChatRoom(chatKey){ // 룸 정보에 유저 정보 넣기
   firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).update({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
     name: getUserName(),
-    profilePicUrl: getProfilePicUrl()
+    profilePicUrl: getProfilePicUrl(),
+    like_num : 0
   }, function(err){
     if(err){ // 에러 생겼을 시
 
