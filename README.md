@@ -23,7 +23,7 @@
   ~각자 적기~
 - 1771098 이가은 (gaeunleeandlee) 
   : gaeun
-  ~각자 적기~
+  
   
 
 ## 4. 라이센스 정보
@@ -31,4 +31,4 @@ See [LICENSE](LICENSE), Apache License 2.0
 
 ## 5. 사용 open source
 + Firebase 웹 메신저 오픈소스 : https://github.com/firebase/friendlychat-web
-+ Word Cloud 오픈소스 : http://www.wordle.net/
++ Word Cloud 오픈소스 : https://github.com/wvengen/d3-wordcloud
