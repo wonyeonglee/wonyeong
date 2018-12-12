@@ -20,7 +20,7 @@
   ~맟은일각자 적기~
 - 1771044 이원영 (wonyeonglee) 
   : wonyeongbranch
-  ~각자 적기~
+  로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현 
 - 1771098 이가은 (gaeunleeandlee) 
   : gaeun
   ~각자 적기~
