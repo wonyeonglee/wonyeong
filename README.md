@@ -7,7 +7,8 @@
 # 1. 앱 Kinteract
 ## 1.1 앱 설명
 >Kinteract는 K와 interact의 합성어로서, K= I(In) + C(Class)로 수업중 소통한다는 의미를 담고있습니다.
->Kinteract의 이름에서 알 수 있듯이 In Class, 즉 수업 시간에 활용하거나 질문을 돕는 웹 채팅입니다.
+>Kinteract의 이름에서 알 수 있듯이 In Class, 즉 수업 시간에 활용하거나 질문을 돕는 웹 채팅입니다. 
+>Kinteract 채팅 웹을 통해 좋아요-가산점 기능, 단체 채팅, word cloud을 주요 기능으로 구현하였습니다.
 
 ## 1.2 앱 설치 방법 및 사용법
 ## 1.3 주요기능및 관련 코드/API 설명
