@@ -22,7 +22,7 @@
   : wonyeongbranch
  로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 기존 UI에서 불필요한 부분 삭제
 - 1771098 이가은 (gaeunleeandlee) 
-  : gaeun
+  : 기존 UI에서 불필요한 부분 삭제, 마이페이지 UI 수정, 버튼 UI 수정, 
   
   
 
@@ -31,4 +31,5 @@ See [LICENSE](LICENSE), Apache License 2.0
 
 ## 5. 사용 open source
 + Firebase 웹 메신저 오픈소스 : https://github.com/firebase/friendlychat-web
-+ Word Cloud 오픈소스 : https://github.com/wvengen/d3-wordcloud
++ 질문 데이터 시각화 Word Cloud 오픈소스 : https://github.com/wvengen/d3-wordcloud
++ Main 채팅 창 UI 오픈소스 : https://bootsnipp.com/snippets/35mvD
