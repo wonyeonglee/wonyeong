@@ -17,7 +17,7 @@
   채팅방 생성 기능 구현, 채팅창 기능 구현, 좋아요 기능 구현, 좋아요-마이페이지 연동 기능 구현, word-cloud기능 구현
 - 1771016 김은지 (eun-g-kim)
   : eunjiBranch
-  기존 UI에서 불필요한 부분 삭제, 좋아요 버튼 추가, word Cloud 버튼 추가, 
+  기존 UI에서 불필요한 부분 삭제, 좋아요 UI 구현, word Cloud UI 구현, UI 위치 오류 나는 부분 수정
 - 1771044 이원영 (wonyeonglee) 
   : wonyeongbranch
  로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 기존 UI에서 불필요한 부분 삭제
