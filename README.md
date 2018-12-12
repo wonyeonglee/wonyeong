@@ -20,7 +20,7 @@
   기존 UI에서 불필요한 부분 삭제, 좋아요 버튼 추가, word Cloud 버튼 추가, 
 - 1771044 이원영 (wonyeonglee) 
   : wonyeongbranch
-  ~각자 적기~
+ 로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 기존 UI에서 불필요한 부분 삭제
 - 1771098 이가은 (gaeunleeandlee) 
   : gaeun
   
