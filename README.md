@@ -18,7 +18,7 @@
 - 1771016 김은지 (eun-g-kim)
   : eunjiBranch
 - 1771044 이원영 (wonyeonglee) 
-  :wonyeongbranch
+  : wonyeongbranch
 - 1771098 이가은 (gaeunleeandlee) 
   : gaeun
 
