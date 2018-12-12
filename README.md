@@ -17,14 +17,17 @@
   채팅방 생성 기능 구현, 채팅창 기능 구현, 좋아요 기능 구현, 좋아요-마이페이지 연동 기능 구현, word-cloud기능 구현
 - 1771016 김은지 (eun-g-kim)
   : eunjiBranch
-  ~맟은일각자 적기~
+  ~맡은일각자 적기~
 - 1771044 이원영 (wonyeonglee) 
   : wonyeongbranch
-  로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현 
+  ~각자 적기~
 - 1771098 이가은 (gaeunleeandlee) 
   : gaeun
   ~각자 적기~
   
 
 ## 4. 라이센스 정보
-the Apache License, Version 2.0
+See [LICENSE](LICENSE), Apache License 2.0
+
+## 5. 사용 open source
+https://github.com/firebase/friendlychat-web
