@@ -15,6 +15,7 @@
  */
 'use strict';
 
+
 var currentChatKey = "";
 var currentChatUserInfo = [];
 
@@ -71,11 +72,19 @@ function getProfilePicUrl() { // 현재 로그인 한 유저의 프로필 사진
   return firebase.auth().currentUser.photoURL || 'https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg';
 }
 
-
-function getUserUid(){ //현재 로그인 한 유저의 uid 불러오기
-  return firebase.auth().currentUser.uid
+function isUserSignedIn()  { // Return true if a user is signed-in.
+  return !!firebase.auth().currentUser;
 }
-
+function getUserUid(){ //현재 로그인 한 유저의 uid 불러오기
+  return firebase.auth().currentUser.uid;
+}
+// Returns true if user is signed-in. Otherwise false and displays a message.
+function checkSignedInWithMessage() {
+  // Return true if the user is signed in Firebase
+  if (isUserSignedIn()) {
+    return true;
+  }
+}
 
 function getChatList(){ // 현재 로그인 한 유저의 채팅방 리스트 불러오기
   var callback = function(snap) {
@@ -204,7 +213,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
       firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
         if(result){
           if(result[''+getUserUid()]){
-            likeElement.style.color="red";
+              likeElement.style.color="red";
             return result;      // 메세지에 좋아한 유저 리스트의 자기가 없을때
           } else{
             result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저 리스트의 자기가 없을때
@@ -235,14 +244,20 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
     messageElement.textContent = text;
     // Replace all line breaks by <br>.
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-  } else if (imageUrl) { // If the message is an image.
+  }
+  else if (imageUrl) { // 이미지 메세지였다면
     var image = document.createElement('img');
     image.addEventListener('load', function() {
-      messageListDiv.scrollTop = messageListDiv.scrollHeight;
+//    messageListDiv.scrollTop = messageListDiv.scrollHeight;
+    image.style.borderRadius="0%";
+    image.style.margin="0px 0px 0px 0px";
+    image.style.height="auto"; //크기 조절
+    image.style.width="280px";
     });
     image.src = imageUrl + '&' + new Date().getTime();
     messageElement.innerHTML = '';
     messageElement.appendChild(image);
+
   }
 
   // Show the card fading-in and scroll to view the new message.
@@ -619,6 +634,63 @@ function updateMyInfoInChatRoom(chatKey){ // 룸 정보에 유저 정보 넣기
     }
   });
 }
+
+var imageButtonElement = document.getElementById('submitImage');
+var imageFormElement = document.getElementById('image-form');
+var mediaCaptureElement = document.getElementById('mediaCapture');
+
+// 이미지 업로드를 위한 이벤트 처리
+imageButtonElement.addEventListener('click', function(e) {
+  e.preventDefault();
+  mediaCaptureElement.click();
+});
+mediaCaptureElement.addEventListener('change', onMediaFileSelected);
+
+
+var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';  //로딩 아이콘
+
+// Firebase에 image 메세지를 저장
+// Cloud Storage에 이미지를 먼저 저장함
+function saveImageMessage(file) {
+  // 1 -메세지 placeholder 만들어서 로딩 아이콘 보여주기
+  firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
+    user: getUserUid(),
+    imageUrl: LOADING_IMAGE_URL,
+//    profilePicUrl: getProfilePicUrl()
+  }).then(function(messageRef) {
+    // 2 - Cloud Storage에 이미지를 업로드
+    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
+    return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
+      // 3 - 이미지 파일로부터 public URL 만들기
+      return fileSnapshot.ref.getDownloadURL().then((url) => {
+        // 4 - 이미지 URL로 메세지 placeholder 업데이트
+        return messageRef.update({
+          imageUrl: url,
+          storageUri: fileSnapshot.metadata.fullPath
+        });
+      });
+    });
+  }).catch(function(error) {
+    console.error('Cloud Storage에 업로드하던 중 에러가 발생했습니다:', error);
+  });
+}
+
+// Triggered when a file is selected via the media picker.
+function onMediaFileSelected(event) {
+  event.preventDefault();
+  var file = event.target.files[0];
+
+  // Clear the selection in the file picker input.
+  imageFormElement.reset();
+
+
+  // Check if the user is signed-in
+  if (checkSignedInWithMessage()) {
+    saveImageMessage(file);
+  }
+}
+
+
 
 // initialize Firebase
 initFirebaseAuth();
