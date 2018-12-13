@@ -180,7 +180,7 @@ function loadMessages(chatKey) {
         } else{
           count = Object.keys(data.likeUserList).length;
         }
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, count,currentChatUserInfo[i]['uid']);
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid']);
         break;
       }
     }
@@ -189,7 +189,7 @@ function loadMessages(chatKey) {
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUid) {
+function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid) {
   var li = document.getElementById(key);
   // If an element for that message does not exists yet we create it.
   if (!li) {
@@ -197,7 +197,10 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
     li.innerHTML = '<img class="pic" src="">'+
                           '<div class="send_name"></div>'+
                           '<p class="message"></p>' +
-                          '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>';
+
+                          '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>'+
+                          '<label class="time" style="font-size: 7px; float:right;"></label>' ;
+
     li.setAttribute('id', key);
     if(send){
       li.setAttribute('class','sent');
@@ -239,6 +242,8 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
   }
   li.querySelector('.send_name').textContent = name;
 
+ li.querySelector('.time').textContent = createdAt;
+
   var messageElement = li.querySelector('.message');
   if (text) { // If the message is text.
     messageElement.textContent = text;
@@ -270,7 +275,8 @@ function saveMessage(messageText) {
   // Adds a new message entry to the Realtime Database.
   return firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
    user: getUserUid(),
-   text: messageText
+   text: messageText,
+   createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"  //  "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
  }).catch(function(error) {
    console.error('Error writing new message to Realtime Database:', error);
  });
@@ -708,6 +714,7 @@ function saveImageMessage(file) {
   firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
     user: getUserUid(),
     imageUrl: LOADING_IMAGE_URL,
+    createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"  //  "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
 //    profilePicUrl: getProfilePicUrl()
   }).then(function(messageRef) {
     // 2 - Cloud Storage에 이미지를 업로드
