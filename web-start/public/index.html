@@ -735,14 +735,14 @@ Website: http://emilcarlsson.se/
       </div>
       <div id="bottom-bar">
          <button id="addclass" ><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add class</span></button>
-         <button id="settings"><i class="fa fa-trash" aria-hidden="true"></i> <span>Delete class</span></button>
+         <button id="deleteclass"><i class="fa fa-trash" aria-hidden="true"></i> <span>Delete class</span></button>
       </div>
    </div>
     <div class="content">
       <div class="contact-profile">
          <p>오픈SW플랫폼</p>
          <div class="wordCloud">
-             <button id="word-Cloud"><i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></button></i>
+             <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i>
             </div>
             <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
       </div>
@@ -804,6 +804,7 @@ Website: http://emilcarlsson.se/
     </form>
    </div>
 </div>
+
 <div class="modal" id="myModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -845,6 +846,30 @@ Website: http://emilcarlsson.se/
     </div>
   </div>
 </div>
+
+
+<div class="modal" id="myModal2" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"  style="color:#FF007F">채팅방 삭제</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:90%">삭제할 채팅방 이름을 적어주세요.</p>
+        <input type="text" class="form-control" id="chatToDelete-name-input">
+      </div>
+      <div class="modal-footer">
+        <button style="background:#FF007F"  type="button" id="delete-class-modal-btn" class="btn btn-primary">삭제</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script>
