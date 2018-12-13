@@ -1,700 +1,916 @@
-/**
- * Copyright 2018 Google Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-'use strict';
+<!DOCTYPE html>
+<html>
+<head
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#ffffff">
 
 
-var currentChatKey = "";
-var currentChatUserInfo = [];
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 
-// Signs-in Friendly Chat.
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.5.0/css/all.css' integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU' crossorigin='anonymous'>
 
-// Signs-out of Friendly Chat.
-function signOut() {
-  firebase.auth().signOut();
-  // TODO 2: Sign out of Firebase.
+<script src="https://use.typekit.net/hoy3lrg.js"></script>
+<script>try{Typekit.load({ async: true });}catch(e){}</script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+<script src="https://d3js.org/d3.v3.min.js" > </script>
+<script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js" type="text/JavaScript"></script>
+
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+<style class="cp-pen-styles">
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #F6F6F6;
+  font-family: "proxima-nova", "Source Sans Pro", sans-serif;
+  font-size: 1em;
+  letter-spacing: 0.1px;
+  color: #32465a;
+  text-rendering: optimizeLegibility;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+  -webkit-font-smoothing: antialiased;
 }
 
-var userPicElement = document.getElementById('profile-img');
-var signOutButtonElement = document.getElementById('sign-out');
-
-var userNameElement = document.getElementById('user-name');
-var messageListDiv = document.getElementById('messages-list')
-var messageListElement = document.getElementById('message-box');
-var messageFormElement = document.getElementById('message-form');
-
-var messageInputElement = document.getElementById('message');
-var submitButtonElement = document.getElementById('submit');
-
-signOutButtonElement.addEventListener('click', signOut);
-
-// Initiate firebase auth.
-function initFirebaseAuth() {
-  firebase.auth().onAuthStateChanged(authStateObserver);
-  // TODO 3: Initialize Firebase.
+#frame {
+  width: 95%;
+  min-width: 360px;
+  max-width: 1000px;
+  height: 92vh;
+  min-height: 300px;
+  max-height: 720px;
+  background: #EDEDED;
 }
-function authStateObserver(user) {
-  if (user) { // User is signed in!
-    // Get the signed-in user's profile pic and name.
-    var profilePicUrl = getProfilePicUrl();
-    var userName = getUserName();
-
-    // Set the user's profile pic and name.
-    userPicElement.src=profilePicUrl;
-    userNameElement.textContent = userName;
-
-
-    getChatList();
-    // We save the Firebase Messaging Device token and enable notifications.
-    //saveMessagingDeviceToken();*/
-  } else { // 로그아웃 됐을 때
-    location.href="/login.html";
+@media screen and (max-width: 360px) {
+  #frame {
+    width: 100%;
+    height: 100vh;
+  }
+}
+#frame #sidepanel {
+  float: left;
+  min-width: 280px;
+  max-width: 340px;
+  width: 40%;
+  height: 100%;
+  background: #2c3e50;
+  color: #f5f5f5;
+  overflow: hidden;
+  position: relative;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel {
+    width: 58px;
+    min-width: 58px;
+  }
+}
+#frame #sidepanel #profile {
+  width: 80%;
+  margin: 25px auto;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #profile {
+    width: 100%;
+    margin: 0 auto;
+    padding: 5px 0 0 0;
+    background: #32465a;
+  }
+}
+#frame #sidepanel #profile.expanded .wrap {
+  height: 300px;
+  line-height: initial;
+}
+#frame #sidepanel #profile.expanded .wrap p {
+  margin-top: 20px;
+}
+#frame #sidepanel #profile.expanded .wrap i.expand-button {
+  -moz-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+  filter: FlipH;
+  -ms-filter: "FlipH";
+}
+#frame #sidepanel #profile .wrap {
+ height: 60px;
+  line-height: 60px;
+  overflow: hidden;
+  -moz-transition: 0.3s height ease;
+  -o-transition: 0.3s height ease;
+  -webkit-transition: 0.3s height ease;
+  transition: 0.3s height ease;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #profile .wrap {
+    height: 55px;
+  }
+}
+#frame #sidepanel #profile .wrap img {
+  width: 50px;
+  border-radius: 50%;
+  padding: 3px;
+  border: 2px solid #e74c3c;
+  height: auto;
+  float: left;
+  cursor: pointer;
+  -moz-transition: 0.3s border ease;
+  -o-transition: 0.3s border ease;
+  -webkit-transition: 0.3s border ease;
+  transition: 0.3s border ease;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #profile .wrap img {
+    width: 40px;
+    margin-left: 4px;
+  }
+}
+#frame #sidepanel #profile .wrap img.online {
+  border: 2px solid #2ecc71;
+}
+#frame #sidepanel #profile .wrap img.away {
+  border: 2px solid #f1c40f;
+}
+#frame #sidepanel #profile .wrap img.busy {
+  border: 2px solid #e74c3c;
+}
+#frame #sidepanel #profile .wrap img.offline {
+  border: 2px solid #95a5a6;
+}
+#frame #sidepanel #profile .wrap p {
+  float: left;
+  margin-left: 15px;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #profile .wrap p {
+    display: none;
+  }
+}
+#frame #sidepanel #profile .wrap i.expand-button {
+  float: right;
+  margin-top: 23px;
+  font-size: 0.8em;
+  cursor: pointer;
+  color: #435f7a;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #profile .wrap i.expand-button {
+    display: none;
   }
 }
 
-function getUserName() { //현재 로그인 되어 있는 유저의 이름 가져오기
-  return firebase.auth().currentUser.displayName;
+#frame #sidepanel #profile .wrap #expanded {
+  padding: 100px 0 0 0;
+  display: block;
+  line-height: initial !important;
+}
+#frame #sidepanel #profile .wrap #expanded label {
+  float: left;
+  clear: both;
+  margin: 0 8px 5px 0;
+  padding: 5px 0;
+}
+#frame #sidepanel #profile .wrap #expanded input {
+  border: none;
+  margin-bottom: 6px;
+  background: #32465A;
+  border-radius: 3px;
+  color: #f5f5f5;
+  padding: 7px;
+  width: calc(100% - 43px);
+}
+#frame #sidepanel #profile .wrap #expanded input:focus {
+  outline: none;
+  background: #435f7a;
 }
 
-function getProfilePicUrl() { // 현재 로그인 한 유저의 프로필 사진 불러오기, 없을 시 기본 사진 불러오기
-  return firebase.auth().currentUser.photoURL || 'https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg';
+#frame #sidepanel #profile .wrap #chat-like-list .chat-like{
+  font-size:80%;margin-left:10px;margin-bottom:10px
 }
 
-function isUserSignedIn()  { // Return true if a user is signed-in.
-  return !!firebase.auth().currentUser;
+#frame #sidepanel #profile .wrap #chat-like-list .chat-like .like-num{
+  float : right;
 }
-function getUserUid(){ //현재 로그인 한 유저의 uid 불러오기
-  return firebase.auth().currentUser.uid;
+#frame #sidepanel #profile .wrap #chat-like-list {
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
-// Returns true if user is signed-in. Otherwise false and displays a message.
-function checkSignedInWithMessage() {
-  // Return true if the user is signed in Firebase
-  if (isUserSignedIn()) {
-    return true;
+
+#frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar {
+  width: 8px;
+  background: #2c3e50;
+}
+#frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar-thumb {
+  background-color:#32465A; /*채팅목록스크롤바색깔 */
+}
+#frame #sidepanel #contacts {
+  height: calc(100% - 150px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #contacts {
+    height: calc(100% - 149px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  #frame #sidepanel #contacts::-webkit-scrollbar {
+    display: none;
+  }
+}
+#frame #sidepanel #contacts.expanded {
+  height: calc(100% - 390px);
+}
+#frame #sidepanel #contacts::-webkit-scrollbar {
+  width: 8px;
+  background: #2c3e50;
+}
+#frame #sidepanel #contacts::-webkit-scrollbar-thumb {
+  background-color:#32465A; /*채팅목록스크롤바색깔 */
+}
+#frame #sidepanel #contacts ul li.contact {
+  text-align:center;
+  position: relative;
+  padding: 10px 0 15px 0;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #contacts ul li.contact {
+    padding: 6px 0 46px 8px;
+  }
+}
+#frame #sidepanel #contacts ul li.contact:hover {
+  background: #32465a; /* 여기다!!!!!!!!!!!!!!!!!!!*/
+}
+#frame #sidepanel #contacts ul li.contact.active {
+  background: #32465a;
+  border-right: 5px solid #435f7a;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap {
+  width: 88%;
+  margin: 0 auto;
+  position: relative;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #contacts ul li.contact .wrap {
+    width: 100%;
+  }
+}
+#frame #sidepanel #contacts ul li.contact .wrap span {
+  position: absolute;
+  left: 0;
+  margin: -2px 0 0 -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #2c3e50;
+  background: #95a5a6;
+}
+#frame #sidepanel #contacts ul li.contact .wrap span.online {
+  background: #2ecc71;
+}
+#frame #sidepanel #contacts ul li.contact .wrap span.away {
+  background: #f1c40f;
+}
+#frame #sidepanel #contacts ul li.contact .wrap span.busy {
+  background: #e74c3c;
+}
+#frame #sidepanel #contacts ul li.contact .wrap img {
+  width: 40px;
+  border-radius: 50%;
+  float: left;
+  margin-right: 10px;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #contacts ul li.contact .wrap img {
+    margin-right: 0px;
+  }
+}
+#frame #sidepanel #contacts ul li.contact .wrap .meta {
+  padding: 5px 0 0 0;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #contacts ul li.contact .wrap .meta {
+    display: none;
+  }
+}
+#frame #sidepanel #contacts ul li.contact .wrap .meta .name {
+  font-weight: 600;
+}
+
+#frame #sidepanel #bottom-bar {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+#frame #sidepanel #bottom-bar button {
+  float: left;     /*아래 add class, settings 버튼*/
+  border: none;
+  width: 50%;
+  padding: 10px 0;
+  background: #32465a;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #bottom-bar button {
+    float: none;
+    width: 100%;
+    padding: 15px 0;
+  }
+}
+#frame #sidepanel #bottom-bar button:focus {
+  outline: none;
+}
+#frame #sidepanel #bottom-bar button:nth-child(1) {
+  border-right: 1px solid #2c3e50;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #bottom-bar button:nth-child(1) {
+    border-right: none;
+    border-bottom: 1px solid #2c3e50;
+  }
+}
+#frame #sidepanel #bottom-bar button:hover {
+  background: #435f7a;
+}
+#frame #sidepanel #bottom-bar button i {
+  margin-right: 3px;
+  font-size: 1em;
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #bottom-bar button i {
+    font-size: 1.3em;
+  }
+}
+@media screen and (max-width: 735px) {
+  #frame #sidepanel #bottom-bar button span {
+    display: none;
+  }
+}
+#frame .content {
+  float: right;
+  width: 60%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+@media screen and (max-width: 735px) {
+  #frame .content {
+    width: calc(100% - 58px);
+    min-width: 300px !important;
+  }
+}
+@media screen and (min-width: 900px) {
+  #frame .content {
+    width: calc(100% - 340px);
+  }
+}
+#frame .content .contact-profile {
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  background: #f5f5f5;
+}
+
+#frame .content .contact-profile p {
+  margin-left: 20px;
+  float: left;
+}
+#frame .content .contact-profile .wordCloud {
+  float: right;
+}
+#frame .content .contact-profile .wordCloud i {
+  margin-left: 20px;
+  vertical-align:middle;
+  cursor: pointer;
+}
+#frame .content .contact-profile .wordCloud i:nth-last-child(1) {
+  margin-right: 20px;
+}
+#frame .content .contact-profile .wordCloud i:hover {
+  color: #435f7a;
+}
+.sent {
+   position:relative;
+}
+#frame .content .messages {
+  height: auto;
+  min-height: calc(100% - 93px);
+  max-height: calc(100% - 93px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+@media screen and (max-width: 735px) {
+  #frame .content .messages {
+    max-height: calc(100% - 105px);
+  }
+}
+#frame .content .messages::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+#frame .content .messages::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+#frame .content .messages ul li {
+  display: inline-block;
+  clear: both;
+  float: left;
+  margin: 15px 15px 5px 15px;
+  width: calc(100% - 25px);
+  font-size: 0.9em;
+}
+
+#frame .content .messages ul li img {
+  width: 22px;
+  border-radius: 50%;
+  float: left;
+}
+#frame .content .messages ul li p {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 20px;
+  max-width: 205px;
+  line-height: 130%;
+}
+
+@media screen and (min-width: 735px) {
+  #frame .content .messages ul li p {
+    max-width: 300px;
   }
 }
 
-function getChatList(){ // 현재 로그인 한 유저의 채팅방 리스트 불러오기
-  var callback = function(snap) {
-    var data = snap.val(); // 불러온 정보(snap)를 javascript로 사용할 수 있게 변경
-    displayChatlist(snap.key, data.room_name);
-
-    firebase.database().ref('/chat_list/'+data.room_name+'/user/'+getUserUid()+'/like_num').on('value',function(snapshot){//채티방 리스트에 존재하는 자기 아이디의 좋아요 갯수 불러오기
-      displayChatLikeList(snapshot.key, data.room_name,snapshot.val());
-    });
-  }
-  firebase.database().ref('/user_list/'+getUserUid()+'/room_list/').on('child_added', callback); // 자기 정보에 존재하는 채팅방 리스트 불러오기
-                                                                                                                   // child_added 는 해당 데이터베이스에 데이터가 추가 됐을 시 callback 함수를 실행하라는 의미
-}
-function displayChatLikeList(key, name,number){ //채팅방 좋아요 요소 불러오는 부분
-  var chatLikeListElement = document.getElementById("chat-like-list"); // 채팅방 좋아요 리스트 넣는 요소 찾기
-  var likeContainer;
-  if(document.getElementById(name)){
-    likeContainer =  document.getElementById(name);
-  } else{
-    likeContainer = document.createElement('li'); //채팅방 좋아요 리스트 생성
-    likeContainer.setAttribute('class', 'chat-like');
-    likeContainer.setAttribute('id', name);
-  }
-
-  likeContainer.innerHTML = name+'<span class="like-num">'+number+'</span>' //채팅방 좋아요 관련 정보 업데이트
-  chatLikeListElement.appendChild(likeContainer);
+#frame .content .messages ul li:nth-last-child(1) {
+  margin-bottom: 20px;
 }
 
-function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 함수
-  var CHAT_LIST_TEMPLATE =  // 채팅방 이름이 들어갈 리스트 템플릿. html과 같음.
-      '<div class="wrap"><div class="meta">' +
-      '<p class="name"></p>' +
-      '</div></div>';
-
-  var chatListElement = document.getElementById("chat_list");
-
-  var container = document.createElement('li');
-  container.setAttribute('class', 'contact');
-  container.setAttribute('id', key);
-  container.innerHTML = CHAT_LIST_TEMPLATE;
-  var div = container.firstChild;
-
-  var nameElement = div.querySelector('.name');
-  nameElement.textContent = name;
-  container.addEventListener('click' , function(e){
-    firebase.database().ref('/chat_list/'+currentChatKey+'/user/').off();
-    firebase.database().ref('/chat_list/'+currentChatKey+'/message/').off();
-    $("#chat_list>li.active").removeClass("active");
-    $(this).addClass("active");
-    $("#message-box").html('');
-    currentChatKey = $(this).find(".name").text();
-    $("#chat-name").text(currentChatKey);
-    currentChatUserInfo = [];
-    classClick(currentChatKey);
-  });
-  chatListElement.appendChild(container);
+#frame .content .messages ul li.sent img {   /*프사*/
+  float: right;
+  margin: 6px 0 0 8px;
 }
 
-function addUserInfo(snap){
-  var childData = snap.val();
-      var info = {
-        name : childData.name,
-        uid : snap.key,
-        picUrl : childData.profilePicUrl
-      }
-      currentChatUserInfo.push(info);
+#frame .content .messages ul li.sent .send_name { /* 현재 메세지 보내는 유저. main.js에서 사용. */
+  position:absolute;   /*보내는 사람 이름*/
+  right: 20px;
+  top: -16px;
+
+}
+#frame .content .messages ul li.sent p {   /*메세지 내용*/
+  float: right;
+  position:relative;
+  background: #435f7a;
+  color: #f5f5f5;   /*하얀글씨*/
+  margin-bottom:15px;
 }
 
-function classClick(chatKey){
-  firebase.database().ref('/chat_list/'+chatKey+'/user/').once('value',function(snapshot){
-    snapshot.forEach(function(childSnapshot) {
-      addUserInfo(childSnapshot);
-      loadMessages(chatKey);
-      firebase.database().ref('/chat_list/'+chatKey+'/user/').on('child_added', function(snapshot){
-        addUserInfo(childSnapshot);
-      });
-    });
-  });
+#frame .content .messages ul li.sent i {
+	
+  float: right;
+  margin-right: 3px;
+  margin-top: 14px;
+  cursor: pointer;
+}
+#frame .content .messages ul li.sent i:link {
+  color: #32465a;
+}
+#frame .content .messages ul li.sent i:visited {
+  color: #FF0000;
+}
+#frame .content .messages ul li.sent i:hover {
+  color: #435f7a;
+}
+#frame .content .messages ul li.sent i:active {
+  color: #FF0000;
 }
 
-function loadMessages(chatKey) {
-  var callback = function(snap){
-    var data = snap.val();
-    for(var i = 0 ; i < currentChatUserInfo.length;i++){
-      if(currentChatUserInfo[i]['uid']==data.user){
-        var send = false;
-        if(data.user == getUserUid()){
-          send = true
-        }
-        var count;
-        if(data.likeUserList==null){
-          count = 0;
-        } else{
-          count = Object.keys(data.likeUserList).length;
-        }
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, count,currentChatUserInfo[i]['uid']);
-        break;
-      }
-    }
-  }
-  firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_added', callback);
-  firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
+
+#frame .content .messages ul li.replies img {
+    margin: 6px 8px 0 0;
+}
+#frame .content .messages ul li.replies p {
+  background: #f5f5f5;
+}
+#frame .content .messages ul li.replies i {
+  margin-left: 3px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+#frame .content .messages ul li.replies i:link {
+  color: #32465a;
+}
+#frame .content .messages ul li.replies i:visited {
+  color: #FF0000;
+}
+#frame .content .messages ul li.replies i:hover {
+  color: #FF0000;
+}
+#frame .content .messages ul li.replies i:active {
+  color: #FF0000;
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUid) {
-  var li = document.getElementById(key);
-  // If an element for that message does not exists yet we create it.
-  if (!li) {
-    li = document.createElement('li');
-    li.innerHTML = '<img class="pic" src="">'+
-                          '<div class="send_name"></div>'+
-                          '<p class="message"></p>' +
-                          '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>';
-    li.setAttribute('id', key);
-    if(send){
-      li.setAttribute('class','sent');
-    } else{
-      li.setAttribute('class','replies');
-    }
-    messageListElement.appendChild(li);
-  }
-  var likeElement = li.querySelector('.like');
-    likeElement.textContent = " "+likeNum;
-    likeElement.addEventListener('click', function(e){
 
-      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
-        if(result){
-          if(result[''+getUserUid()]){
-              likeElement.style.color="red";
-            return result;      // 메세지에 좋아한 유저 리스트의 자기가 없을때
-          } else{
-            result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저 리스트의 자기가 없을때
-          }
-        } else{
-          result = {};
-          result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
-        }
-        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) {
-          if (number) {
-            ++number;
-          } else{
-            number = 1;
-          }
-          return number;
-        });
-        return result;
-      });
-
-  });
-  if (picUrl) {
-    li.querySelector('.pic').src=picUrl
-  }
-  li.querySelector('.send_name').textContent = name;
-
-  var messageElement = li.querySelector('.message');
-  if (text) { // If the message is text.
-    messageElement.textContent = text;
-    // Replace all line breaks by <br>.
-    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-  }
-  else if (imageUrl) { // 이미지 메세지였다면
-    var image = document.createElement('img');
-    image.addEventListener('load', function() {
-//    messageListDiv.scrollTop = messageListDiv.scrollHeight;
-    image.style.borderRadius="0%";
-    image.style.margin="0px 0px 0px 0px";
-    image.style.height="auto"; //크기 조절
-    image.style.width="280px";
-    });
-    image.src = imageUrl + '&' + new Date().getTime();
-    messageElement.innerHTML = '';
-    messageElement.appendChild(image);
-
-  }
-
-  // Show the card fading-in and scroll to view the new message.
-  setTimeout(function() {li.classList.add('visible')}, 1);
-  messageListDiv.scrollTop = messageListDiv.scrollHeight;
- // messageInputElement.focus();
+#frame .content .message-input {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 99;
 }
-
-function saveMessage(messageText) {
-  // Adds a new message entry to the Realtime Database.
-  return firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
-   user: getUserUid(),
-   text: messageText
- }).catch(function(error) {
-   console.error('Error writing new message to Realtime Database:', error);
- });
+#frame .content .message-input .wrap {
+  position: relative;
 }
-
-messageFormElement.addEventListener('submit', onMessageFormSubmit);
-
-function onMessageFormSubmit(e) {
-  e.preventDefault();
-  if (messageInputElement.value && (currentChatKey!="")) {
-    saveMessage(messageInputElement.value).then(function() {
-      // Clear message text field and re-enable the SEND button.
-      $('.message-input input').val(null);
-      toggleButton();
-    });
-  } else if(currentChatKey==""){
-    $('.message-input input').val(null);
-    alert("채팅방 입장 후 입력이 가능합니다.");
-  }
-  // Check that the user entered a message and is signed in.
+#frame .content .message-input .wrap input {
+  font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+  float: left;
+  border: none;
+  width: calc(100% - 90px);
+  padding: 11px 32px 10px 8px;
+  font-size: 0.8em;
+  color: #32465a;
 }
-
-function toggleButton() {
-  if (messageInputElement.value) {
-    submitButtonElement.removeAttribute('disabled');
-  } else {
-    submitButtonElement.setAttribute('disabled', 'true');
+@media screen and (max-width: 735px) {
+  #frame .content .message-input .wrap input {
+    padding: 15px 32px 16px 8px;
   }
 }
+#frame .content .message-input .wrap input:focus {
+  outline: none;
+}
+#frame .content .message-input .wrap .attachment {
+  position: absolute;
+  right: 60px;
+  z-index: 4;
+  margin-top: 10px;
+  font-size: 1.1em;
+  color: #435f7a;
+  opacity: .5;
+  cursor: pointer;
+}
+@media screen and (max-width: 735px) {
+  #frame .content .message-input .wrap .attachment {
+    margin-top: 17px;
+    right: 65px;
+  }
+}
+#frame .content .message-input .wrap .attachment:hover {
+  opacity: 1;
+}
+#frame .content .message-input .wrap button {
+  float: right;
+  border: none;
+  width: 50px;
+  padding: 12px 0;
+  cursor: pointer;
+  background: #32465a;
+  color: #f5f5f5;
+}
+@media screen and (max-width: 735px) {
+  #frame .content .message-input .wrap button {
+    padding: 16px 0;
+  }
+}
+#frame .content .message-input .wrap button:hover {
+  background: #435f7a;
+}
+#frame .content .message-input .wrap button:focus {
+  outline: none;
+}
 
-messageInputElement.addEventListener('keyup', toggleButton);
-messageInputElement.addEventListener('change', toggleButton);
+
+#frame .content .contact-profile button {
+  float: right;   /*로그아웃버튼*/
+  border: none;
+  border-radius: 6px;
+  width: 100px;
+  height: 40px;
+  margin-left: 10px;
+  margin-top: 10px;
+  line-height:1.5;
+  vertical-align:middle;
+
+
+  background: #32465a;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+}
+</style>
+
+</head><body>
+<!--
+
+A concept for a chat interface.
+
+Try writing a new message! :)
+
+
+Follow me here:
+Twitter: https://twitter.com/thatguyemil
+Codepen: https://codepen.io/emilcarlsson/
+Website: http://emilcarlsson.se/
+
+-->
+
+<div id="frame">
+   <div id="sidepanel">
+      <div id="profile">
+         <div class="wrap">
+            <img id="profile-img" src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" class="online" alt="" />
+            <p id="user-name">이화연</p>
+            <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+            <div id="expanded">
+                 <div style="background-color:#32465a;height:200%">
+            <h1 style="text-align:center;height:150%">My incentive</h1>
+          </div>
+          <div style="margin-top:3px">
+          <ul id="chat-like-list">
+            <!--<li class ="chat-like" >자료구조            <span class="like-num">6</span></li>
+            <li class ="chat-like">오픈플랫폼         <span class="like-num">10</span></li>
+            <li class ="chat-like">고전읽기와글쓰기   13</li>
+             <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+              <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+-->
+          </ul>
+        </div>
+            </div>
+         </div>
+      </div>
+
+      <div style="background-color:#435F7A; height:5px">      </div>      <!--/*경계선*/-->
+
+      <div id="contacts">
+         <ul id="chat_list">
+            <!--<li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">시스템소프트웨어</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact active">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">오픈SW플랫폼</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">자료구조</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">컴퓨터구조</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">JAVA프로그래밍</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">문학으로읽는사랑의역사</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">인물로읽는한국사</p>
+
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">사용자경험과인간중심디자인</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">고영</p>
+                  </div>
+               </div>
+            </li>
+            <li class="contact">
+               <div class="wrap">
+                  <div class="meta">
+                     <p class="name">대영</p>
+                  </div>
+               </div>
+            </li> main.js CHAT_LIST_TEMPLATE 으로 자동 생성-->
+         </ul>
+      </div>
+      <div id="bottom-bar">
+         <button id="addclass" ><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add class</span></button>
+         <button id="deleteclass"><i class="fa fa-trash" aria-hidden="true"></i> <span>Delete class</span></button>
+      </div>
+   </div>
+    <div class="content">
+      <div class="contact-profile">
+         <p>오픈SW플랫폼</p>
+         <div class="wordCloud">
+             <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i>
+            </div>
+            <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
+      </div>
+      <div class="messages" id="messages-list">
+         <ul id="message-box">
+            <!--<li class="sent">
+          <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
+          <div>sd</div>
+               <p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
+            </li>
+            <li class="replies">
+               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
+               <p>When you're backed against the wall, break the god damn thing down.</p>
+                    <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
+            </li>
+            <li class="replies">
+               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
+               <p>Excuses don't win championships.</p>
+          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
+            </li>
+            <li class="sent">
+               <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
+               <p>Oh yeah, did Michael Jordan tell you that?</p>
+            </li>
+            <li class="replies">
+               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
+               <p>No, I told him that.</p>
+          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
+            </li>
+            <li class="replies">
+               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
+               <p>What are your choices when someone puts a gun to your head?</p>
+          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
+            </li>
+            <li class="sent">
+               <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
+               <p>What are you talking about? You do what they say or they shoot you.</p>
+            </li>
+            <li class="replies">
+               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
+           <p>Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
+          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
+            </li>-->
+         </ul>
+    </div>
+    <form id="message-form">
+      <div class="message-input">
+         <div class="wrap">
+      		<input id="message" type="text" placeholder="Write your message..." /> </form>
+         	<button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+         	 <i  id="submitImage"  class="fa fa-paperclip attachment" aria-hidden="true"></i>
+         </div>
+         
+         <form hidden id="image-form" action="#">
+            <input hidden id="mediaCapture" type="file" accept="image/*" capture="camera">
+         </form>
+       
+    </div>
+    </form>
+   </div>
+</div>
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"  style="color:#FF007F">채팅방 추가</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:90%">추가할 채팅방 이름을 적어주세요.</p>
+        <input type="text" class="form-control" id="chat-name-input">
+        <p style="font-size:90%">채팅방 코드를 입력해주세요</p>
+        <input type="text" class="form-control" id="chat-code-input">
+      </div>
+      <div class="modal-footer">
+        <button style="background:#FF007F"  type="button" id="add-class-modal-btn" class="btn btn-primary">추가</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="confirmModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">채팅방 추가</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>채팅방이 존재하지 않아 새로 생성해야 합니다. 해당 코드로 생성 하시겠습니까?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="create-class-modal-btn" class="btn btn-primary">생성</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="myModal2" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"  style="color:#FF007F">채팅방 삭제</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:90%">삭제할 채팅방 이름을 적어주세요.</p>
+        <input type="text" class="form-control" id="chatToDelete-name-input">
+      </div>
+      <div class="modal-footer">
+        <button style="background:#FF007F"  type="button" id="delete-class-modal-btn" class="btn btn-primary">삭제</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script>
+
+$(".messages").animate({ scrollTop: $(document).height() }, "fast");
+
+$(".expand-button").click(function() {
+    $("#profile").toggleClass("expanded");
+     $("#contacts").toggleClass("expanded");
+});
 
 /*
-// Returns the signed-in user's profile Pic URL.
+function newMessage() {
+   message = $(".message-input input").val();
+   if($.trim(message) == '') {
+      return false;
+   }
+   $('<li class="sent"><img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+   $('.message-input input').val(null);
+   $(".messages").animate({ scrollTop: $(document).height() }, "fast");
+};
 
-
-// Returns the signed-in user's display name.
-
-
-// Returns true if a user is signed-in.
-function isUserSignedIn() {
-
-  return !!firebase.auth().currentUser;
-  // TODO 6: Return true if a user is signed-in.
-}
-
-// Loads chat messages history and listens for upcoming ones.
-function loadMessages() {
-  var callback = function(snap) {
-    var data = snap.val();
-    displayMessage(snap.key, data.name, data.text, data.profilePicUrl, data.imageUrl);
-  };
-  firebase.database().ref('/messages/').limitToLast(12).on('child_added', callback);
-  firebase.database().ref('/messages/').limitToLast(12).on('child_changed', callback);
-  // TODO 7: Load and listens for new messages.
-}
-
-// Saves a new message on the Firebase DB.
-function saveMessage(messageText) {
-   // Adds a new message entry to the Realtime Database.
-   return firebase.database().ref('/messages/').push({
-    name: getUserName(),
-    text: messageText,
-    profilePicUrl: getProfilePicUrl()
-  }).catch(function(error) {
-    console.error('Error writing new message to Realtime Database:', error);
-  });
-}
-
-// Saves a new message containing an image in Firebase.
-// This first saves the image in Firebase storage.
-function saveImageMessage(file) {
-  firebase.database().ref('/messages/').push({
-    name: getUserName(),
-    imageUrl: LOADING_IMAGE_URL,
-    profilePicUrl: getProfilePicUrl()
-  }).then(function(messageRef) {
-    // 2 - Upload the image to Cloud Storage.
-    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
-    return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
-      // 3 - Generate a public URL for the image file.
-      return fileSnapshot.ref.getDownloadURL().then((url) => {
-        // 4 - Update the chat message placeholder with the image's URL.
-        return messageRef.update({
-          imageUrl: url,
-          storageUri: fileSnapshot.metadata.fullPath
-        });
-      });
-    });
-  }).catch(function(error) {
-    console.error('There was an error uploading a file to Cloud Storage:', error);
-  });
-  // TODO 9: Posts a new image as a message.
-}
-
-// Saves the messaging device token to the datastore.
-function saveMessagingDeviceToken() {
-  firebase.messaging().getToken().then(function(currentToken) {
-    if (currentToken) {
-      console.log('Got FCM device token:', currentToken);
-      // Save the device token to the Realtime Database.
-      firebase.database().ref('/fcmTokens').child(currentToken)
-          .set(firebase.auth().currentUser.uid);
-    } else {
-      // Need to request permissions to show notifications.
-      requestNotificationsPermissions();
-    }
-  }).catch(function(error){
-    console.error('Unable to get messaging device token:', error);
-  });
-  // TODO 10: Save the device token in the realtime datastore
-}
-
-// Requests permissions to show notifications.
-function requestNotificationsPermissions() {
-  // TODO 11: Request permissions to send notifications.
-}
-
-// Triggered when a file is selected via the media picker.
-function onMediaFileSelected(event) {
-  event.preventDefault();
-  var file = event.target.files[0];
-
-  // Clear the selection in the file picker input.
-  imageFormElement.reset();
-
-  // Check if the file is an image.
-  if (!file.type.match('image.*')) {
-    var data = {
-      message: 'You can only share images',
-      timeout: 2000
-    };
-    signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
-    return;
-  }
-  // Check if the user is signed-in
-  if (checkSignedInWithMessage()) {
-    saveImageMessage(file);
-  }
-}
-
-// Triggered when the send new message form is submitted.
-function onMessageFormSubmit(e) {
-  e.preventDefault();
-  // Check that the user entered a message and is signed in.
-  if (messageInputElement.value && checkSignedInWithMessage()) {
-    saveMessage(messageInputElement.value).then(function() {
-      // Clear message text field and re-enable the SEND button.
-      resetMaterialTextfield(messageInputElement);
-      toggleButton();
-    });
-  }
-}
-
-// Returns true if user is signed-in. Otherwise false and displays a message.
-function checkSignedInWithMessage() {
-  // Return true if the user is signed in Firebase
-  if (isUserSignedIn()) {
-    return true;
-  }
-
-  // Display a message to the user using a Toast.
-  var data = {
-    message: 'You must sign-in first',
-    timeout: 2000
-  };
-  signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
-  return false;
-}
-
-// Resets the given MaterialTextField.
-function resetMaterialTextfield(element) {
-  element.value = '';
-  element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
-}
-
-// Template for messages.
-var MESSAGE_TEMPLATE =
-    '<div class="message-container">' +
-      '<div class="spacing"><div class="pic"></div></div>' +
-      '<div class="message"></div>' +
-      '<div class="name"></div>' +
-    '</div>';
-
-// Adds a size to Google Profile pics URLs.
-function addSizeToGoogleProfilePic(url) {
-  if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-    return url + '?sz=150';
-  }
-  return url;
-}
-
-// A loading image URL.
-var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
-
-// Displays a Message in the UI.
-function displayMessage(key, name, text, picUrl, imageUrl) {
-  var div = document.getElementById(key);
-  // If an element for that message does not exists yet we create it.
-  if (!div) {
-    var container = document.createElement('div');
-    container.innerHTML = MESSAGE_TEMPLATE;
-    div = container.firstChild;
-    div.setAttribute('id', key);
-    messageListElement.appendChild(div);
-  }
-  if (picUrl) {
-    div.querySelector('.pic').style.backgroundImage = 'url(' + addSizeToGoogleProfilePic(picUrl) + ')';
-  }
-  div.querySelector('.name').textContent = name;
-  var messageElement = div.querySelector('.message');
-  if (text) { // If the message is text.
-    messageElement.textContent = text;
-    // Replace all line breaks by <br>.
-    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-  } else if (imageUrl) { // If the message is an image.
-    var image = document.createElement('img');
-    image.addEventListener('load', function() {
-      messageListElement.scrollTop = messageListElement.scrollHeight;
-    });
-    image.src = imageUrl + '&' + new Date().getTime();
-    messageElement.innerHTML = '';
-    messageElement.appendChild(image);
-  }
-  // Show the card fading-in and scroll to view the new message.
-  setTimeout(function() {div.classList.add('visible')}, 1);
-  messageListElement.scrollTop = messageListElement.scrollHeight;
-  messageInputElement.focus();
-}
-
-// Enables or disables the submit button depending on the values of the input
-// fields.
-function toggleButton() {
-  if (messageInputElement.value) {
-    submitButtonElement.removeAttribute('disabled');
-  } else {
-    submitButtonElement.setAttribute('disabled', 'true');
-  }
-}
-
-// Checks that the Firebase SDK has been correctly setup and configured.
-function checkSetup() {
-  if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
-    window.alert('You have not configured and imported the Firebase SDK. ' +
-        'Make sure you go through the codelab setup instructions and make ' +
-        'sure you are running the codelab using `firebase serve`');
-  }
-}
-
-// Checks that Firebase has been imported.
-checkSetup();
-
-// Shortcuts to DOM Elements.
-var messageListElement = document.getElementById('messages');
-var messageFormElement = document.getElementById('message-form');
-var messageInputElement = document.getElementById('message');
-var submitButtonElement = document.getElementById('submit');
-var imageButtonElement = document.getElementById('submitImage');
-var imageFormElement = document.getElementById('image-form');
-var mediaCaptureElement = document.getElementById('mediaCapture');
-var signInSnackbarElement = document.getElementById('must-signin-snackbar');
-
-
-// Saves message on form submit.
-messageFormElement.addEventListener('submit', onMessageFormSubmit);
-
-
-// Toggle for the button.
-messageInputElement.addEventListener('keyup', toggleButton);
-messageInputElement.addEventListener('change', toggleButton);
-
-// Events for image upload.
-imageButtonElement.addEventListener('click', function(e) {
-  e.preventDefault();
-  mediaCaptureElement.click();
-});
-mediaCaptureElement.addEventListener('change', onMediaFileSelected);
-*/
-
-var addClassElement = document.getElementById('addclass'); // add class 버튼 불러오기
-
-addClassElement.addEventListener('click', function(e){ // add class 버튼이 클릭됐을때 채팅방 추가하는 알림창 띄우기
-    $("#myModal").modal('show')
+$('.submit').click(function() {
+  newMessage();
 });
 
-$("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창에서 추가하기 버튼 클릭했을 시
-  var chatListRef = firebase.database().ref('chat_list/'+$("#chat-name-input").val());
-  chatListRef.once('value', function(snapshot) { // 해당 목록에 존재하는 데이터 한번만 불러오기 https://firebase.google.com/docs/database/web/read-and-write?hl=ko
-    if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
-      if(snapshot.val().code== $("#chat-code-input").val()){ // 해당 채팅방의 코드와 입력한 코드가 일치 할 시
-        addRoomListInMyInfo($("#chat-name-input").val());
-      } else{ // 해당 채팅방의 코드와 입력한 코드가 일치하지 않을 시
-        $("#myModal").modal('hide');
-        alert("코드가 일치 하지 않습니다. 다시 시도 해 주세요")
-      }
-    } else { // 해당 이름을 가진 채팅방이 존재하지 않을 시
-      $("#myModal").modal('hide');
-      $("#confirmModal").modal('show'); // 해당 코드로 채팅방 생성할 것 인지 묻는 알림창 띄우기
-    }
-  });
-});
-
-$("#create-class-modal-btn").on('click', function(){ // 생성 하기 클릭 시
-  firebase.database().ref('chat_list/'+$("#chat-name-input").val()+'/').set({ // 데이터 베이스에 Chat_list 항목에 해당 이름과 코드을 가진 채팅방 데이터베이스 생성
-    code: $("#chat-code-input").val()                                         // set은 내가 정한 key값(과목이름)으로 데이터 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
-  },function(error) {
-    if (error) {  // 에러 생겼을 시
-     alert("에러 발생!");
-    } else { // 에러 없을 시
-      addRoomListInMyInfo($("#chat-name-input").val());
-    }
-  });
-});
-
-function addRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 추가 하기
-  firebase.database().ref('user_list/'+getUserUid()+'/room_list').once('value', function(snapshot){
-    var myRoomarr = [];                   // 내가 가지고 있는 채팅방 임시 저장 배열
-    snapshot.forEach(function(childSnapshot) {  //내가 가지고있는 채팅방 이름 불러오기
-      myRoomarr.push(childSnapshot.val().room_name);
-    });
-    var check = true;
-    for(var i = 0 ; i < myRoomarr.length; i++){ // 만약 내가 가지고 있는 채팅방과 같은 이름의 채팅방 값이 들어왔을 시 false
-      if(myRoomarr[i]==name){
-        check = false;
-      }
-    }
-    if(check){
-      updateMyInfoInChatRoom(name);
-      firebase.database().ref('user_list/'+getUserUid()+'/room_list').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
-        room_name: name
-      }, function(err){
-        if(err){ // 에러 생겼을 시
-          alert("에러 발생!");
-        } else{ // 에러 없을 시
-          $("#myModal").modal('hide');
-          $("#confirmModal").modal('hide');
-        }
-      });
-    } else{
-      alert("이미 존재하는 채팅방입니다!");
-      $("#myModal").modal('hide');
-      $("#confirmModal").modal('hide');
-    };
-  });
-}
-
-function updateMyInfoInChatRoom(chatKey){ // 룸 정보에 유저 정보 넣기
-  firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).update({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
-    name: getUserName(),
-    profilePicUrl: getProfilePicUrl(),
-    like_num : 0
-  }, function(err){
-    if(err){ // 에러 생겼을 시
-
-    } else{ // 에러 없을 시
-      firebase.database().ref('chat_list/'+chatKey+'/message/').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
-        text: getUserName()+"님이 입장하셨습니다.",
-        user: getUserUid()
-      })
-    }
-  });
-}
-
-var imageButtonElement = document.getElementById('submitImage');
-var imageFormElement = document.getElementById('image-form');
-var mediaCaptureElement = document.getElementById('mediaCapture');
-
-// 이미지 업로드를 위한 이벤트 처리
-imageButtonElement.addEventListener('click', function(e) {
-  e.preventDefault();
-  mediaCaptureElement.click();
-});
-mediaCaptureElement.addEventListener('change', onMediaFileSelected);
-
-
-var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';  //로딩 아이콘
-
-// Firebase에 image 메세지를 저장
-// Cloud Storage에 이미지를 먼저 저장함
-function saveImageMessage(file) {
-  // 1 -메세지 placeholder 만들어서 로딩 아이콘 보여주기
-  firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
-    user: getUserUid(),
-    imageUrl: LOADING_IMAGE_URL,
-//    profilePicUrl: getProfilePicUrl()
-  }).then(function(messageRef) {
-    // 2 - Cloud Storage에 이미지를 업로드
-    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
-    return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
-      // 3 - 이미지 파일로부터 public URL 만들기
-      return fileSnapshot.ref.getDownloadURL().then((url) => {
-        // 4 - 이미지 URL로 메세지 placeholder 업데이트
-        return messageRef.update({
-          imageUrl: url,
-          storageUri: fileSnapshot.metadata.fullPath
-        });
-      });
-    });
-  }).catch(function(error) {
-    console.error('Cloud Storage에 업로드하던 중 에러가 발생했습니다:', error);
-  });
-}
-
-// Triggered when a file is selected via the media picker.
-function onMediaFileSelected(event) {
-  event.preventDefault();
-  var file = event.target.files[0];
-
-  // Clear the selection in the file picker input.
-  imageFormElement.reset();
-
-
-  // Check if the user is signed-in
-  if (checkSignedInWithMessage()) {
-    saveImageMessage(file);
+$(window).on('keydown', function(e) {
+  if (e.which == 13) {
+    newMessage();
+    return false;
   }
-}
+});*/
+//# sourceURL=pen.js
+</script>
 
+<script src="/__/firebase/5.5.9/firebase-app.js"></script>
+<script src="/__/firebase/5.5.9/firebase-auth.js"></script>
+<script src="/__/firebase/5.5.9/firebase-database.js"></script>
+<script src="/__/firebase/5.5.9/firebase-storage.js"></script>
+<script src="/__/firebase/5.5.9/firebase-messaging.js"></script>
+<script src="/__/firebase/init.js"></script>
 
-
-// initialize Firebase
-initFirebaseAuth();
-
-
-// We load currently existing chat messages and listen to new ones.
-//loadMessages();
+<script type="text/javascript" src="scripts/main.js"></script>
+</body></html>
