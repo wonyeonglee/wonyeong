@@ -276,7 +276,7 @@ function saveMessage(messageText) {
   return firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
    user: getUserUid(),
    text: messageText,
-   createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"  //  "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
+   createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"   /   "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
  }).catch(function(error) {
    console.error('Error writing new message to Realtime Database:', error);
  });
@@ -714,7 +714,7 @@ function saveImageMessage(file) {
   firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
     user: getUserUid(),
     imageUrl: LOADING_IMAGE_URL,
-    createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"  //  "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
+    createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"   /   "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
 //    profilePicUrl: getProfilePicUrl()
   }).then(function(messageRef) {
     // 2 - Cloud Storage에 이미지를 업로드

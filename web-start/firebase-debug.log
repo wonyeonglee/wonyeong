@@ -1,29 +1,29 @@
-[debug] [2018-12-05T10:42:37.640Z] ----------------------------------------------------------------------
-[debug] [2018-12-05T10:42:37.646Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\eg\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve --only hosting
-[debug] [2018-12-05T10:42:37.646Z] CLI Version:   6.1.1
-[debug] [2018-12-05T10:42:37.646Z] Platform:      win32
-[debug] [2018-12-05T10:42:37.646Z] Node Version:  v10.13.0
-[debug] [2018-12-05T10:42:37.653Z] Time:          Wed Dec 05 2018 19:42:37 GMT+0900 (GMT+09:00)
-[debug] [2018-12-05T10:42:37.653Z] ----------------------------------------------------------------------
+[debug] [2018-12-14T04:19:12.749Z] ----------------------------------------------------------------------
+[debug] [2018-12-14T04:19:12.754Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\eg\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve --only hosting
+[debug] [2018-12-14T04:19:12.755Z] CLI Version:   6.1.1
+[debug] [2018-12-14T04:19:12.755Z] Platform:      win32
+[debug] [2018-12-14T04:19:12.755Z] Node Version:  v10.13.0
+[debug] [2018-12-14T04:19:12.765Z] Time:          Fri Dec 14 2018 13:19:12 GMT+0900 (GMT+09:00)
+[debug] [2018-12-14T04:19:12.765Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2018-12-05T10:42:37.682Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-12-05T10:42:37.684Z] > authorizing via signed-in user
-[debug] [2018-12-05T10:42:37.684Z] [iam] checking project openswteam for permissions ["firebase.projects.get"]
-[debug] [2018-12-05T10:42:37.689Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2018-12-05T10:42:37.689Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+[debug] [2018-12-14T04:19:12.813Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-12-14T04:19:12.815Z] > authorizing via signed-in user
+[debug] [2018-12-14T04:19:12.816Z] [iam] checking project openswteam for permissions ["firebase.projects.get"]
+[debug] [2018-12-14T04:19:12.821Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-12-14T04:19:12.821Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
  <request body omitted>
-[debug] [2018-12-05T10:42:38.445Z] <<< HTTP RESPONSE 200
-[debug] [2018-12-05T10:42:38.465Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/openswteam:testIamPermissions  
+[debug] [2018-12-14T04:19:13.863Z] <<< HTTP RESPONSE 200
+[debug] [2018-12-14T04:19:13.887Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/openswteam:testIamPermissions  
 
-[debug] [2018-12-05T10:42:39.309Z] <<< HTTP RESPONSE 200
-[debug] [2018-12-05T10:42:39.313Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/openswteam  
+[debug] [2018-12-14T04:19:15.777Z] <<< HTTP RESPONSE 200
+[debug] [2018-12-14T04:19:15.779Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/openswteam  
  
-[debug] [2018-12-05T10:42:40.150Z] <<< HTTP RESPONSE 200
+[debug] [2018-12-14T04:19:16.861Z] <<< HTTP RESPONSE 200
 [info] 
 [info] === Serving from 'C:\Users\eg\Desktop\friendlychat-web\web-start'...
 [info] 
-[debug] [2018-12-05T10:42:40.163Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/850353280123/clients/_:getWebAppConfig  
+[debug] [2018-12-14T04:19:16.871Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/850353280123/clients/_:getWebAppConfig  
  
-[debug] [2018-12-05T10:42:40.899Z] <<< HTTP RESPONSE 200
+[debug] [2018-12-14T04:19:17.708Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: ./public
 [info] +  hosting: Local server: http://localhost:5000
