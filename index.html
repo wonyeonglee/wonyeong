@@ -192,7 +192,7 @@ body {
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list .chat-like{
-  font-size:80%;margin-left:10px;margin-bottom:10px
+  font-size:80%;margin-left:10px;margin-bottom:10px;margin-top:10px;
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list .chat-like .like-num{
@@ -388,6 +388,21 @@ body {
   margin-left: 20px;
   float: left;
 }
+#frame .content .contact-profile .rank {
+  float: right;
+}
+#frame .content .contact-profile .rank i {
+  margin-left: 20px;
+  vertical-align:middle;
+  cursor: pointer;
+}
+#frame .content .contact-profile .rank i:nth-last-child(1) {
+  margin-right: 20px;
+}
+#frame .content .contact-profile .rank i:hover {
+  color: #435f7a;
+}
+
 #frame .content .contact-profile .wordCloud {
   float: right;
 }
@@ -402,6 +417,7 @@ body {
 #frame .content .contact-profile .wordCloud i:hover {
   color: #435f7a;
 }
+
 .sent {
    position:relative;
 }
@@ -476,7 +492,7 @@ body {
 }
 
 #frame .content .messages ul li.sent i {
-	
+   
   float: right;
   margin-right: 3px;
   margin-top: 14px;
@@ -628,7 +644,7 @@ Website: http://emilcarlsson.se/
       <div id="profile">
          <div class="wrap">
             <img id="profile-img" src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" class="online" alt="" />
-            <p id="user-name">이화연</p>
+            <p id="user-name"> </p>
             <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
             <div id="expanded">
                  <div style="background-color:#32465a;height:200%">
@@ -740,11 +756,15 @@ Website: http://emilcarlsson.se/
    </div>
     <div class="content">
       <div class="contact-profile">
-         <p id="chat-name"></p>
+         <p id="chat-name" ></p>
          <div class="wordCloud">
-             <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i>
-            </div>
-            <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
+             <i id="wordCloudIcon" class="fa fa-cloud" style="font-size:36px;" aria-hidden="true"></i>
+          </div>
+      <div class="rank">
+             <i id="rankIcon" class="fa fa-list-ol" style="font-size:36px;" aria-hidden="true"></i>
+          </div>
+
+         <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
       </div>
       <div class="messages" id="messages-list">
          <ul id="message-box">
@@ -791,9 +811,9 @@ Website: http://emilcarlsson.se/
     <form id="message-form">
       <div class="message-input">
          <div class="wrap">
-      		<input id="message" type="text" placeholder="Write your message..." /> </form>
-         	<button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-         	 <i  id="submitImage"  class="fa fa-paperclip attachment" aria-hidden="true"></i>
+            <input id="message" type="text" placeholder="Write your message..." /> </form>
+            <button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+             <i  id="submitImage"  class="fa fa-paperclip attachment" aria-hidden="true"></i>
          </div>
          
          <form hidden id="image-form" action="#">
