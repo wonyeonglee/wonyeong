@@ -38,6 +38,16 @@ var messageFormElement = document.getElementById('message-form');
 var messageInputElement = document.getElementById('message');
 var submitButtonElement = document.getElementById('submit');
 
+
+var imageButtonElement = document.getElementById('submitImage');
+var imageFormElement = document.getElementById('image-form');
+var mediaCaptureElement = document.getElementById('mediaCapture');
+
+
+// var wordCloudElement = document.getElementById('wordCloudIcon');
+var rankElement = document.getElementById('rankIcon');
+rankElement.addEventListener('click', ranking);
+
 signOutButtonElement.addEventListener('click', signOut);
 
 // Initiate firebase auth.
@@ -167,7 +177,9 @@ function classClick(chatKey){
 
 function loadMessages(chatKey) {
   var callback = function(snap){
+
     var data = snap.val();
+
     for(var i = 0 ; i < currentChatUserInfo.length;i++){
       if(currentChatUserInfo[i]['uid']==data.user){
         var send = false;
@@ -175,12 +187,20 @@ function loadMessages(chatKey) {
           send = true
         }
         var count;
-        if(data.likeUserList==null){//좋아요 누른 유저가 없을 때
-          count = 0; //하트 수는 0 
-        } else{ 
-          count = Object.keys(data.likeUserList).length; //좋아요 누른 유저 수 만큼 
+        if(data.likeUserList==null){
+          count = 0;
+        } else{
+          count = Object.keys(data.likeUserList).length;
         }
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid']);
+
+
+        // 2018. 12. 15. 메세지 받아올 때 좋아요 눌렀던 메세지일 때 하트 색 빨간 색으로. - 이원영
+        var itsme = false; 
+        if(data.likeUserList !== undefined && data.likeUserList[getUserUid()]){
+          itsme = true;
+        }
+        // 파라메터 itsme 추가.
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme);
         break;
       }
     }
@@ -189,7 +209,7 @@ function loadMessages(chatKey) {
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid) {
+function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid, itsme = false) {
   var li = document.getElementById(key);
   // If an element for that message does not exists yet we create it.
   if (!li) {
@@ -198,7 +218,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
                           '<div class="send_name"></div>'+
                           '<p class="message"></p>' +
 
-                          '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>'+
+                          '<i class="fas fa-heart like" style="font-size:12px; '+(itsme ? 'color:red;' : '')+'" aria-hidden="true"> 0</i>'+
                           '<label class="time" style="font-size: 7px; float:right;"></label>' ;
 
     li.setAttribute('id', key);
@@ -215,17 +235,24 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
 
       firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
         if(result){
+
           if(result[''+getUserUid()]){
-            likeElement.style.color="red";  
+
+            likeElement.style.color="#32465a";  
+
+            delete result[getUserUid()]; //리스트에서 본인 삭제 
+
+
             return result;      // 메세지에 좋아한 유저 리스트에 자기가 없을때
           } 
+
         } else{
           result = {}; 
           likeElement.style.color="red";  
           result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
         }
         firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) {
-          if (number!=0) {
+          if (number) {
             ++number;
           } else{
             number = 1;
@@ -689,12 +716,46 @@ function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼�
 
 }
 
+//랭킹
+function ranking(){
+  var likeNumArr = [];     // 좋아요 개수들의 배열
+  var likeOwnerArr=[];  //좋아요 주인이름의 배열
+  firebase.database().ref('/chat_list/'+currentChatKey+'/user/').once('value', function(snapshot){
+    snapshot.forEach(function(childSnapshot) {  //좋아요 개수들의 배열 불러오기
+      if(childSnapshot.val().like_num){  //좋아요 받은 기록이 있다면
+        likeNumArr.push(childSnapshot.val().like_num); //좋아요 배열에 좋아요 수 저장
+        likeOwnerArr.push(childSnapshot.val().name);  //이름 배열에 사람 이름 저장
+      }
+    });
+  })
+  for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬
+    var key= likeNumArr[i];
+    var name=likeOwnerArr[i];
+    for (var j=i-1; j>=0 && likeNumArr[j]<key; j--){
+      likeNumArr[j+1]=likeNumArr[j];
+      likeOwnerArr[j+1]=likeOwnerArr[j];
+    }
+    likeNumArr[j+1]=key;
+    likeOwnerArr[j+1]=name;
+  }
+
+  var maxList=[];
+  for(var i=0; i<3 ; i++){  //최댓값 3개 가져오기-> 배열 길이는 6개(좋아요수, 이름 순으로)가 됨
+    maxList.push(likeNumArr[i], likeOwnerArr[i]);
+  } //좋아요 숫자에 접근하려면 2*i, 이름에 접근하려면 2*i+1 로 해야함
+  var max1= "1위: ";
+  var max2= "2위: ";
+  var max3= "3위: ";
+  if(maxList[0]) max1 += maxList[1]+" ("+maxList[0]+"개)<br>"; else max1+="정보 없음<br>";
+  if(maxList[2]) max2 += maxList[3]+" ("+maxList[2]+"개)<br>"; else max2+="정보 없음<br>";
+  if(maxList[4]) max3 += maxList[5]+" ("+maxList[4]+"개)<br>"; else max3+="정보 없음<br>";
+  document.getElementById("rankModal-body").innerHTML = "<p>"+max1+max2+max3+"</p>";
+  $("#rankModal").modal('show');
+
+}
 
 
 
-var imageButtonElement = document.getElementById('submitImage');
-var imageFormElement = document.getElementById('image-form');
-var mediaCaptureElement = document.getElementById('mediaCapture');
 
 // 이미지 업로드를 위한 이벤트 처리
 imageButtonElement.addEventListener('click', function(e) {
