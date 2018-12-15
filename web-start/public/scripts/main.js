@@ -724,21 +724,135 @@ function ranking(){
   }
 
   var maxList=[];
-  for(var i=0; i<3 ; i++){  //최댓값 3개 가져오기-> 배열 길이는 6개(좋아요수, 이름 순으로)가 됨
-    maxList.push(likeNumArr[i], likeOwnerArr[i]);
+  for(var i=0; i<5 ; i++){  //최댓값 5개 가져오기-> 배열 길이는 10개(이름, 좋아요수 순으로)가 됨
+    if(likeNumArr[i]) //데이터 있으면
+      maxList.push(likeOwnerArr[i],likeNumArr[i]);
+    else { //빈 데이터면
+      maxList.push("순위 없음", null);
+    }
   } //좋아요 숫자에 접근하려면 2*i, 이름에 접근하려면 2*i+1 로 해야함
-  var max1= "1위: ";
-  var max2= "2위: ";
-  var max3= "3위: ";
-  if(maxList[0]) max1 += maxList[1]+" ("+maxList[0]+"개)<br>"; else max1+="정보 없음<br>";
-  if(maxList[2]) max2 += maxList[3]+" ("+maxList[2]+"개)<br>"; else max2+="정보 없음<br>";
-  if(maxList[4]) max3 += maxList[5]+" ("+maxList[4]+"개)<br>"; else max3+="정보 없음<br>";
-  document.getElementById("rankModal-body").innerHTML = "<p>"+max1+max2+max3+"</p>";
+
+  $("#rankModal").addClass("chartdiv");
+
+//chart 생성하기!!!!!!!!!!
+  am4core.useTheme(am4themes_animated);
+  var chart = am4core.create("chartdiv", am4charts.XYChart);
+  chart.paddingBottom = 30;
+  chart.data = [{
+      "name": maxList[0],
+      "steps": maxList[1]
+  }, {
+      "name": maxList[2],
+      "steps": maxList[3]
+  }, {
+      "name": maxList[4],
+      "steps": maxList[5]
+  }, {
+      "name": maxList[6],
+      "steps": maxList[7]
+  }, {
+      "name": maxList[8],
+      "steps": maxList[9]
+  }];
+
+  var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+  categoryAxis.dataFields.category = "name";
+  categoryAxis.renderer.grid.template.strokeOpacity = 0;
+  categoryAxis.renderer.minGridDistance = 10;
+  categoryAxis.renderer.labels.template.dy = 35;
+  categoryAxis.renderer.tooltip.dy = 35;
+
+  var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  valueAxis.renderer.inside = true;
+  valueAxis.renderer.labels.template.fillOpacity = 0.3;
+  valueAxis.renderer.grid.template.strokeOpacity = 0;
+  valueAxis.min = 0;
+  valueAxis.cursorTooltipEnabled = false;
+  valueAxis.renderer.baseGrid.strokeOpacity = 0;
+
+  var series = chart.series.push(new am4charts.ColumnSeries);
+  series.dataFields.valueY = "steps";
+  series.dataFields.categoryX = "name";
+  series.tooltipText = "{valueY.value}";
+  series.tooltip.pointerOrientation = "vertical";
+  series.tooltip.dy = - 6;
+  series.columnsContainer.zIndex = 100;
+
+  var columnTemplate = series.columns.template;
+  columnTemplate.width = am4core.percent(50);
+  columnTemplate.maxWidth = 30;
+  columnTemplate.column.cornerRadius(60, 60, 10, 10);
+  columnTemplate.strokeOpacity = 0;
+
+  series.heatRules.push({ target: columnTemplate, property: "fill", dataField: "valueY", min: am4core.color("#e5dc36"), max: am4core.color("#5faa46") });
+  series.mainContainer.mask = undefined;
+
+  var cursor = new am4charts.XYCursor();
+  chart.cursor = cursor;
+  cursor.lineX.disabled = true;
+  cursor.lineY.disabled = true;
+  cursor.behavior = "none";
+
+  var bullet = columnTemplate.createChild(am4charts.CircleBullet);
+  bullet.circle.radius = 15;
+  bullet.valign = "bottom";
+  bullet.align = "center";
+  bullet.isMeasured = true;
+  bullet.interactionsEnabled = false;
+  bullet.verticalCenter = "bottom";
+
+  var hoverState = bullet.states.create("hover");
+
+  var outlineCircle = bullet.createChild(am4core.Circle);
+  outlineCircle.adapter.add("radius", function (radius, target) {
+      var circleBullet = target.parent;
+      return circleBullet.circle.pixelRadius + 10;
+  })
+/*
+  var image = bullet.createChild(am4core.Image);
+  image.width = 60;
+  image.height = 60;
+  image.horizontalCenter = "middle";
+  image.verticalCenter = "middle";
+
+  image.adapter.add("href", function (href, target) {
+      var dataItem = target.dataItem;
+      if (dataItem) {
+          return dataItem.categoryX.toLowerCase() + ".jpg";
+      }
+  })
+
+
+  image.adapter.add("mask", function (mask, target) {
+      var circleBullet = target.parent;
+      return circleBullet.circle;
+  })
+*/
+  var previousBullet;
+  chart.cursor.events.on("cursorpositionchanged", function (event) {
+      var dataItem = series.tooltipDataItem;
+
+      if (dataItem.column) {
+          var bullet = dataItem.column.children.getIndex(1);
+
+          if (previousBullet && previousBullet != bullet) {
+              previousBullet.isHover = false;
+          }
+
+          if (previousBullet != bullet) {
+
+              var hs = bullet.states.getKey("hover");
+              hs.properties.dy = -bullet.parent.pixelHeight + 30;
+              bullet.isHover = true;
+
+              previousBullet = bullet;
+          }
+      }
+  })
+
   $("#rankModal").modal('show');
 
 }
-
-
 
 
 // 이미지 업로드를 위한 이벤트 처리
