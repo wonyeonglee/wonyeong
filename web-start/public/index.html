@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head
+<head>
 
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -9,7 +9,7 @@
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="msapplication-TileColor" content="#2d89ef">
 <meta name="theme-color" content="#ffffff">
-
+<meta charset="UTF-8" />
 
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 
@@ -23,8 +23,11 @@
 <script src="https://d3js.org/d3.v3.min.js" > </script>
 <script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js" type="text/JavaScript"></script>
 
-<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
 <style class="cp-pen-styles">
+
 body {
   display: flex;
   align-items: center;
@@ -87,9 +90,12 @@ body {
 #frame #sidepanel #profile.expanded .wrap {
   height: 300px;
   line-height: initial;
+  position: relative;
+
 }
 #frame #sidepanel #profile.expanded .wrap p {
   margin-top: 20px;
+
 }
 #frame #sidepanel #profile.expanded .wrap i.expand-button {
   -moz-transform: scaleY(-1);
@@ -98,6 +104,7 @@ body {
   transform: scaleY(-1);
   filter: FlipH;
   -ms-filter: "FlipH";
+
 }
 #frame #sidepanel #profile .wrap {
  height: 60px;
@@ -192,7 +199,7 @@ body {
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list .chat-like{
-  font-size:80%;margin-left:10px;margin-bottom:10px
+  font-size:80%;margin-left:10px;margin-bottom:10px;margin-top:10px;
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list .chat-like .like-num{
@@ -397,7 +404,7 @@ body {
   cursor: pointer;
 }
 #frame .content .contact-profile .rank i:nth-last-child(1) {
-  margin-right: 20px;
+  margin-right: 5px;
 }
 #frame .content .contact-profile .rank i:hover {
   color: #435f7a;
@@ -407,7 +414,7 @@ body {
   float: right;
 }
 #frame .content .contact-profile .wordCloud i {
-  margin-left: 20px;
+  margin-left: 5px;
   vertical-align:middle;
   cursor: pointer;
 }
@@ -492,7 +499,7 @@ body {
 }
 
 #frame .content .messages ul li.sent i {
-	
+   
   float: right;
   margin-right: 3px;
   margin-top: 14px;
@@ -604,7 +611,7 @@ body {
 }
 
 
-#frame .content .contact-profile button {
+#sign-out{
   float: right;   /*로그아웃버튼*/
   border: none;
   border-radius: 6px;
@@ -621,7 +628,22 @@ body {
   cursor: pointer;
   font-size: 0.8em;
   font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+  position: absolute;bottom:0;right:0;
 }
+
+#chardiv body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: #ffffff;
+  overflow: hidden;
+  margin: 0;
+}
+
+#chartdiv {
+  width: 100%;
+  max-height: 300px;
+  height: 50vh;
+}
+
 </style>
 
 </head><body>
@@ -643,35 +665,22 @@ Website: http://emilcarlsson.se/
    <div id="sidepanel">
       <div id="profile">
          <div class="wrap">
-            <img id="profile-img" src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" class="online" alt="" />
+            <img id="profile-img" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" class="online" alt="" />
             <p id="user-name"> </p>
             <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
-            <div id="expanded">
+            <div  id="expanded">
                  <div style="background-color:#32465a;height:200%">
-            <h1 style="text-align:center;height:150%">My incentive</h1>
-          </div>
-          <div style="margin-top:3px">
-          <ul id="chat-like-list">
-            <!--<li class ="chat-like" >자료구조            <span class="like-num">6</span></li>
-            <li class ="chat-like">오픈플랫폼         <span class="like-num">10</span></li>
-            <li class ="chat-like">고전읽기와글쓰기   13</li>
-             <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-              <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
--->
-          </ul>
-        </div>
-            </div>
-         </div>
-      </div>
+            		<h1 style="text-align:center;height:150%">My incentive</h1>
+          		</div>
+          		<div style="margin-top:3px">
+          		<ul id="chat-like-list">
+          		</ul>
+        		</div>
+           </div>
+		<button  id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
+		</div>
 
+      </div>
       <div style="background-color:#435F7A; height:5px">      </div>      <!--/*경계선*/-->
 
       <div id="contacts">
@@ -760,11 +769,9 @@ Website: http://emilcarlsson.se/
          <div class="wordCloud">
              <i id="wordCloudIcon" class="fa fa-cloud" style="font-size:36px;" aria-hidden="true"></i>
           </div>
-		<div class="rank">
+      <div class="rank">
              <i id="rankIcon" class="fa fa-list-ol" style="font-size:36px;" aria-hidden="true"></i>
           </div>
-
-         <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
       </div>
       <div class="messages" id="messages-list">
          <ul id="message-box">
@@ -811,9 +818,9 @@ Website: http://emilcarlsson.se/
     <form id="message-form">
       <div class="message-input">
          <div class="wrap">
-      		<input id="message" type="text" placeholder="Write your message..." /> </form>
-         	<button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-         	 <i  id="submitImage"  class="fa fa-paperclip attachment" aria-hidden="true"></i>
+            <input id="message" type="text" placeholder="Write your message..." /> </form>
+            <button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+             <i  id="submitImage"  class="fa fa-paperclip attachment" aria-hidden="true"></i>
          </div>
          
          <form hidden id="image-form" action="#">
@@ -888,19 +895,18 @@ Website: http://emilcarlsson.se/
     </div>
   </div>
 </div>
-
 <div class="modal" id="rankModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"  style="color:#FF007F">랭킹 페이지</h5>
+        <h5 class="modal-title"  style="color:#FF007F">랭킹</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body" id="rankModal-body">
-
-      </div>
+  		  <div id="chartdiv"></div>
+		</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
       </div>
@@ -908,39 +914,12 @@ Website: http://emilcarlsson.se/
   </div>
 </div>
 
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script>
 
-$(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
-$(".expand-button").click(function() {
-    $("#profile").toggleClass("expanded");
-     $("#contacts").toggleClass("expanded");
-});
 
-/*
-function newMessage() {
-   message = $(".message-input input").val();
-   if($.trim(message) == '') {
-      return false;
-   }
-   $('<li class="sent"><img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
-   $('.message-input input').val(null);
-   $(".messages").animate({ scrollTop: $(document).height() }, "fast");
-};
-
-$('.submit').click(function() {
-  newMessage();
-});
-
-$(window).on('keydown', function(e) {
-  if (e.which == 13) {
-    newMessage();
-    return false;
-  }
-});*/
-//# sourceURL=pen.js
 </script>
 
 <script src="/__/firebase/5.5.9/firebase-app.js"></script>
@@ -948,6 +927,11 @@ $(window).on('keydown', function(e) {
 <script src="/__/firebase/5.5.9/firebase-database.js"></script>
 <script src="/__/firebase/5.5.9/firebase-storage.js"></script>
 <script src="/__/firebase/5.5.9/firebase-messaging.js"></script>
+
+<script src="scripts/core.js"></script>
+<script src="scripts/charts.js"></script>
+<script src="scripts/animated.js"></script>
+
 <script src="/__/firebase/init.js"></script>
 
 <script type="text/javascript" src="scripts/main.js"></script>
