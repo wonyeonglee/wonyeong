@@ -154,7 +154,9 @@ function addUserInfo(snap){
 }
 
 function classClick(chatKey){
-  firebase.database().ref('/chat_list/'+chatKey+'/user/').once('value',function(snapshot){
+  // once 는 한번만 불러오는건데, 그래서 유저가 들어왔을 때 유저리스트가 업데이트 되지 않아서
+  // 유저정보를 못 불러와 메세지가 보여지지 않았던 것임. - (once를 on으로 고쳤습니다.)
+  firebase.database().ref('/chat_list/'+chatKey+'/user/').on('value',function(snapshot){
     snapshot.forEach(function(childSnapshot) {
       addUserInfo(childSnapshot);
       loadMessages(chatKey);
@@ -168,7 +170,9 @@ function classClick(chatKey){
 function loadMessages(chatKey) {
   var callback = function(snap){
     var data = snap.val();
+
     for(var i = 0 ; i < currentChatUserInfo.length;i++){
+
       if(currentChatUserInfo[i]['uid']==data.user){
         var send = false;
         if(data.user == getUserUid()){
@@ -185,10 +189,11 @@ function loadMessages(chatKey) {
         if(data.likeUserList !== undefined && data.likeUserList[getUserUid()]){
           itsme = true;
         }
-        // 파라메터 itsme 추가.
+        // 파라메터 itsme 추가.        
         displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme);
         break;
       }
+      
     }
   }
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_added', callback);
@@ -201,11 +206,13 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
   // If an element for that message does not exists yet we create it.
   if (!li) {
     li = document.createElement('li');
+
+
     li.innerHTML = '<img class="pic" src="">'+
                           '<div class="send_name"></div>'+
                           '<p class="message"></p>' +
 
-                          '<i class="fas fa-heart like" style="font-size:12px; '+(itsme ? 'color:red;' : '')+'" aria-hidden="true"> 0</i>'+
+                          '<i class="fas fa-heart like " style="font-size:12px; '+(itsme ? 'color:red;' : '')+'" aria-hidden="true"> 0</i>'+
                           '<label class="time" style="font-size: 7px; vertical-align: top;"></label>' ;
 
     li.setAttribute('id', key);
@@ -693,7 +700,7 @@ function deleteRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트�
 function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼기
   firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove();
   firebase.database().ref('chat_list/'+chatKey+'/message/').push({
-    text: getUserName()+"님이 퇴장하셨습니다.",
+    text: getUserName()+"님이 퇴장하셨습니다."
   });
 
 }
