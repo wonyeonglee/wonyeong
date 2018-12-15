@@ -87,9 +87,12 @@ body {
 #frame #sidepanel #profile.expanded .wrap {
   height: 300px;
   line-height: initial;
+  position: relative;
+
 }
 #frame #sidepanel #profile.expanded .wrap p {
   margin-top: 20px;
+
 }
 #frame #sidepanel #profile.expanded .wrap i.expand-button {
   -moz-transform: scaleY(-1);
@@ -98,6 +101,7 @@ body {
   transform: scaleY(-1);
   filter: FlipH;
   -ms-filter: "FlipH";
+
 }
 #frame #sidepanel #profile .wrap {
  height: 60px;
@@ -397,7 +401,7 @@ body {
   cursor: pointer;
 }
 #frame .content .contact-profile .rank i:nth-last-child(1) {
-  margin-right: 20px;
+  margin-right: 5px;
 }
 #frame .content .contact-profile .rank i:hover {
   color: #435f7a;
@@ -407,7 +411,7 @@ body {
   float: right;
 }
 #frame .content .contact-profile .wordCloud i {
-  margin-left: 20px;
+  margin-left: 5px;
   vertical-align:middle;
   cursor: pointer;
 }
@@ -604,7 +608,7 @@ body {
 }
 
 
-#frame .content .contact-profile button {
+#sign-out{
   float: right;   /*로그아웃버튼*/
   border: none;
   border-radius: 6px;
@@ -621,6 +625,7 @@ body {
   cursor: pointer;
   font-size: 0.8em;
   font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+  position: absolute;bottom:0;right:0;
 }
 </style>
 
@@ -646,12 +651,13 @@ Website: http://emilcarlsson.se/
             <img id="profile-img" src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" class="online" alt="" />
             <p id="user-name"> </p>
             <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
-            <div id="expanded">
+            <div  id="expanded">
                  <div style="background-color:#32465a;height:200%">
             <h1 style="text-align:center;height:150%">My incentive</h1>
           </div>
           <div style="margin-top:3px">
           <ul id="chat-like-list">
+
             <!--<li class ="chat-like" >자료구조            <span class="like-num">6</span></li>
             <li class ="chat-like">오픈플랫폼         <span class="like-num">10</span></li>
             <li class ="chat-like">고전읽기와글쓰기   13</li>
@@ -669,9 +675,11 @@ Website: http://emilcarlsson.se/
           </ul>
         </div>
             </div>
-         </div>
-      </div>
+                        <button  id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
 
+         </div>
+
+      </div>
       <div style="background-color:#435F7A; height:5px">      </div>      <!--/*경계선*/-->
 
       <div id="contacts">
@@ -763,8 +771,6 @@ Website: http://emilcarlsson.se/
       <div class="rank">
              <i id="rankIcon" class="fa fa-list-ol" style="font-size:36px;" aria-hidden="true"></i>
           </div>
-
-         <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
       </div>
       <div class="messages" id="messages-list">
          <ul id="message-box">
@@ -884,6 +890,24 @@ Website: http://emilcarlsson.se/
       <div class="modal-footer">
         <button style="background:#FF007F"  type="button" id="delete-class-modal-btn" class="btn btn-primary">삭제</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="rankModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"  style="color:#FF007F">랭킹 페이지</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="rankModal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
       </div>
     </div>
   </div>
