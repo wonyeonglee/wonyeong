@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#ffffff">
+
+
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 
 <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -9,6 +19,9 @@
 <script src="https://use.typekit.net/hoy3lrg.js"></script>
 <script>try{Typekit.load({ async: true });}catch(e){}</script>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+<script src="https://d3js.org/d3.v3.min.js" > </script>
+<script src="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js" type="text/JavaScript"></script>
 
 <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
 <style class="cp-pen-styles">
@@ -177,46 +190,28 @@ body {
   outline: none;
   background: #435f7a;
 }
-#frame #sidepanel #search {
-  border-top: 1px solid #32465a;
-  border-bottom: 1px solid #32465a;
-  font-weight: 300;
+
+#frame #sidepanel #profile .wrap #chat-like-list .chat-like{
+  font-size:80%;margin-left:10px;margin-bottom:10px
 }
-@media screen and (max-width: 735px) {
-  #frame #sidepanel #search {
-    display: none;
-  }
+
+#frame #sidepanel #profile .wrap #chat-like-list .chat-like .like-num{
+  float : right;
 }
-#frame #sidepanel #search label {
-  position: absolute;
-  margin: 10px 0 0 20px;
+#frame #sidepanel #profile .wrap #chat-like-list {
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
-#frame #sidepanel #search input {
-  font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
-  padding: 10px 0 10px 46px;
-  width: calc(100% - 25px);
-  border: none;
-  background: #32465a;
-  color: #f5f5f5;
+
+#frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar {
+  width: 8px;
+  background: #2c3e50;
 }
-#frame #sidepanel #search input:focus {
-  outline: none;
-  background: #435f7a;
-}
-#frame #sidepanel #search input::-webkit-input-placeholder {
-  color: #f5f5f5;
-}
-#frame #sidepanel #search input::-moz-placeholder {
-  color: #f5f5f5;
-}
-#frame #sidepanel #search input:-ms-input-placeholder {
-  color: #f5f5f5;
-}
-#frame #sidepanel #search input:-moz-placeholder {
-  color: #f5f5f5;
+#frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar-thumb {
+  background-color:#32465A; /*채팅목록스크롤바색깔 */
 }
 #frame #sidepanel #contacts {
-  height: calc(100% - 177px);
+  height: calc(100% - 150px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -231,7 +226,7 @@ body {
   }
 }
 #frame #sidepanel #contacts.expanded {
-  height: calc(100% - 334px);
+  height: calc(100% - 390px);
 }
 #frame #sidepanel #contacts::-webkit-scrollbar {
   width: 8px;
@@ -407,7 +402,9 @@ body {
 #frame .content .contact-profile .wordCloud i:hover {
   color: #435f7a;
 }
-
+.sent {
+   position:relative;
+}
 #frame .content .messages {
   height: auto;
   min-height: calc(100% - 93px);
@@ -465,7 +462,9 @@ body {
 }
 
 #frame .content .messages ul li.sent .send_name { /* 현재 메세지 보내는 유저. main.js에서 사용. */
-  float: right;   /*보내는 사람 이름*/
+  position:absolute;   /*보내는 사람 이름*/
+  right: 20px;
+  top: -13px;
 
 }
 #frame .content .messages ul li.sent p {   /*메세지 내용*/
@@ -473,9 +472,11 @@ body {
   position:relative;
   background: #435f7a;
   color: #f5f5f5;   /*하얀글씨*/
+  margin-bottom:15px;
 }
 
 #frame .content .messages ul li.sent i {
+	
   float: right;
   margin-right: 3px;
   margin-top: 14px;
@@ -489,6 +490,9 @@ body {
 }
 #frame .content .messages ul li.sent i:hover {
   color: #435f7a;
+}
+#frame .content .messages ul li.sent i:active {
+  color: #FF0000;
 }
 
 
@@ -510,7 +514,10 @@ body {
   color: #FF0000;
 }
 #frame .content .messages ul li.replies i:hover {
-  color: #435f7a;
+  color: #FF0000;
+}
+#frame .content .messages ul li.replies i:active {
+  color: #FF0000;
 }
 
 
@@ -628,22 +635,29 @@ Website: http://emilcarlsson.se/
             <h1 style="text-align:center;height:150%">My incentive</h1>
           </div>
           <div style="margin-top:3px">
-          <ul>
-            <li style="font-size:80%;margin-left:10px">자료구조            6</li>
-            <li style="font-size:80%;margin-left:10px; margin-top:10px">오픈플랫폼         10</li>
-            <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
-             <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
-              <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-top:10px">고전읽기와글쓰기   13</li>
+          <ul id="chat-like-list">
+            <!--<li class ="chat-like" >자료구조            <span class="like-num">6</span></li>
+            <li class ="chat-like">오픈플랫폼         <span class="like-num">10</span></li>
+            <li class ="chat-like">고전읽기와글쓰기   13</li>
+             <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+              <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
+-->
           </ul>
         </div>
             </div>
          </div>
       </div>
-      <div id="search">
-         <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-         <input type="text" placeholder="Search class..." />
-      </div>
+
+      <div style="background-color:#435F7A; height:5px">      </div>      <!--/*경계선*/-->
+
       <div id="contacts">
          <ul id="chat_list">
             <!--<li class="contact">
@@ -721,12 +735,12 @@ Website: http://emilcarlsson.se/
       </div>
       <div id="bottom-bar">
          <button id="addclass" ><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add class</span></button>
-         <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Delete class</span></button>
+         <button id="deleteclass"><i class="fa fa-trash" aria-hidden="true"></i> <span>Delete class</span></button>
       </div>
    </div>
-   <div class="content">
+    <div class="content">
       <div class="contact-profile">
-         <p>오픈SW플랫폼</p>
+         <p id="chat-name"></p>
          <div class="wordCloud">
              <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i>
             </div>
@@ -777,14 +791,20 @@ Website: http://emilcarlsson.se/
     <form id="message-form">
       <div class="message-input">
          <div class="wrap">
-         <input id="message" type="text" placeholder="Write your message..." />
-         <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-         <button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+      		<input id="message" type="text" placeholder="Write your message..." /> </form>
+         	<button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+         	 <i  id="submitImage"  class="fa fa-paperclip attachment" aria-hidden="true"></i>
          </div>
+         
+         <form hidden id="image-form" action="#">
+            <input hidden id="mediaCapture" type="file" accept="image/*" capture="camera">
+         </form>
+       
     </div>
     </form>
    </div>
 </div>
+
 <div class="modal" id="myModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -826,6 +846,30 @@ Website: http://emilcarlsson.se/
     </div>
   </div>
 </div>
+
+
+<div class="modal" id="myModal2" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"  style="color:#FF007F">채팅방 삭제</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:90%">삭제할 채팅방 이름을 적어주세요.</p>
+        <input type="text" class="form-control" id="chatToDelete-name-input">
+      </div>
+      <div class="modal-footer">
+        <button style="background:#FF007F"  type="button" id="delete-class-modal-btn" class="btn btn-primary">삭제</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script>
