@@ -89,6 +89,7 @@ body {
   line-height: initial;
   position: relative;
 
+
 }
 #frame #sidepanel #profile.expanded .wrap p {
   margin-top: 20px;
@@ -173,13 +174,16 @@ body {
 #frame #sidepanel #profile .wrap #expanded {
   padding: 100px 0 0 0;
   display: block;
+
   line-height: initial !important;
+
 }
 #frame #sidepanel #profile .wrap #expanded label {
   float: left;
   clear: both;
   margin: 0 8px 5px 0;
   padding: 5px 0;
+
 }
 #frame #sidepanel #profile .wrap #expanded input {
   border: none;
@@ -193,6 +197,7 @@ body {
 #frame #sidepanel #profile .wrap #expanded input:focus {
   outline: none;
   background: #435f7a;
+
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list .chat-like{
@@ -205,6 +210,7 @@ body {
 #frame #sidepanel #profile .wrap #chat-like-list {
   overflow-y: scroll;
   overflow-x: hidden;
+  height: 126px;
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar {
@@ -231,6 +237,8 @@ body {
 }
 #frame #sidepanel #contacts.expanded {
   height: calc(100% - 390px);
+
+
 }
 #frame #sidepanel #contacts::-webkit-scrollbar {
   width: 8px;
@@ -625,7 +633,8 @@ body {
   cursor: pointer;
   font-size: 0.8em;
   font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
-  position: absolute;bottom:0;right:0;
+  /*position: absolute;*/
+  /*bottom:0;right:0;*/
 }
 </style>
 
@@ -655,27 +664,18 @@ Website: http://emilcarlsson.se/
                  <div style="background-color:#32465a;height:200%">
             <h1 style="text-align:center;height:150%">My incentive</h1>
           </div>
-          <div style="margin-top:3px">
+          <div style="margin-top:3px;">
           <ul id="chat-like-list">
 
-            <!--<li class ="chat-like" >자료구조            <span class="like-num">6</span></li>
-            <li class ="chat-like">오픈플랫폼         <span class="like-num">10</span></li>
-            <li class ="chat-like">고전읽기와글쓰기   13</li>
-             <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-              <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
--->
+
+        
+
           </ul>
+
         </div>
+             <button  id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
+
             </div>
-                        <button  id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
 
          </div>
 
@@ -684,77 +684,7 @@ Website: http://emilcarlsson.se/
 
       <div id="contacts">
          <ul id="chat_list">
-            <!--<li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">시스템소프트웨어</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact active">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">오픈SW플랫폼</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">자료구조</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">컴퓨터구조</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">JAVA프로그래밍</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">문학으로읽는사랑의역사</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">인물로읽는한국사</p>
-
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">사용자경험과인간중심디자인</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">고영</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">대영</p>
-                  </div>
-               </div>
-            </li> main.js CHAT_LIST_TEMPLATE 으로 자동 생성-->
+            
          </ul>
       </div>
       <div id="bottom-bar">
@@ -774,44 +704,7 @@ Website: http://emilcarlsson.se/
       </div>
       <div class="messages" id="messages-list">
          <ul id="message-box">
-            <!--<li class="sent">
-          <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
-          <div>sd</div>
-               <p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>When you're backed against the wall, break the god damn thing down.</p>
-                    <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>Excuses don't win championships.</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="sent">
-               <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
-               <p>Oh yeah, did Michael Jordan tell you that?</p>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>No, I told him that.</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>What are your choices when someone puts a gun to your head?</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="sent">
-               <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
-               <p>What are you talking about? You do what they say or they shoot you.</p>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-           <p>Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>-->
+          
          </ul>
     </div>
     <form id="message-form">
