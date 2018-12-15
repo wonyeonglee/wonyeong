@@ -388,6 +388,21 @@ body {
   margin-left: 20px;
   float: left;
 }
+#frame .content .contact-profile .rank {
+  float: right;
+}
+#frame .content .contact-profile .rank i {
+  margin-left: 20px;
+  vertical-align:middle;
+  cursor: pointer;
+}
+#frame .content .contact-profile .rank i:nth-last-child(1) {
+  margin-right: 20px;
+}
+#frame .content .contact-profile .rank i:hover {
+  color: #435f7a;
+}
+
 #frame .content .contact-profile .wordCloud {
   float: right;
 }
@@ -402,6 +417,7 @@ body {
 #frame .content .contact-profile .wordCloud i:hover {
   color: #435f7a;
 }
+
 .sent {
    position:relative;
 }
@@ -464,7 +480,7 @@ body {
 #frame .content .messages ul li.sent .send_name { /* 현재 메세지 보내는 유저. main.js에서 사용. */
   position:absolute;   /*보내는 사람 이름*/
   right: 20px;
-  top: -16px;
+  top: -13px;
 
 }
 #frame .content .messages ul li.sent p {   /*메세지 내용*/
@@ -628,7 +644,7 @@ Website: http://emilcarlsson.se/
       <div id="profile">
          <div class="wrap">
             <img id="profile-img" src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" class="online" alt="" />
-            <p id="user-name">이화연</p>
+            <p id="user-name"> </p>
             <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
             <div id="expanded">
                  <div style="background-color:#32465a;height:200%">
@@ -740,11 +756,15 @@ Website: http://emilcarlsson.se/
    </div>
     <div class="content">
       <div class="contact-profile">
-         <p id="chat-name"></p>
+         <p id="chat-name" ></p>
          <div class="wordCloud">
-             <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i>
-            </div>
-            <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
+             <i id="wordCloudIcon" class="fa fa-cloud" style="font-size:36px;" aria-hidden="true"></i>
+          </div>
+		<div class="rank">
+             <i id="rankIcon" class="fa fa-list-ol" style="font-size:36px;" aria-hidden="true"></i>
+          </div>
+
+         <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
       </div>
       <div class="messages" id="messages-list">
          <ul id="message-box">
@@ -869,6 +889,24 @@ Website: http://emilcarlsson.se/
   </div>
 </div>
 
+<div class="modal" id="rankModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"  style="color:#FF007F">랭킹 페이지</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="rankModal-body">
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
