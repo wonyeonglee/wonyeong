@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict'; 
+'use strict';
 
-var currentChatKey = "";
+var maxList=[];
+var currentChatKey = ""; 
 var currentChatUserInfo = [];
 
 // Signs-in Friendly Chat.
@@ -26,9 +27,6 @@ function signOut() {
   // TODO 2: Sign out of Firebase.
 }
 
-function addImage(){
-  $("#mediaCapture").trigger('click');
-}
 
 var userPicElement = document.getElementById('profile-img');
 var signOutButtonElement = document.getElementById('sign-out');
@@ -41,9 +39,18 @@ var messageFormElement = document.getElementById('message-form');
 var messageInputElement = document.getElementById('message');
 var submitButtonElement = document.getElementById('submit');
 var imageAddButtonElement = document.getElementById('image_add');
-//var mediaCaptureElement = document.getElementById('mediaCapture');
 
-imageAddButtonElement.addEventListener('click',addImage)
+
+var imageButtonElement = document.getElementById('submitImage');
+var imageFormElement = document.getElementById('image-form');
+var mediaCaptureElement = document.getElementById('mediaCapture');
+
+
+
+//var mediaCaptureElement = document.getElementById('mediaCapture');
+var rankElement = document.getElementById('rankIcon');
+rankElement.addEventListener('click', ranking);
+
 
 signOutButtonElement.addEventListener('click', signOut);
 
@@ -62,47 +69,12 @@ function authStateObserver(user) {
     userPicElement.src=profilePicUrl;
     userNameElement.textContent = userName;
 
-
+    
     getChatList();
     // We save the Firebase Messaging Device token and enable notifications.
     //saveMessagingDeviceToken();*/
   } else { // 로그아웃 됐을 때
     location.href="/login.html";
-  }
-}
-
-function onMediaFileSelected(event) {
-  event.preventDefault();
-  var file = event.target.files[0];
-
-  // Clear the selection in the file picker input.
-  imageFormElement.reset();
-
-  // Check if the file is an image.
-  if (!file.type.match('image.*')) {
-    var data = {
-      message: 'You can only share images',
-      timeout: 2000
-    };
-    signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
-    return;
-  }
-  // Check if the user is signed-in
-  if (checkSignedInWithMessage()) {
-    saveImageMessage(file);
-  }
-}
-
-// Triggered when the send new message form is submitted.
-function onMessageFormSubmit(e) {
-  e.preventDefault();
-  // Check that the user entered a message and is signed in.
-  if (messageInputElement.value && checkSignedInWithMessage()) {
-    saveMessage(messageInputElement.value).then(function() {
-      // Clear message text field and re-enable the SEND button.
-      resetMaterialTextfield(messageInputElement);
-      toggleButton();
-    });
   }
 }
 
@@ -114,9 +86,18 @@ function getProfilePicUrl() { // 현재 로그인 한 유저의 프로필 사진
   return firebase.auth().currentUser.photoURL || 'https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg';
 }
 
+function isUserSignedIn() {
+  return !!firebase.auth().currentUser;
+}
 
 function getUserUid(){ //현재 로그인 한 유저의 uid 불러오기
   return firebase.auth().currentUser.uid
+}
+
+function checkSignedInWithMessage() {
+  if (isUserSignedIn()) {
+    return true;
+  }
 }
 
 
@@ -139,7 +120,7 @@ function displayChatLikeList(key, name,number){ //채팅방 좋아요 요소 불
     likeContainer =  document.getElementById(name);
   } else{
     likeContainer = document.createElement('li'); //채팅방 좋아요 리스트 생성
-    likeContainer.setAttribute('class', 'chat-like');
+    likeContainer.setAttribute('class', 'chat-like'); 
     likeContainer.setAttribute('id', name);
   }
 
@@ -160,7 +141,7 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
   container.setAttribute('id', key);
   container.innerHTML = CHAT_LIST_TEMPLATE;
   var div = container.firstChild;
-
+  
   var nameElement = div.querySelector('.name');
   nameElement.textContent = name;
   container.addEventListener('click' , function(e){
@@ -214,7 +195,7 @@ function loadMessages(chatKey) {
         } else{
           count = Object.keys(data.likeUserList).length;
         }
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, count,currentChatUserInfo[i]['uid']);
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt ,count,currentChatUserInfo[i]['uid']);
         break;
       }
     }
@@ -223,7 +204,7 @@ function loadMessages(chatKey) {
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUid) {
+function displayMessage(key, name, text, picUrl, send,imageUrl,createdAt, likeNum,messageUid) {
   var li = document.getElementById(key);
   // If an element for that message does not exists yet we create it.
   if (!li) {
@@ -231,7 +212,8 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
     li.innerHTML = '<img class="pic" src="">'+
                           '<div class="send_name"></div>'+
                           '<p class="message"></p>' +
-                          '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>';
+                          '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>'+
+                          '<label class="time" style="font-size: 7px; float:right;"></label>';
     li.setAttribute('id', key);
     if(send){
       li.setAttribute('class','sent');
@@ -246,6 +228,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
       firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){ // 해당 메세지의 좋아요 버튼 누른사람 리스트 불러오기
         if(result){ //리스트(result)
           if(result[''+getUserUid()]){
+            likeElement.style.color="red";
             return result;      // 메세지에 좋아한 유저 리스트에 자기가 있을때
           } else{
             result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저 리스트에 자기가 없을때
@@ -269,7 +252,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
     li.querySelector('.pic').src=picUrl
   }
   li.querySelector('.send_name').textContent = name;
-
+  li.querySelector('.time').textContent = createdAt;
   var messageElement = li.querySelector('.message');
   if (text) { // If the message is text.
     messageElement.textContent = text;
@@ -278,13 +261,17 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
   } else if (imageUrl) { // If the message is an image.
     var image = document.createElement('img');
     image.addEventListener('load', function() {
-      messageListDiv.scrollTop = messageListDiv.scrollHeight;
+      //    messageListDiv.scrollTop = messageListDiv.scrollHeight;
+      image.style.borderRadius="0%";
+      image.style.margin="0px 0px 0px 0px";
+      image.style.height="auto"; //크기 조절
+      image.style.width="280px";
     });
     image.src = imageUrl + '&' + new Date().getTime();
     messageElement.innerHTML = '';
     messageElement.appendChild(image);
   }
-
+ 
   // Show the card fading-in and scroll to view the new message.
   setTimeout(function() {li.classList.add('visible')}, 1);
   messageListDiv.scrollTop = messageListDiv.scrollHeight;
@@ -295,7 +282,8 @@ function saveMessage(messageText) {
   // Adds a new message entry to the Realtime Database.
   return firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
    user: getUserUid(),
-   text: messageText
+   text: messageText,
+   createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"   /   "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
  }).catch(function(error) {
    console.error('Error writing new message to Realtime Database:', error);
  });
@@ -329,7 +317,6 @@ function toggleButton() {
 messageInputElement.addEventListener('keyup', toggleButton);
 messageInputElement.addEventListener('change', toggleButton);
 
-//mediaCaptureElement.addEventListener('change', onMediaFileSelected);
 
 /*
 // Returns the signed-in user's profile Pic URL.
@@ -662,12 +649,259 @@ function updateMyInfoInChatRoom(chatKey){ // 룸 정보에 유저 정보 넣기
   });
 }
 
+
+
+var deleteClassElement = document.getElementById('deleteclass'); // delete class 버튼 불러오기
+deleteClassElement.addEventListener('click', function(e){ // delete class 버튼이 클릭됐을때 채팅방 추가하는 알림창 띄우기
+    $("#myModal2").modal('show')
+});
+
+$("#delete-class-modal-btn").on('click', function() { // 채팅방 삭제 알림창에서 삭제하기 버튼 클릭했을 시
+  var chatListRef = firebase.database().ref('chat_list/'+$("#chatToDelete-name-input").val());
+  chatListRef.once('value', function(snapshot) { // 해당 목록에 존재하는 데이터 한번만 불러오기 https://firebase.google.com/docs/database/web/read-and-write?hl=ko
+    if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
+      deleteRoomListInMyInfo($("#chatToDelete-name-input").val());  //삭제
+      }
+    else { // 해당 이름을 가진 채팅방이 존재하지 않을 시
+      $("#myModal2").modal('hide');
+      alert("해당 이름의 채팅방이 존재하지 않습니다")
+    }
+  });
+});
+
+
+function deleteRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 삭제 하기
+
+  var keyVal;
+
+  var ref = firebase.database().ref('user_list/'+getUserUid()+'/room_list');
+  if (ref.orderByChild('room_name').equalTo(name).on("value", function(snapshot) {
+      snapshot.forEach((function(child) { keyVal=child.key;  })) }) )
+  {
+      deleteMyInfoInChatRoom(name);
+      firebase.database().ref('user_list/'+getUserUid()+'/room_list/'+keyVal).remove();
+      $("#myModal2").modal('hide');
+      window.location.reload();
+    }
+  else{
+    alert("존재하지 않는 채팅방입니다!");
+    $("#myModal2").modal('hide');
+  };
+
+}
+
+function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼기
+  firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove();
+  firebase.database().ref('chat_list/'+chatKey+'/message/').push({
+    text: getUserName()+"님이 퇴장하셨습니다.",
+  });
+
+}
+
+//랭킹
+function ranking(){
+  if(currentChatKey ==""){
+  alert("채팅방에 접속 후 이용이 가능합니다.")
+} else{
+  var likeNumArr = [];     // 좋아요 개수들의 배열
+  var likeOwnerArr=[];  //좋아요 주인이름의 배열
+  firebase.database().ref('/chat_list/'+currentChatKey+'/user/').once('value', function(snapshot){
+    snapshot.forEach(function(childSnapshot) {  //좋아요 개수들의 배열 불러오기
+      if(childSnapshot.val().like_num){  //좋아요 받은 기록이 있다면
+        likeNumArr.push(childSnapshot.val().like_num); //좋아요 배열에 좋아요 수 저장
+        likeOwnerArr.push(childSnapshot.val().name);  //이름 배열에 사람 이름 저장
+      }
+    });
+  })
+  for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬
+    var key= likeNumArr[i];
+    var name=likeOwnerArr[i];
+    for (var j=i-1; j>=0 && likeNumArr[j]<key; j--){
+      likeNumArr[j+1]=likeNumArr[j];
+      likeOwnerArr[j+1]=likeOwnerArr[j];
+    }
+    likeNumArr[j+1]=key;
+    likeOwnerArr[j+1]=name;
+  }
+
+  maxList=[];
+  for(var i=0; i<5 ; i++){  //최댓값 5개 가져오기-> 배열 길이는 10개(이름, 좋아요수 순으로)가 됨
+    if(likeNumArr[i]) //데이터 있으면
+      maxList.push(likeOwnerArr[i],likeNumArr[i]);
+    else { //빈 데이터면
+      maxList.push("순위 없음", null);
+    }
+  } //좋아요 숫자에 접근하려면 2*i, 이름에 접근하려면 2*i+1 로 해야함
+
+  createChart();
+  $("#rankModal").modal('show');
+}
+}
+
+function createChart(){
+
+  $('#rankModal').modal({ //초기화..
+      refresh: true
+  });
+  var chart;
+  //chart 생성하기!!!!!!!!!!
+    am4core.useTheme(am4themes_animated);
+    chart = am4core.create("chartdiv", am4charts.XYChart);
+
+    chart.paddingBottom = 30;
+    chart.data = [{
+        "name": maxList[0],
+        "steps": maxList[1]
+    }, {
+        "name": maxList[2],
+        "steps": maxList[3]
+    }, {
+        "name": maxList[4],
+        "steps": maxList[5]
+    }, {
+        "name": maxList[6],
+        "steps": maxList[7]
+    }, {
+        "name": maxList[8],
+        "steps": maxList[9]
+    }];
+
+    var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+    categoryAxis.dataFields.category = "name";
+    categoryAxis.renderer.grid.template.strokeOpacity = 0;
+    categoryAxis.renderer.minGridDistance = 10;
+    categoryAxis.renderer.labels.template.dy = 35;
+    categoryAxis.renderer.tooltip.dy = 35;
+
+    var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    valueAxis.renderer.inside = true;
+    valueAxis.renderer.labels.template.fillOpacity = 0.3;
+    valueAxis.renderer.grid.template.strokeOpacity = 0;
+    valueAxis.min = 0;
+    valueAxis.cursorTooltipEnabled = false;
+    valueAxis.renderer.baseGrid.strokeOpacity = 0;
+
+    var series = chart.series.push(new am4charts.ColumnSeries);
+    series.dataFields.valueY = "steps";
+    series.dataFields.categoryX = "name";
+    series.tooltipText = "{valueY.value}";
+    series.tooltip.pointerOrientation = "vertical";
+    series.tooltip.dy = - 6;
+    series.columnsContainer.zIndex = 100;
+
+    var columnTemplate = series.columns.template;
+    columnTemplate.width = am4core.percent(50);
+    columnTemplate.maxWidth = 30;
+    columnTemplate.column.cornerRadius(60, 60, 10, 10);
+    columnTemplate.strokeOpacity = 0;
+
+    series.heatRules.push({ target: columnTemplate, property: "fill", dataField: "valueY", min: am4core.color("#e5dc36"), max: am4core.color("#5faa46") });
+    series.mainContainer.mask = undefined;
+
+    var cursor = new am4charts.XYCursor();
+    chart.cursor = cursor;
+    cursor.lineX.disabled = true;
+    cursor.lineY.disabled = true;
+    cursor.behavior = "none";
+
+    var bullet = columnTemplate.createChild(am4charts.CircleBullet);
+    bullet.circle.radius = 15;
+    bullet.valign = "bottom";
+    bullet.align = "center";
+    bullet.isMeasured = true;
+    bullet.interactionsEnabled = false;
+    bullet.verticalCenter = "bottom";
+
+    var hoverState = bullet.states.create("hover");
+
+    var outlineCircle = bullet.createChild(am4core.Circle);
+    outlineCircle.adapter.add("radius", function (radius, target) {
+        var circleBullet = target.parent;
+        return circleBullet.circle.pixelRadius + 10;
+    })
+
+    var previousBullet;
+    chart.cursor.events.on("cursorpositionchanged", function (event) {
+        var dataItem = series.tooltipDataItem;
+
+        if (dataItem.column) {
+            var bullet = dataItem.column.children.getIndex(1);
+
+            if (previousBullet && previousBullet != bullet) {
+                previousBullet.isHover = false;
+            }
+
+            if (previousBullet != bullet) {
+
+                var hs = bullet.states.getKey("hover");
+                hs.properties.dy = -bullet.parent.pixelHeight + 30;
+                bullet.isHover = true;
+
+                previousBullet = bullet;
+            }
+        }
+    })
+}
+
+// 이미지 업로드를 위한 이벤트 처리
+imageButtonElement.addEventListener('click', function(e) {
+  e.preventDefault();
+  mediaCaptureElement.click();
+});
+mediaCaptureElement.addEventListener('change', onMediaFileSelected);
+
+
+var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';  //로딩 아이콘
+
+// Firebase에 image 메세지를 저장
+// Cloud Storage에 이미지를 먼저 저장함
+function saveImageMessage(file) {
+  // 1 -메세지 placeholder 만들어서 로딩 아이콘 보여주기
+  firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
+    user: getUserUid(),
+    imageUrl: LOADING_IMAGE_URL,
+    createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"   /   "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
+//    profilePicUrl: getProfilePicUrl()
+  }).then(function(messageRef) {
+    // 2 - Cloud Storage에 이미지를 업로드
+    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
+    return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
+      // 3 - 이미지 파일로부터 public URL 만들기
+      return fileSnapshot.ref.getDownloadURL().then((url) => {
+        // 4 - 이미지 URL로 메세지 placeholder 업데이트
+        return messageRef.update({
+          imageUrl: url,
+          storageUri: fileSnapshot.metadata.fullPath
+        });
+      });
+    });
+  }).catch(function(error) {
+    console.error('Cloud Storage에 업로드하던 중 에러가 발생했습니다:', error);
+  });
+}
+
+// Triggered when a file is selected via the media picker.
+function onMediaFileSelected(event) {
+  event.preventDefault();
+  var file = event.target.files[0];
+
+  // Clear the selection in the file picker input.
+  imageFormElement.reset();
+
+
+  // Check if the user is signed-in
+  if (checkSignedInWithMessage()) {
+    saveImageMessage(file);
+  }
+}
+
+
 // initialize Firebase
 initFirebaseAuth();
 
-var iCloudElement = document.getElementById('word-Cloud');
+var wCloudElement = document.getElementById('word-Cloud');
 
-iCloudElement.addEventListener('click', goWordCloud);
+wCloudElement.addEventListener('click', goWordCloud);
 
 function goWordCloud(){
   if(currentChatKey ==""){

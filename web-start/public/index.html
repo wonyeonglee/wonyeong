@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#2d89ef"> 
+<meta name="msapplication-TileColor" content="#2d89ef">
 <meta name="theme-color" content="#ffffff">
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 
@@ -79,9 +79,25 @@ body {
     background: #32465a;
   }
 }
+#frame .content .contact-profile .rank {
+  float: right;
+}
+#frame .content .contact-profile .rank i {
+  margin-left: 20px;
+  vertical-align:middle;
+  cursor: pointer;
+}
+#frame .content .contact-profile .rank i:nth-last-child(1) {
+  margin-right: 5px;
+}
+#frame .content .contact-profile .rank i:hover {
+  color: #435f7a;
+}
 #frame #sidepanel #profile.expanded .wrap {
   height: 300px;
   line-height: initial;
+  position: relative;
+
 }
 #frame #sidepanel #profile.expanded .wrap p {
   margin-top: 20px;
@@ -187,7 +203,7 @@ body {
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list .chat-like{
-  font-size:80%;margin-left:10px;margin-bottom:10px
+  font-size:80%;margin-left:10px;margin-bottom:10px;margin-top:10px;
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list .chat-like .like-num{
@@ -196,6 +212,7 @@ body {
 #frame #sidepanel #profile .wrap #chat-like-list {
   overflow-y: scroll;
   overflow-x: hidden;
+  height: 126px;
 }
 
 #frame #sidepanel #profile .wrap #chat-like-list::-webkit-scrollbar {
@@ -387,7 +404,7 @@ body {
   float: right;
 }
 #frame .content .contact-profile .wordCloud i {
-  margin-left: 20px;
+  margin-left: 5px;
   vertical-align:middle;
   cursor: pointer;
 }
@@ -441,6 +458,41 @@ body {
   line-height: 130%;
 }
 
+#sign-out{
+  float: right;   /*로그아웃버튼*/
+  border: none;
+  border-radius: 6px;
+  width: 100px;
+  height: 40px;
+  margin-left: 10px;
+  margin-top: 10px;
+  line-height:1.5;
+  vertical-align:middle;
+
+
+  background: #32465a;
+  color: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
+  /*position: absolute;*/
+  /*bottom:0;right:0;*/
+}
+
+
+#chardiv body {   /*차트 스타일*/
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: #ffffff;
+  overflow: hidden;
+  margin: 0;
+}
+
+#chartdiv {
+  width: 100%;
+  max-height: 300px;
+  height: 50vh;
+}
+
 @media screen and (min-width: 735px) {
   #frame .content .messages ul li p {
     max-width: 300px;
@@ -459,7 +511,7 @@ body {
 #frame .content .messages ul li.sent .send_name { /* 현재 메세지 보내는 유저. main.js에서 사용. */
   position:absolute;   /*보내는 사람 이름*/
   right: 20px;
-  top: -16px;
+  top: -13px;
 
 }
 #frame .content .messages ul li.sent p {   /*메세지 내용*/
@@ -489,6 +541,9 @@ body {
   color: #FF0000;
 }
 
+#frame .content .messages ul li.sent label {
+  float: right;
+}
 
 #frame .content .messages ul li.replies img {
     margin: 6px 8px 0 0;
@@ -508,13 +563,14 @@ body {
   color: #FF0000;
 }
 #frame .content .messages ul li.replies i:hover {
-  color: #435f7a;
+  color:  #FF0000;
 }
 #frame .content .messages ul li.replies i:active {
   color: #FF0000;
 }
-
-
+#frame .content .messages ul li.replies label {
+  margin-left: 3px;
+}
 #frame .content .message-input {
   position: absolute;
   bottom: 0;
@@ -532,6 +588,8 @@ body {
   padding: 11px 32px 10px 8px;
   font-size: 0.8em;
   color: #32465a;
+  padding-top: 13px;
+  padding-bottom: 12px;
 }
 @media screen and (max-width: 735px) {
   #frame .content .message-input .wrap input {
@@ -545,11 +603,11 @@ body {
   position: absolute;
   right: 60px;
   z-index: 4;
-  margin-top: 10px;
   font-size: 1.1em;
   color: #435f7a;
   opacity: .5;
   cursor: pointer;
+  line-height: 41px;
 }
 @media screen and (max-width: 735px) {
   #frame .content .message-input .wrap .attachment {
@@ -581,25 +639,6 @@ body {
   outline: none;
 }
 
-
-#frame .content .contact-profile button {
-  float: right;   /*로그아웃버튼*/
-  border: none;
-  border-radius: 6px;
-  width: 100px;
-  height: 40px;
-  margin-left: 10px;
-  margin-top: 10px;
-  line-height:1.5;
-  vertical-align:middle;
-
-
-  background: #32465a;
-  color: #f5f5f5;
-  cursor: pointer;
-  font-size: 0.8em;
-  font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
-}
 </style>
 
 </head><body>
@@ -621,8 +660,8 @@ Website: http://emilcarlsson.se/
    <div id="sidepanel">
       <div id="profile">
          <div class="wrap">
-            <img id="profile-img" src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" class="online" alt="" />
-            <p id="user-name">이화연</p>
+            <img id="profile-img" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" class="online" alt="" />
+            <p id="user-name"></p>
             <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
             <div id="expanded">
                  <div style="background-color:#32465a;height:200%">
@@ -630,22 +669,11 @@ Website: http://emilcarlsson.se/
           </div>
           <div style="margin-top:3px">
           <ul id="chat-like-list">
-            <!--<li class ="chat-like" >자료구조            <span class="like-num">6</span></li>
-            <li class ="chat-like">오픈플랫폼         <span class="like-num">10</span></li>
-            <li class ="chat-like">고전읽기와글쓰기   13</li>
-             <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-              <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
-               <li style="font-size:80%;margin-left:10px;margin-bottom:10px">고전읽기와글쓰기   13</li>
--->
           </ul>
+          
         </div>
+            
+      <button  id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
             </div>
          </div>
       </div>
@@ -654,151 +682,45 @@ Website: http://emilcarlsson.se/
 
       <div id="contacts">
          <ul id="chat_list">
-            <!--<li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">시스템소프트웨어</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact active">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">오픈SW플랫폼</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">자료구조</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">컴퓨터구조</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">JAVA프로그래밍</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">문학으로읽는사랑의역사</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">인물로읽는한국사</p>
-
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">사용자경험과인간중심디자인</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">고영</p>
-                  </div>
-               </div>
-            </li>
-            <li class="contact">
-               <div class="wrap">
-                  <div class="meta">
-                     <p class="name">대영</p>
-                  </div>
-               </div>
-            </li> main.js CHAT_LIST_TEMPLATE 으로 자동 생성-->
          </ul>
       </div>
       <div id="bottom-bar">
          <button id="addclass" ><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add class</span></button>
-         <button id="settings"><i class="fa fa-trash" aria-hidden="true"></i> <span>Delete class</span></button>
+         <button id="deleteclass"><i class="fa fa-trash" aria-hidden="true"></i> <span>Delete class</span></button>
       </div>
    </div>
    <div class="content">
       <div class="contact-profile">
          <p id="chat-name"></p>
          <div class="wordCloud">
-             <button id="word-Cloud">
-              <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i></button>
+             <div id="word-Cloud">
+              <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i></div>
             </div>
-            <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
+            <div class="rank">
+    
+                <i id="rankIcon" class="fa fa-list-ol" style="font-size:36px;" aria-hidden="true"></i>
+    
+            </div>
       </div>
       <div class="messages" id="messages-list">
          <ul id="message-box">
             <div id="wordcloud"></div>
-            <!--<li class="sent">
-          <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
-          <div>sd</div>
-               <p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>When you're backed against the wall, break the god damn thing down.</p>
-                    <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>Excuses don't win championships.</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="sent">
-               <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
-               <p>Oh yeah, did Michael Jordan tell you that?</p>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>No, I told him that.</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-               <p>What are your choices when someone puts a gun to your head?</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>
-            <li class="sent">
-               <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
-               <p>What are you talking about? You do what they say or they shoot you.</p>
-            </li>
-            <li class="replies">
-               <img src="https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg" alt="" />
-           <p>Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
-          <i class="fas fa-heart" style="font-size:12px;" aria-hidden="true"></i>
-            </li>-->
          </ul>
     </div>
     <form id="message-form">
-      <div class="message-input">
-         <div class="wrap">
-         <input id="message" type="text" placeholder="Write your message..." />
-         <i id="image_add" class="fa fa-paperclip attachment" aria-hidden="true"></i>
-         <button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-         </div>
-    </div>
-    </form>
-    <form id="image-form" action="#">
-      <input id="mediaCapture" style="display: none" type="file" accept="image/*" capture="camera">
-      <button id="submitImage" title="Add an image" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400 mdl-color-text--white">
-        <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-      </button> 
-    </form>
+        <div class="message-input">
+           <div class="wrap">
+              <input id="message" type="text" placeholder="Write your message..." /> </form>
+              <button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+               <i  id="submitImage"  class="fa fa-paperclip attachment" aria-hidden="true"></i>
+           </div>
+           
+           <form hidden id="image-form" action="#">
+              <input hidden id="mediaCapture" type="file" accept="image/*" capture="camera">
+           </form>
+         
+      </div>
+      </form>
    </div>
 </div>
 <div class="modal" id="myModal" tabindex="-1" role="dialog">
@@ -842,6 +764,44 @@ Website: http://emilcarlsson.se/
     </div>
   </div>
 </div>
+<div class="modal" id="myModal2" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"  style="color:#FF007F">채팅방 삭제</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:90%">삭제할 채팅방 이름을 적어주세요.</p>
+          <input type="text" class="form-control" id="chatToDelete-name-input">
+        </div>
+        <div class="modal-footer">
+          <button style="background:#FF007F"  type="button" id="delete-class-modal-btn" class="btn btn-primary">삭제</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="modal" id="rankModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"  style="color:#FF007F">랭킹 페이지</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="rankModal-body">
+           <div id="chartdiv"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script>
@@ -853,6 +813,10 @@ $(".expand-button").click(function() {
      $("#contacts").toggleClass("expanded");
 });
 </script>
+    <script src="scripts/core.js"></script>
+    <script src="scripts/charts.js"></script>
+    <script src="scripts/animated.js"></script>
+
 
 <script src="/__/firebase/5.5.9/firebase-app.js"></script>
 <script src="/__/firebase/5.5.9/firebase-auth.js"></script>
@@ -862,4 +826,5 @@ $(".expand-button").click(function() {
 <script src="/__/firebase/init.js"></script>
 
 <script type="text/javascript" src="scripts/main.js"></script>
+
 </body></html>
