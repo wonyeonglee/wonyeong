@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
-<head
-
+<head>
+<title>Kinteract | Main</title>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="msapplication-TileColor" content="#2d89ef"> 
 <meta name="theme-color" content="#ffffff">
- 
-
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 
 <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -738,12 +736,14 @@ Website: http://emilcarlsson.se/
       <div class="contact-profile">
          <p id="chat-name"></p>
          <div class="wordCloud">
-             <button id="word-Cloud"><i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i></button>
+             <button id="word-Cloud">
+              <i class="fa fa-cloud" style="font-size:36px; " aria-hidden="true"></i></button>
             </div>
             <button id="sign-out" ><i class="fa fa-sign-out" aria-hidden="true"></i> <span>LOG OUT</span></button>
       </div>
       <div class="messages" id="messages-list">
          <ul id="message-box">
+            <div id="wordcloud"></div>
             <!--<li class="sent">
           <img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" />
           <div>sd</div>
@@ -788,10 +788,16 @@ Website: http://emilcarlsson.se/
       <div class="message-input">
          <div class="wrap">
          <input id="message" type="text" placeholder="Write your message..." />
-         <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+         <i id="image_add" class="fa fa-paperclip attachment" aria-hidden="true"></i>
          <button id="submit" class="disabled"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
          </div>
     </div>
+    </form>
+    <form id="image-form" action="#">
+      <input id="mediaCapture" style="display: none" type="file" accept="image/*" capture="camera">
+      <button id="submitImage" title="Add an image" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--amber-400 mdl-color-text--white">
+        <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+      </button> 
     </form>
    </div>
 </div>
@@ -846,29 +852,6 @@ $(".expand-button").click(function() {
     $("#profile").toggleClass("expanded");
      $("#contacts").toggleClass("expanded");
 });
-
-/*
-function newMessage() {
-   message = $(".message-input input").val();
-   if($.trim(message) == '') {
-      return false;
-   }
-   $('<li class="sent"><img src="https://t3.ftcdn.net/jpg/01/50/44/40/500_F_150444057_XafiBkyICzuWgYHWAPCYETzH5zwCKSri.jpg" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
-   $('.message-input input').val(null);
-   $(".messages").animate({ scrollTop: $(document).height() }, "fast");
-};
-
-$('.submit').click(function() {
-  newMessage();
-});
-
-$(window).on('keydown', function(e) {
-  if (e.which == 13) {
-    newMessage();
-    return false;
-  }
-});*/
-//# sourceURL=pen.js
 </script>
 
 <script src="/__/firebase/5.5.9/firebase-app.js"></script>

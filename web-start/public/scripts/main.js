@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+'use strict'; 
 
 var currentChatKey = "";
 var currentChatUserInfo = [];
@@ -26,6 +26,10 @@ function signOut() {
   // TODO 2: Sign out of Firebase.
 }
 
+function addImage(){
+  $("#mediaCapture").trigger('click');
+}
+
 var userPicElement = document.getElementById('profile-img');
 var signOutButtonElement = document.getElementById('sign-out');
 
@@ -36,6 +40,10 @@ var messageFormElement = document.getElementById('message-form');
 
 var messageInputElement = document.getElementById('message');
 var submitButtonElement = document.getElementById('submit');
+var imageAddButtonElement = document.getElementById('image_add');
+//var mediaCaptureElement = document.getElementById('mediaCapture');
+
+imageAddButtonElement.addEventListener('click',addImage)
 
 signOutButtonElement.addEventListener('click', signOut);
 
@@ -54,12 +62,47 @@ function authStateObserver(user) {
     userPicElement.src=profilePicUrl;
     userNameElement.textContent = userName;
 
-    
+
     getChatList();
     // We save the Firebase Messaging Device token and enable notifications.
     //saveMessagingDeviceToken();*/
   } else { // 로그아웃 됐을 때
     location.href="/login.html";
+  }
+}
+
+function onMediaFileSelected(event) {
+  event.preventDefault();
+  var file = event.target.files[0];
+
+  // Clear the selection in the file picker input.
+  imageFormElement.reset();
+
+  // Check if the file is an image.
+  if (!file.type.match('image.*')) {
+    var data = {
+      message: 'You can only share images',
+      timeout: 2000
+    };
+    signInSnackbarElement.MaterialSnackbar.showSnackbar(data);
+    return;
+  }
+  // Check if the user is signed-in
+  if (checkSignedInWithMessage()) {
+    saveImageMessage(file);
+  }
+}
+
+// Triggered when the send new message form is submitted.
+function onMessageFormSubmit(e) {
+  e.preventDefault();
+  // Check that the user entered a message and is signed in.
+  if (messageInputElement.value && checkSignedInWithMessage()) {
+    saveMessage(messageInputElement.value).then(function() {
+      // Clear message text field and re-enable the SEND button.
+      resetMaterialTextfield(messageInputElement);
+      toggleButton();
+    });
   }
 }
 
@@ -87,7 +130,7 @@ function getChatList(){ // 현재 로그인 한 유저의 채팅방 리스트 �
     });
   }
   firebase.database().ref('/user_list/'+getUserUid()+'/room_list/').on('child_added', callback); // 자기 정보에 존재하는 채팅방 리스트 불러오기
-                                                                                                                   // child_added 는 해당 데이터베이스에 데이터가 추가 됐을 시 callback 함수를 실행하라는 의미 
+                                                                                                                   // child_added 는 해당 데이터베이스에 데이터가 추가 됐을 시 callback 함수를 실행하라는 의미
 }
 function displayChatLikeList(key, name,number){ //채팅방 좋아요 요소 불러오는 부분
   var chatLikeListElement = document.getElementById("chat-like-list"); // 채팅방 좋아요 리스트 넣는 요소 찾기
@@ -96,7 +139,7 @@ function displayChatLikeList(key, name,number){ //채팅방 좋아요 요소 불
     likeContainer =  document.getElementById(name);
   } else{
     likeContainer = document.createElement('li'); //채팅방 좋아요 리스트 생성
-    likeContainer.setAttribute('class', 'chat-like'); 
+    likeContainer.setAttribute('class', 'chat-like');
     likeContainer.setAttribute('id', name);
   }
 
@@ -117,7 +160,7 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
   container.setAttribute('id', key);
   container.innerHTML = CHAT_LIST_TEMPLATE;
   var div = container.firstChild;
-  
+
   var nameElement = div.querySelector('.name');
   nameElement.textContent = name;
   container.addEventListener('click' , function(e){
@@ -200,18 +243,18 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
   var likeElement = li.querySelector('.like');
     likeElement.textContent = " "+likeNum;
     likeElement.addEventListener('click', function(e){
-      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
-        if(result){
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){ // 해당 메세지의 좋아요 버튼 누른사람 리스트 불러오기
+        if(result){ //리스트(result)
           if(result[''+getUserUid()]){
-            return result;      // 메세지에 좋아한 유저 리스트의 자기가 없을때
+            return result;      // 메세지에 좋아한 유저 리스트에 자기가 있을때
           } else{
-            result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저 리스트의 자기가 없을때
+            result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저 리스트에 자기가 없을때
           }
         } else{
           result = {};
           result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
         }
-        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) {
+        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) { // 트랜젝션을 이용하여 동시성 해소
           if (number) {
             ++number;
           } else{
@@ -221,13 +264,12 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
         });
         return result;
       });
-    
   });
   if (picUrl) {
     li.querySelector('.pic').src=picUrl
   }
   li.querySelector('.send_name').textContent = name;
- 
+
   var messageElement = li.querySelector('.message');
   if (text) { // If the message is text.
     messageElement.textContent = text;
@@ -242,7 +284,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,likeNum,messageUi
     messageElement.innerHTML = '';
     messageElement.appendChild(image);
   }
- 
+
   // Show the card fading-in and scroll to view the new message.
   setTimeout(function() {li.classList.add('visible')}, 1);
   messageListDiv.scrollTop = messageListDiv.scrollHeight;
@@ -286,6 +328,8 @@ function toggleButton() {
 
 messageInputElement.addEventListener('keyup', toggleButton);
 messageInputElement.addEventListener('change', toggleButton);
+
+//mediaCaptureElement.addEventListener('change', onMediaFileSelected);
 
 /*
 // Returns the signed-in user's profile Pic URL.
@@ -541,8 +585,8 @@ addClassElement.addEventListener('click', function(e){ // add class 버튼이 �
 });
 
 $("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창에서 추가하기 버튼 클릭했을 시
-  var chatListRef = firebase.database().ref('chat_list/'+$("#chat-name-input").val()); 
-  chatListRef.once('value', function(snapshot) { // 해당 목록에 존재하는 데이터 한번만 불러오기 https://firebase.google.com/docs/database/web/read-and-write?hl=ko 
+  var chatListRef = firebase.database().ref('chat_list/'+$("#chat-name-input").val());
+  chatListRef.once('value', function(snapshot) { // 해당 목록에 존재하는 데이터 한번만 불러오기 https://firebase.google.com/docs/database/web/read-and-write?hl=ko
     if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
       if(snapshot.val().code== $("#chat-code-input").val()){ // 해당 채팅방의 코드와 입력한 코드가 일치 할 시
         addRoomListInMyInfo($("#chat-name-input").val());
@@ -558,7 +602,7 @@ $("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창
 });
 
 $("#create-class-modal-btn").on('click', function(){ // 생성 하기 클릭 시
-  firebase.database().ref('chat_list/'+$("#chat-name-input").val()+'/').set({ // 데이터 베이스에 Chat_list 항목에 해당 이름과 코드을 가진 채팅방 데이터베이스 생성 
+  firebase.database().ref('chat_list/'+$("#chat-name-input").val()+'/').set({ // 데이터 베이스에 Chat_list 항목에 해당 이름과 코드을 가진 채팅방 데이터베이스 생성
     code: $("#chat-code-input").val()                                         // set은 내가 정한 key값(과목이름)으로 데이터 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
   },function(error) {
     if (error) {  // 에러 생겼을 시
@@ -608,7 +652,7 @@ function updateMyInfoInChatRoom(chatKey){ // 룸 정보에 유저 정보 넣기
     like_num : 0
   }, function(err){
     if(err){ // 에러 생겼을 시
-      
+
     } else{ // 에러 없을 시
       firebase.database().ref('chat_list/'+chatKey+'/message/').push({ // push는 firebase에서 겹치지 않는 key값으로 넣기 https://firebase.google.com/docs/database/web/lists-of-data?hl=ko
         text: getUserName()+"님이 입장하셨습니다.",
@@ -620,6 +664,18 @@ function updateMyInfoInChatRoom(chatKey){ // 룸 정보에 유저 정보 넣기
 
 // initialize Firebase
 initFirebaseAuth();
+
+var iCloudElement = document.getElementById('word-Cloud');
+
+iCloudElement.addEventListener('click', goWordCloud);
+
+function goWordCloud(){
+  if(currentChatKey ==""){
+    alert("채팅방에 접속 후 이용이 가능합니다.")
+  } else{
+    window.open('wordcloud.html?chatkey='+currentChatKey,'pop', 'menubar=no,status=no,scrollbars=no,resizable=no ,width=800,height=600,top=50,left=50');
+  }
+}
 
 
 // We load currently existing chat messages and listen to new ones.

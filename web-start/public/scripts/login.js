@@ -64,5 +64,3 @@ function getProfilePicUrl() { //현재 로그인 한 유저의 프로필 사진 
 function getUserUid(){ //현재 로그인 한 유저의 이메일 불러오기
   return firebase.auth().currentUser.uid
 }
-
-
