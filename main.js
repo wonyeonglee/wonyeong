@@ -211,16 +211,20 @@ function loadMessages(chatKey) {
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl,createdAt, likeNum,messageUid, itsme=false) {
+function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid, itsme = false) {
   var li = document.getElementById(key);
   // If an element for that message does not exists yet we create it.
   if (!li) {
     li = document.createElement('li');
+
+
     li.innerHTML = '<img class="pic" src="">'+
                           '<div class="send_name"></div>'+
                           '<p class="message"></p>' +
-                        '<i class="fas fa-heart like " style="font-size:12px; '+(itsme ? 'color:red;' : '')+'" aria-hidden="true"> 0</i>'+
+
+                          '<i class="fas fa-heart like " style="font-size:12px; '+(itsme ? 'color:red;' : '')+'" aria-hidden="true"> 0</i>'+
                           '<label class="time" style="font-size: 7px; vertical-align: top;"></label>' ;
+
     li.setAttribute('id', key);
     if(send){
       li.setAttribute('class','sent');
@@ -231,59 +235,89 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,createdAt, likeNu
   }
   var likeElement = li.querySelector('.like');
     likeElement.textContent = " "+likeNum;
-    likeElement.addEventListener('click', function(e){
-      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){ // 해당 메세지의 좋아요 버튼 누른사람 리스트 불러오기
-        if(result){ //리스트(result)
-          if(result[''+getUserUid()]){
-            likeElement.style.color="red";
-            return result;      // 메세지에 좋아한 유저 리스트에 자기가 있을때
+
+    likeElement.onclick = function(e){
+
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
+
+        var plusminus = 1;
+        if(result){
+
+          // 유저 리스트에 본인이 있는 경우
+          if(result[getUserUid()]){
+
+            likeElement.style.color="#32465a";  
+            delete result[getUserUid()]; //리스트에서 본인 삭제 
+            plusminus = -1;
           } else{
-            result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저 리스트에 자기가 없을때
+            likeElement.style.color="red";  
+            result[getUserUid()] ={temp : 'temp'}; // 유저리스트에 본인이 없는 경우
           }
+          
+
         } else{
-          result = {};
-          result[''+getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
+          result = {}; 
+          likeElement.style.color="red";  
+          result[getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
+          
         }
-        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) { // 트랜젝션을 이용하여 동시성 해소
+
+
+        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) {
+  
           if (number) {
-            ++number;
+            
+              number = number + plusminus;
+
           } else{
             number = 1;
           }
           return number;
         });
+
+
         return result;
       });
-  });
+
+
+
+  };
+
+    
   if (picUrl) {
     li.querySelector('.pic').src=picUrl
   }
   li.querySelector('.send_name').textContent = name;
-  li.querySelector('.time').textContent = createdAt;
+
+ li.querySelector('.time').textContent = createdAt;
+
   var messageElement = li.querySelector('.message');
   if (text) { // If the message is text.
     messageElement.textContent = text;
     // Replace all line breaks by <br>.
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-  } else if (imageUrl) { // If the message is an image.
+  }
+  else if (imageUrl) { // 이미지 메세지였다면
     var image = document.createElement('img');
     image.addEventListener('load', function() {
-      //    messageListDiv.scrollTop = messageListDiv.scrollHeight;
-      image.style.borderRadius="0%";
-      image.style.margin="0px 0px 0px 0px";
-      image.style.height="auto"; //크기 조절
-      image.style.width="280px";
+//    messageListDiv.scrollTop = messageListDiv.scrollHeight;
+    image.style.borderRadius="0%";
+    image.style.margin="0px 0px 0px 0px";
+    image.style.height="auto"; //크기 조절
+    image.style.width="280px";
     });
     image.src = imageUrl + '&' + new Date().getTime();
     messageElement.innerHTML = '';
     messageElement.appendChild(image);
+
   }
- 
+
   // Show the card fading-in and scroll to view the new message.
   setTimeout(function() {li.classList.add('visible')}, 1);
   messageListDiv.scrollTop = messageListDiv.scrollHeight;
  // messageInputElement.focus();
 }
+
 
 function saveMessage(messageText) {
   // Adds a new message entry to the Realtime Database.
