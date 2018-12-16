@@ -321,10 +321,11 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
 
 function saveMessage(messageText) {
   // Adds a new message entry to the Realtime Database.
+  var t = new Date(+new Date()+(1000*60*60*9));
   return firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
    user: getUserUid(),
    text: messageText,
-   createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"   /   "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
+   createdAt: t.getUTCFullYear()+"."+ (t.getUTCMonth()+1) +"."+t.getUTCDate()+"   /   "+(t.getUTCHours())%24+":"+new Date().getUTCMinutes()
  }).catch(function(error) {
    console.error('Error writing new message to Realtime Database:', error);
  });
