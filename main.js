@@ -195,8 +195,15 @@ function loadMessages(chatKey) {
         } else{
           count = Object.keys(data.likeUserList).length;
         }
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt ,count,currentChatUserInfo[i]['uid']);
+          // 2018. 12. 15. 메세지 받아올 때 좋아요 눌렀던 메세지일 때 하트 색 빨간 색으로. - 이원영
+        var itsme = false; 
+        if(data.likeUserList !== undefined && data.likeUserList[getUserUid()]){
+          itsme = true;
+        }
+        // 파라메터 itsme 추가.        
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme);
         break;
+      
       }
     }
   }
@@ -204,7 +211,7 @@ function loadMessages(chatKey) {
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl,createdAt, likeNum,messageUid) {
+function displayMessage(key, name, text, picUrl, send,imageUrl,createdAt, likeNum,messageUid, itsme=false) {
   var li = document.getElementById(key);
   // If an element for that message does not exists yet we create it.
   if (!li) {
@@ -212,8 +219,8 @@ function displayMessage(key, name, text, picUrl, send,imageUrl,createdAt, likeNu
     li.innerHTML = '<img class="pic" src="">'+
                           '<div class="send_name"></div>'+
                           '<p class="message"></p>' +
-                          '<i class="fas fa-heart like" style="font-size:12px;" aria-hidden="true"> 0</i>'+
-                          '<label class="time" style="font-size: 7px; float:right;"></label>';
+                        '<i class="fas fa-heart like " style="font-size:12px; '+(itsme ? 'color:red;' : '')+'" aria-hidden="true"> 0</i>'+
+                          '<label class="time" style="font-size: 7px; vertical-align: top;"></label>' ;
     li.setAttribute('id', key);
     if(send){
       li.setAttribute('class','sent');
