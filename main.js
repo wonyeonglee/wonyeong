@@ -151,7 +151,7 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
     $(this).addClass("active");
     $("#message-box").html('');
     currentChatKey = $(this).find(".name").text();
-    $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users"></i> '+);
+    $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users"></i> <span id="chatUserCount"></span>');
     currentChatUserInfo = [];
     classClick(currentChatKey);
   });
@@ -160,23 +160,36 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
 
 function addUserInfo(snap){
   var childData = snap.val();
+  
       var info = {
         name : childData.name,
         uid : snap.key,
         picUrl : childData.profilePicUrl
       }
+
+      //on에서 넘어온 유저 push될 때마다 length세서 참가인원수 표시.
       currentChatUserInfo.push(info);
+      document.getElementById('chatUserCount').innerHTML = currentChatUserInfo.length;
+      // document.getElementById('chatUserCount').text('3');
+
 }
 
 function classClick(chatKey){
-  firebase.database().ref('/chat_list/'+chatKey+'/user/').on('value',function(snapshot){ //새로고침 안해도 입장 메세지 보임.
-    snapshot.forEach(function(childSnapshot) {
-      addUserInfo(childSnapshot);
-      loadMessages(chatKey);
-      firebase.database().ref('/chat_list/'+chatKey+'/user/').on('child_added', function(snapshot){
-        addUserInfo(childSnapshot);
-      });
-    });
+  // firebase.database().ref('/chat_list/'+chatKey+'/user/').once('value',function(snapshot){ //새로고침 안해도 입장 메세지 보임.
+  //     addUserInfo(snapshot);
+  // });
+
+
+  // child_added로 on 해둬도 어차피 초기화 하기 때문에 두번 쓸 필요 없어용. 구래서 위에 주석 해둠!
+  var o = true;
+  firebase.database().ref('/chat_list/'+chatKey+'/user/').on('child_added', function(snapshot){
+
+    addUserInfo(snapshot);
+    if(o){
+      loadMessages(chatKey);  
+      o = false;
+    }
+
   });
 }
 
