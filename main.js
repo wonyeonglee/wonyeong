@@ -151,7 +151,7 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
     $(this).addClass("active");
     $("#message-box").html('');
     currentChatKey = $(this).find(".name").text();
-    $("#chat-name").text(currentChatKey);
+    $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users"></i> '+);
     currentChatUserInfo = [];
     classClick(currentChatKey);
   });
