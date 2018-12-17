@@ -137,3 +137,4 @@ See [LICENSE](LICENSE), Apache License 2.0
 + Firebase 웹 메신저 오픈소스 : https://github.com/firebase/friendlychat-web
 + 질문 데이터 시각화 Word Cloud 오픈소스 : https://github.com/wvengen/d3-wordcloud
 + Main 채팅 창 UI 오픈소스 : https://bootsnipp.com/snippets/35mvD
++ 랭킹 chart 생성 api: https://www.amcharts.com/demos/column-chart-images-top/
