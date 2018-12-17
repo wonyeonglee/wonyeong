@@ -31,7 +31,7 @@ function ranking(){
       }
     });
   })
-  for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬
+  for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬 
     var key= likeNumArr[i];
     var name=likeOwnerArr[i];
     for (var j=i-1; j>=0 && likeNumArr[j]<key; j--){
@@ -55,7 +55,7 @@ function ranking(){
 
 function createChart(){
   $('#rankModal').modal({   // 채팅방마다 새로운 모달이 생성될 수 있도록
-      refresh: true // refresh ㅅ키기
+      refresh: true // refresh 시키기
   });
   var chart;  //chart 생성할 변수 선언
   am4core.useTheme(am4themes_animated); // 애니메이션 효과 주기 위해 테마 설정
