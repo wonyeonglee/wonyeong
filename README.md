@@ -14,7 +14,7 @@
 ## 1.3 주요기능및 관련 코드/API 설명
 
 ### - Ranking 
-랭킹 표시 기능. 각 채팅방에 저장되어 있는 유저들의 좋아요 개수 목록을 불러와 내림차순으로 정렬 후 최댓값 5개 데이터의 사용자 이름, 받은 좋아요 개수를 저장한다. 이 데이터를 기반으로 랭킹 차트 생성하여 모달에 표시한다.
+랭킹 표시 기능. 각 채팅방에 저장되어 있는 유저들의 좋아요 개수 목록을 불러와 내림차순으로 정렬 후 최댓값 5개 데이터의 사용자 이름, 받은 좋아요 개수를 저장한다. 이 데이터를 기반으로 랭킹 차트 생성하여 모달에 표시한다. 차트 생성하는 함수는 amChart에서 참고한 것으로, 
 
 ```
 function ranking(){
@@ -48,9 +48,36 @@ function ranking(){
     else //빈 데이터면
       maxList.push("순위 없음", null);
   } 
-  createChart(); // chart 생성 함수 -amCharts에서 가져옴
-  $("#rankModal").modal('show');
+  createChart();  //차트 생성
+  $("#rankModal").modal('show');  //모달 띄우기
  }
+}
+
+function createChart(){
+  $('#rankModal').modal({   // 채팅방마다 새로운 모달이 생성될 수 있도록
+      refresh: true // refresh ㅅ키기
+  });
+  var chart;  //chart 생성할 변수 선언
+  am4core.useTheme(am4themes_animated); // 애니메이션 효과 주기 위해 테마 설정
+  chart = am4core.create("chartdiv", am4charts.XYChart);  //차트 생성
+  chart.paddingBottom = 30;
+  chart.data = [{     // 해당 채팅방의 top 5 데이터(이름, 좋아요 수)를 차트 데이터로 넘겨줌
+      "name": maxList[0],
+      "steps": maxList[1]
+  }, {
+      "name": maxList[2],
+      "steps": maxList[3]
+  }, {
+      "name": maxList[4],
+      "steps": maxList[5]
+  }, {
+      "name": maxList[6],
+      "steps": maxList[7]
+  }, {
+      "name": maxList[8],
+      "steps": maxList[9]
+  }];
+  // 이하 생략 - 차트 데이터 표시 단위, 그래프 단위와 사이즈 등을 조절하는 부분임
 }
 ```
 ### - Submit Image
