@@ -164,7 +164,7 @@ function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼�
   기존 UI에서 불필요한 부분 삭제, 좋아요 및 word Cloud UI 구현, 랭킹 차트 UI 및 기능 구현, 채팅방 삭제 기능 구현, 채팅 시간 표시, 파일 전송 기능 구현
 - 1771044 이원영 (wonyeonglee) 
   : wonyeongbranch
- 로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 기존 UI에서 불필요한 부분 삭제
+ 로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 기존 UI에서 불필요한 부분 삭제, 좋아요 취소 기능 구현, 좋아요 ( 본인 메세지 불가능) 기능 추가, ppt 제작, 시연 동영상 
 - 1771098 이가은 (gaeunleeandlee) 
   : 기존 UI에서 불필요한 부분 삭제, 마이페이지 UI 수정, 버튼 UI 수정, 
   
