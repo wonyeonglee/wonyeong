@@ -255,7 +255,8 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
       var isUser = 0;
       firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/user/').transaction(function(user1){
         if(user1==getUserUid()){//본인 메세지인지 확인
-          isUser = 1;//본인 메세지인 경우 isUser를1로
+          isUser = 1;//본인 메세지인 경우 isUser를 1로
+          alert('본인 메세지는 좋아요를 누를 수 없습니다');//본인 메세지 클릭 불가능 하다고 알려주기.
 
         }
 
@@ -454,7 +455,7 @@ function saveImageMessage(file) {
 function saveMessagingDeviceToken() {
   firebase.messaging().getToken().then(function(currentToken) {
     if (currentToken) {
-      console.log('Got FCM device token:', currentToken);
+      ('Got FCM device token:', currentToken);
       // Save the device token to the Realtime Database.
       firebase.database().ref('/fcmTokens').child(currentToken)
           .set(firebase.auth().currentUser.uid);
