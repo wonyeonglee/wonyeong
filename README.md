@@ -23,8 +23,7 @@ function ranking(){
 } else{
   var likeNumArr = [];     // 좋아요 개수들의 배열
   var likeOwnerArr=[];  //좋아요 주인이름의 배열
-  firebase.database().ref('/chat_list/'+currentChatKey+'/user/').once('value',
-   function(snapshot){
+  firebase.database().ref('/chat_list/'+currentChatKey+'/user/').once('value', function(snapshot){
     snapshot.forEach(function(childSnapshot) {  //좋아요 개수들의 배열 불러오기
       if(childSnapshot.val().like_num){  //좋아요 받은 기록이 있다면
         likeNumArr.push(childSnapshot.val().like_num); //좋아요 배열에 좋아요 수 저장
@@ -39,9 +38,8 @@ function ranking(){
   for(var i=0; i<5 ; i++){ 
     if(likeNumArr[i]) //데이터 있으면
       maxList.push(likeOwnerArr[i],likeNumArr[i]);
-    else { //빈 데이터면
+    else //빈 데이터면
       maxList.push("순위 없음", null);
-    }
   } 
   createChart(); // chart 생성 함수 -amCharts에서 가져옴
   $("#rankModal").modal('show');
