@@ -106,7 +106,7 @@ function getChatList(){ // 현재 로그인 한 유저의 채팅방 리스트 �
     var data = snap.val(); // 불러온 정보(snap)를 javascript로 사용할 수 있게 변경
     displayChatlist(snap.key, data.room_name);
 
-    firebase.database().ref('/chat_list/'+data.room_name+'/user/'+getUserUid()+'/like_num').on('value',function(snapshot){//채티방 리스트에 존재하는 자기 아이디의 좋아요 갯수 불러오기
+    firebase.database().ref('/chat_list/'+data.room_name+'/user/'+getUserUid()+'/like_num').on('value',function(snapshot){//채티방 리스트에 존재하는 자기 아이디의 좋아요 개수 불러오기
       displayChatLikeList(snapshot.key, data.room_name,snapshot.val());
     });
   }
@@ -179,6 +179,8 @@ function classClick(chatKey){
   //     addUserInfo(snapshot);
   // });
 
+  
+
 
   // child_added로 on 해둬도 어차피 초기화 하기 때문에 두번 쓸 필요 없어용. 구래서 위에 주석 해둠!
   var o = true;
@@ -250,7 +252,18 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
     likeElement.textContent = " "+likeNum;
 
     likeElement.onclick = function(e){
+      var isUser = 0;
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/user/').transaction(function(user1){
+        if(user1==getUserUid()){//본인 메세지인지 확인
+          isUser = 1;//본인 메세지인 경우 isUser를1로
 
+        }
+
+      });
+       
+
+      if(isUser==0){//본인 메세지가 아닌 경우에만 좋아요 버튼 누르면 효과 있음
+      
       firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
 
         var plusminus = 1;
@@ -272,6 +285,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
           result = {}; 
           likeElement.style.color="red";  
           result[getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
+
           
         }
 
@@ -291,7 +305,7 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
 
         return result;
       });
-
+}
 
 
   };
