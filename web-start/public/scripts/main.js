@@ -20,7 +20,7 @@ var currentChatKey = "";
 var currentChatUserInfo = [];
 
 // Signs-in Friendly Chat.
-
+ 
 // Signs-out of Friendly Chat.
 function signOut() {
   firebase.auth().signOut();
