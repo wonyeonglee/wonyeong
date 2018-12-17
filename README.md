@@ -31,9 +31,16 @@ function ranking(){
       }
     });
   })
-  for (var i=1; i<likeNumArr.length; i++){
-     // like_num 내림차순으로 배열 정렬 ... 코드는 생략 ...
-}
+  for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬
+    var key= likeNumArr[i];
+    var name=likeOwnerArr[i];
+    for (var j=i-1; j>=0 && likeNumArr[j]<key; j--){
+      likeNumArr[j+1]=likeNumArr[j];
+      likeOwnerArr[j+1]=likeOwnerArr[j];
+    }
+    likeNumArr[j+1]=key;
+    likeOwnerArr[j+1]=name;
+  }
   maxList=[];
   for(var i=0; i<5 ; i++){ 
     if(likeNumArr[i]) //데이터 있으면
@@ -82,7 +89,6 @@ function saveImageMessage(file) {
 
 // 해당 사용자의 room_list에서 해당 채팅방 삭제
 function deleteRoomListInMyInfo(name){ 
-
   var keyVal;
   var ref = firebase.database().ref('user_list/'+getUserUid()+'/room_list');
   if (ref.orderByChild('room_name').equalTo(name).on("value", function(snapshot) {
@@ -97,16 +103,13 @@ function deleteRoomListInMyInfo(name){
     alert("존재하지 않는 채팅방입니다!");
     $("#myModal2").modal('hide');
   };
-
 }
-
 // 채팅방 리스트의 해당 채팅방 유저 목록에서 해당 유저 삭제
 function deleteMyInfoInChatRoom(chatKey){ 
 firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove();
   firebase.database().ref('chat_list/'+chatKey+'/message/').push({
     text: getUserName()+"님이 퇴장하셨습니다.",
   });
-
 }
 
 ```
