@@ -16,7 +16,7 @@
 'use strict';
 
 var maxList=[];
-var currentChatKey = ""; 
+var currentChatKey = "";
 var currentChatUserInfo = [];
 
 // Signs-in Friendly Chat.
@@ -69,7 +69,7 @@ function authStateObserver(user) {
     userPicElement.src=profilePicUrl;
     userNameElement.textContent = userName;
 
-    
+
     getChatList();
     // We save the Firebase Messaging Device token and enable notifications.
     //saveMessagingDeviceToken();*/
@@ -104,10 +104,10 @@ function checkSignedInWithMessage() {
 function getChatList(){ // 현재 로그인 한 유저의 채팅방 리스트 불러오기
   var callback = function(snap) {
     var data = snap.val(); // 불러온 정보(snap)를 javascript로 사용할 수 있게 변경
-    displayChatlist(snap.key, data.room_name);
+    displayChatlist(snap.key, data.room_name); // 채팅 리스트 불러오기
 
     firebase.database().ref('/chat_list/'+data.room_name+'/user/'+getUserUid()+'/like_num').on('value',function(snapshot){//채티방 리스트에 존재하는 자기 아이디의 좋아요 개수 불러오기
-      displayChatLikeList(snapshot.key, data.room_name,snapshot.val());
+      displayChatLikeList(snapshot.key, data.room_name,snapshot.val()); // 좋아요(My incentive) 리스트 불러오기
     });
   }
   firebase.database().ref('/user_list/'+getUserUid()+'/room_list/').on('child_added', callback); // 자기 정보에 존재하는 채팅방 리스트 불러오기
@@ -120,8 +120,8 @@ function displayChatLikeList(key, name,number){ //채팅방 좋아요 요소 불
     likeContainer =  document.getElementById(name);
   } else{
     likeContainer = document.createElement('li'); //채팅방 좋아요 리스트 생성
-    likeContainer.setAttribute('class', 'chat-like'); 
-    likeContainer.setAttribute('id', name);
+    likeContainer.setAttribute('class', 'chat-like');
+    likeContainer.setAttribute('id', name); // 채팅방의 name
   }
 
   likeContainer.innerHTML = name+'<span class="like-num">'+number+'</span>' //채팅방 좋아요 관련 정보 업데이트
@@ -136,31 +136,31 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
 
   var chatListElement = document.getElementById("chat_list");
 
-  var container = document.createElement('li');
+  var container = document.createElement('li'); // 각 채팅방 생성
   container.setAttribute('class', 'contact');
   container.setAttribute('id', key);
   container.innerHTML = CHAT_LIST_TEMPLATE;
   var div = container.firstChild;
-  
+
   var nameElement = div.querySelector('.name');
   nameElement.textContent = name;
-  container.addEventListener('click' , function(e){
-    firebase.database().ref('/chat_list/'+currentChatKey+'/user/').off();
-    firebase.database().ref('/chat_list/'+currentChatKey+'/message/').off();
-    $("#chat_list>li.active").removeClass("active");
-    $(this).addClass("active");
+  container.addEventListener('click' , function(e){ // 각 채팅방이 클릭되었을 때
+    firebase.database().ref('/chat_list/'+currentChatKey+'/user/').off(); // 새로운 채팅방으로 넘어갔으니 대기하던 firebase off
+    firebase.database().ref('/chat_list/'+currentChatKey+'/message/').off(); // 새로운 채팅방으로 넘어갔으니 대기하던 firebase off
+    $("#chat_list>li.active").removeClass("active"); // 기존 채팅방 active 상태 풀리도록 CSS 해제
+    $(this).addClass("active"); // 새로운 채팅방이 active 되도록
     $("#message-box").html('');
-    currentChatKey = $(this).find(".name").text();
-    $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users"></i> <span id="chatUserCount"></span>');
-    currentChatUserInfo = [];
-    classClick(currentChatKey);
+    currentChatKey = $(this).find(".name").text(); // 새로운 채팅방에 name 클래스(채팅방)를 가진 요소를 찾아서 그 텍스트를 currentChatKey에 넣음
+    $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users"></i> <span id="chatUserCount"></span>');  // 채팅창 상단에 채팅방 이름 부분 + user 몇명인지 표시
+    currentChatUserInfo = []; // 예전 채팅방의 유저 인포 리셋
+    classClick(currentChatKey); // (새로운 채팅방에 존재하는)유저 리스트랑 메세지 리스트 불러옴
   });
   chatListElement.appendChild(container);
 }
 
-function addUserInfo(snap){
+function addUserInfo(snap){ // DB에서 가져온 유저 정보 할당
   var childData = snap.val();
-  
+
       var info = {
         name : childData.name,
         uid : snap.key,
@@ -168,66 +168,66 @@ function addUserInfo(snap){
       }
 
       //on에서 넘어온 유저 push될 때마다 length세서 참가인원수 표시.
-      currentChatUserInfo.push(info);
-      document.getElementById('chatUserCount').innerHTML = currentChatUserInfo.length;
+      currentChatUserInfo.push(info); // 유저 정보를 currentChatUserInfo에 넣기
+      document.getElementById('chatUserCount').innerHTML = currentChatUserInfo.length; //그 채팅방을 이용하는 user 수 얻기 -> 표시하기 위해 
       // document.getElementById('chatUserCount').text('3');
 
 }
 
-function classClick(chatKey){
+function classClick(chatKey){ // (새로운 채팅방에 존재하는)유저 리스트랑 메세지 리스트 불러옴
   // firebase.database().ref('/chat_list/'+chatKey+'/user/').once('value',function(snapshot){ //새로고침 안해도 입장 메세지 보임.
   //     addUserInfo(snapshot);
   // });
 
-  
+
 
 
   // child_added로 on 해둬도 어차피 초기화 하기 때문에 두번 쓸 필요 없어용. 구래서 위에 주석 해둠!
   var o = true;
-  firebase.database().ref('/chat_list/'+chatKey+'/user/').on('child_added', function(snapshot){
+  firebase.database().ref('/chat_list/'+chatKey+'/user/').on('child_added', function(snapshot){ // .on은 계속 불러오는 것. 새로운 메세지가 써지면 실행 됨.
 
     addUserInfo(snapshot);
     if(o){
-      loadMessages(chatKey);  
+      loadMessages(chatKey);
       o = false;
     }
 
   });
 }
 
-function loadMessages(chatKey) {
+function loadMessages(chatKey) { // DB에서 메세지 리스트 불러오기
   var callback = function(snap){
-    var data = snap.val();
-    for(var i = 0 ; i < currentChatUserInfo.length;i++){
-      if(currentChatUserInfo[i]['uid']==data.user){
-        var send = false;
-        if(data.user == getUserUid()){
-          send = true
+    var data = snap.val(); // snap의 데이터 불러와서 할당
+    for(var i = 0 ; i < currentChatUserInfo.length;i++){ // 메세지 내가 보냈는지(채팅창에서 오른쪽), 상대방이 보냈는지(채팅창에서 왼쪽)
+      if(currentChatUserInfo[i]['uid']==data.user){ // 현재 채팅방 유저의 리스트[i] == 현재 보낸 메세지의 유저 id 일 때 -> 메세지 보낸 사람이 누군지 알게됨.
+        var send = false; // 채팅방에서 왼쪽
+        if(data.user == getUserUid()){ // 보낸 사람이 본인일 때
+          send = true // 채팅방에서 오른쪽
         }
         var count;
-        if(data.likeUserList==null){
+        if(data.likeUserList==null){ // 메세지 좋아요 없을 때
           count = 0;
-        } else{
-          count = Object.keys(data.likeUserList).length;
+        } else{ // 메세지 좋아요 있을 때
+          count = Object.keys(data.likeUserList).length; // 내 메세지를 좋아하는 유저 리스트 모두 세기
         }
           // 2018. 12. 15. 메세지 받아올 때 좋아요 눌렀던 메세지일 때 하트 색 빨간 색으로. - 이원영
-        var itsme = false; 
+        var itsme = false;
         if(data.likeUserList !== undefined && data.likeUserList[getUserUid()]){
           itsme = true;
         }
-        // 파라메터 itsme 추가.        
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme);
+        // 파라메터 itsme 추가.
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme); // HTML에 직접 적으로 할당
         break;
-      
+
       }
     }
   }
-  firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_added', callback);
-  firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback);
+  firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_added', callback); // .on 이라서 새로운 메세지가 달릴 때 마다 callback 함수 실행
+  firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback); // 좋아요 같은 경우(변화 있을 때 refresh)
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid, itsme = false) {
-  var li = document.getElementById(key);
+function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid, itsme = false) { // 채팅방 HTML에 넣는 함수
+  var li = document.getElementById(key);// 메세지 박스가 이미 있는지
   // If an element for that message does not exists yet we create it.
   if (!li) {
     li = document.createElement('li');
@@ -240,20 +240,22 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
                           '<i class="fas fa-heart like " style="font-size:12px; '+(itsme ? 'color:red;' : '')+'" aria-hidden="true"> 0</i>'+
                           '<label class="time" style="font-size: 7px; vertical-align: top;"></label>' ;
 
-    li.setAttribute('id', key);
-    if(send){
+    li.setAttribute('id', key);// 메세지 구분하기 위해서 key 할당
+    if(send){ // 채팅창에서 오른쪽
       li.setAttribute('class','sent');
-    } else{
+    } else{ // 채팅창에서 왼쪽
       li.setAttribute('class','replies');
     }
     messageListElement.appendChild(li);
   }
-  var likeElement = li.querySelector('.like');
+  var likeElement = li.querySelector('.like');// 좋아요
     likeElement.textContent = " "+likeNum;
 
-    likeElement.onclick = function(e){
-      var isUser = 0;
-      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/user/').transaction(function(user1){
+    likeElement.onclick = function(e){ // 좋아요가 클릭 됐을 때 실행
+      var isUser = 0; //본인 메세지인지 확인하기 위한 변수 
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/user/').transaction(function(user1){ // 해당 메세지를 작성한 user불러오기
+                                                                                                                                          // 좋아요의 동시성 해소를 위하여 트랜젝션 사용
+
         if(user1==getUserUid()){//본인 메세지인지 확인
           isUser = 1;//본인 메세지인 경우 isUser를 1로
           alert('본인 메세지는 좋아요를 누를 수 없습니다');//본인 메세지 클릭 불가능 하다고 알려주기.
@@ -261,44 +263,45 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
         }
 
       });
-       
+
 
       if(isUser==0){//본인 메세지가 아닌 경우에만 좋아요 버튼 누르면 효과 있음
-      
-      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){
 
-        var plusminus = 1;
-        if(result){
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){   // 해당 메세지의 좋아요 버튼 누른사람 리스트 불러오기
+                                                                                                                                                    // 좋아요의 동시성 해소를 위하여 트랜젝션 사용
 
-          // 유저 리스트에 본인이 있는 경우
-          if(result[getUserUid()]){
+        var plusminus = 1;//좋아요를 누르면 총 incentive를 +1 해야한다
+        if(result){ // 좋아요를 누른 userlist의 내용이 존재 
 
-            likeElement.style.color="#32465a";  
-            delete result[getUserUid()]; //리스트에서 본인 삭제 
-            plusminus = -1;
-          } else{
-            likeElement.style.color="red";  
-            result[getUserUid()] ={temp : 'temp'}; // 유저리스트에 본인이 없는 경우
+          
+          if(result[getUserUid()]){// userlist가 존재하고 그 안에 본인이 있는 경우는 좋아요를 취소하는 것.
+
+            likeElement.style.color="#32465a"; //원래 하트 색깔로 되돌리고 
+            delete result[getUserUid()]; //userlist에서 본인 삭제
+            plusminus = -1; // 좋아요를 취소하면 총 incentive -1 해야한다
+          } else{// 유저리스트에 본인이 없는 경우는 좋아요를 누르는 것.
+            likeElement.style.color="red"; //하트 색깔 빨간색으로 변경
+            result[getUserUid()] ={temp : 'temp'}; 
           }
-          
 
-        } else{
-          result = {}; 
-          likeElement.style.color="red";  
-          result[getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
 
-          
+        } else{ // 좋아요를 누른 userlist의 내용이 존재하지 않을 때(아무도 그 메세지에 좋아요를 누르지 않음) -> 체크할 필요없이 본인만 넣음
+          result = {};
+          likeElement.style.color="red"; //하트 색깔 빨간색으로 변경
+          result[getUserUid()] ={temp : 'temp'}; 
+
+
         }
 
 
-        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) {
-  
-          if (number) {
-            
-              number = number + plusminus;
+        firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) { // 메세지의 좋아요 갯수(number) 불러오기.
+                                                                                                                            // 좋아요의 동시성 해소를 위하여 트랜젝션 사용
+          if (number) {// 좋아요 개수가 있을 때 
 
-          } else{
-            number = 1;
+              number = number + plusminus; // 취소하는 경우에는 -1을 더하고 좋아요를 하는 경우에는 +1 
+
+          } else{ // 숫자가 없는 경우 
+            number = 1; // 1이된다.
           }
           return number;
         });
@@ -311,8 +314,8 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
 
   };
 
-    
-  if (picUrl) {
+
+  if (picUrl) { // 유저 프로필
     li.querySelector('.pic').src=picUrl
   }
   li.querySelector('.send_name').textContent = name;
@@ -320,10 +323,10 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
  li.querySelector('.time').textContent = createdAt;
 
   var messageElement = li.querySelector('.message');
-  if (text) { // If the message is text.
+  if (text) { // If the message is text.  메세지가 텍스트인 경우
     messageElement.textContent = text;
     // Replace all line breaks by <br>.
-    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>'); // 줄바꿈
   }
   else if (imageUrl) { // 이미지 메세지였다면
     var image = document.createElement('img');
@@ -341,13 +344,13 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
   }
 
   // Show the card fading-in and scroll to view the new message.
-  setTimeout(function() {li.classList.add('visible')}, 1);
+  setTimeout(function() {li.classList.add('visible')}, 1); // 엔터치면 아래로 내려가는거
   messageListDiv.scrollTop = messageListDiv.scrollHeight;
  // messageInputElement.focus();
 }
 
 
-function saveMessage(messageText) {
+function saveMessage(messageText) { // 메세지 DB에 저장
   // Adds a new message entry to the Realtime Database.
   var t = new Date(+new Date()+(1000*60*60*9));
   return firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
@@ -361,9 +364,9 @@ function saveMessage(messageText) {
 
 messageFormElement.addEventListener('submit', onMessageFormSubmit);
 
-function onMessageFormSubmit(e) {
+function onMessageFormSubmit(e) { // 메세지가 제출 됐을 때(엔터 클릭시)실행 되는 함수
   e.preventDefault();
-  if (messageInputElement.value && (currentChatKey!="")) {
+  if (messageInputElement.value && (currentChatKey!="")) { // 메세지 있을 때
     saveMessage(messageInputElement.value).then(function() {
       // Clear message text field and re-enable the SEND button.
       $('.message-input input').val(null);
