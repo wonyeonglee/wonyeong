@@ -13,7 +13,73 @@
 ## 1.2 앱 설치 방법 및 사용법
 ## 1.3 주요기능및 관련 코드/API 설명
 
-Delete Class : 채팅방 삭제 기능. 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제한다.
+### - Ranking 
+랭킹 표시 기능. 각 채팅방에 저장되어 있는 유저들의 좋아요 개수 목록을 불러와 내림차순으로 정렬 후 최댓값 5개 데이터의 사용자 이름, 받은 좋아요 개수를 저장한다. 이 데이터를 기반으로 랭킹 차트 생성하여 모달에 표시한다.
+
+```
+function ranking(){
+  if(currentChatKey ==""){
+  alert("채팅방에 접속 후 이용이 가능합니다.")
+} else{
+  var likeNumArr = [];     // 좋아요 개수들의 배열
+  var likeOwnerArr=[];  //좋아요 주인이름의 배열
+  firebase.database().ref('/chat_list/'+currentChatKey+'/user/').once('value',
+   function(snapshot){
+    snapshot.forEach(function(childSnapshot) {  //좋아요 개수들의 배열 불러오기
+      if(childSnapshot.val().like_num){  //좋아요 받은 기록이 있다면
+        likeNumArr.push(childSnapshot.val().like_num); //좋아요 배열에 좋아요 수 저장
+        likeOwnerArr.push(childSnapshot.val().name);  //이름 배열에 사람 이름 저장
+      }
+    });
+  })
+  for (var i=1; i<likeNumArr.length; i++){
+     // like_num 내림차순으로 배열 정렬 ... 코드는 생략 ...
+}
+  maxList=[];
+  for(var i=0; i<5 ; i++){ 
+    if(likeNumArr[i]) //데이터 있으면
+      maxList.push(likeOwnerArr[i],likeNumArr[i]);
+    else { //빈 데이터면
+      maxList.push("순위 없음", null);
+    }
+  } 
+  createChart(); // chart 생성 함수 -amCharts에서 가져옴
+  $("#rankModal").modal('show');
+ }
+}
+```
+### - Submit Image
+
+사진 파일 전송 기능. 먼저 Firebase Cloud Storage에 이미지를 먼저 업로드하고 이미지 파일로부터 만든 URL을 메세지로 보여준다.
+
+```
+function saveImageMessage(file) {
+  // 1 -메세지 placeholder
+  firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
+    user: getUserUid(),
+    imageUrl: LOADING_IMAGE_URL, //기다리는 동안 보여줄 로딩 아이콘
+    createdAt: new Date()
+  }).then(function(messageRef) {
+    // 2 - Cloud Storage에 이미지를 업로드
+    var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
+    return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
+      // 3 - 이미지 파일로부터 public URL 만들기
+      return fileSnapshot.ref.getDownloadURL().then((url) => {
+        // 4 - 이미지 URL로 메세지 placeholder 업데이트
+        return messageRef.update({
+          imageUrl: url,
+          storageUri: fileSnapshot.metadata.fullPath
+        });
+      });
+    });
+  }).catch(function(error) {
+    console.error('Cloud Storage에 업로드하던 중 에러가 발생했습니다:', error);
+  });
+}
+```
+
+### - Delete Class
+채팅방 삭제 기능. 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제한다.
 ```
 
 // 해당 사용자의 room_list에서 해당 채팅방 삭제
@@ -55,7 +121,7 @@ firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove();
   채팅방 생성 기능 구현, 채팅창 기능 구현, 좋아요 기능 구현, 좋아요-마이페이지 연동 기능 구현, word-cloud기능 구현
 - 1771016 김은지 (eun-g-kim)
   : eunjiBranch
-  기존 UI에서 불필요한 부분 삭제, 좋아요 UI 구현, word Cloud UI 구현, UI 위치 오류 나는 부분 수정
+  기존 UI에서 불필요한 부분 삭제, 좋아요 및 word Cloud UI 구현, 랭킹 차트 UI 및 기능 구현, 채팅방 삭제 기능 구현, 채팅 시간 표시, 파일 전송 기능 구현
 - 1771044 이원영 (wonyeonglee) 
   : wonyeongbranch
  로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 기존 UI에서 불필요한 부분 삭제
