@@ -4,14 +4,16 @@ var allMessageList =[];
 var resultMessageList =[];
 var maxLength;
 var index =0;
-
+ 
 
 
 function myFunction() { // 페이지가 로드 되었을 때 실행되는 함수
     curChatKey = decodeURIComponent(getQueryVariable('chatkey')); // URL에 있는 chatkey 뽑아오기. -> 한글로 decode
     firebase.database().ref('/chat_list/'+curChatKey+'/message').limitToLast(100).once('value', function(snap){ // 현재 curChatKey로 최근 100개 메세지 불러오기.
         snap.forEach(function(childSnapshot) { // 한번에 가져온 메세지는 snap(100개 메세지). 각 1개의 메세지는 chlidSnapshot
+            if(childSnapshot.val().text.indexOf("님이 입장하셨습니다.")==-1){ // 결과값에 입장 메세지 포함되던 문제 제거를 위해 -> 입장 메세지 없을 때만 넘김
             allMessageList.push(childSnapshot.val().text) // allMessageList에 메세지 넣기
+            }
         })
     }).then(function(){
         maxLength = allMessageList.length-1; // allMessageList의 총 갯수
@@ -30,17 +32,15 @@ function myFunction() { // 페이지가 로드 되었을 때 실행되는 함수
 
 https://open-korean-text.herokuapp.com/extractPhrases의 기능 : 쓸데 없는 단어( EX: 하다, 이다, 같은 동사, 조사)를 제거해줌.
 
-그러나 띄어쓰기가 포함되어 결과값을 뱉어냄(ex- https://open-korean-text.herokuapp.com/extractPhrases?text=text의 결과값)는 등 문제가 많아 단어 결과 중 띄어쓰기를 포함하는 결과값은 없애 추출하기도록 구현.
+그러나 띄어쓰기가 포함되어 결과값을 뱉어냄(ex- https://open-korean-text.herokuapp.com/extractPhrases?text=text의 결과값)는 등 문제가 많아 단어 결과중 띄어쓰기가 없는 단어만 추출하기로 결정,
 
-api에 대한 반환 값이 JSON이 아니고 단순 String 형태로 반환이 되어 String상태에서 정보를 추출함.
+반환 값이 JSON이 아니고 단순 String 형태로 반환이 되어 String상태에서 정보를 추출하려는 전략을 수립. 전략은 다음과 같음
 
-"twitter(Noun: 0, 7)" <- 반환값 한개에 대한 예시. ()가 지워지지 않고 반환됨.
+"twitter(Noun: 0, 7)" 왼쪽은 반환값 한개에 대한 예시임.
 
-이에 따라, 반환값에서 () 부분을 삭제하도록 구현.(단, 실제의 소괄호-twitter(SNS)-가 들어와도 소괄호는 결과값으로 반환하지 않음)
+입력값에 소괄호{ ( } 가 없다고 가정을 한 상태에서 분석하는 과정은 아래와 같음(실제로도 소괄호가 들어가면 소괄호는 결과값으로 반환하지 않음)
 
-flow :
-
-String 입력값 -> 소괄호의 맨처음 값과 맨 마지막 값을 입력 받아 해당 문자열을 삭제시킴 -> "twitter" -> 해당 문자열에 띄어쓰기가 있으면 탈락, 없을 시 결과 값에 포함시킴.
+String 입력값 -> 소괄호의 맨처음 값과 맨 마지막 값을 입력 받아 해당 문자열을 삭제시킴 -> "twitter" -> 해당 문자열에 띄워쓰기가 있으면 탈락, 없을 시 결과값에 포함시킴.
 
 */
 
@@ -67,9 +67,9 @@ function requestApi(message){ // 트위터 한글 형태소 분석 api로 요청
 
 
 // 반환값 예시. {"phrases":["text의(Noun: 0, 5)","text의 결과값(Noun: 0, 9)","text(Noun: 0, 4)","결과(Noun: 6, 2)"]}
-function extractString(message){ // (Noun: 0, 5)의 앞 부분만 추출하는 함수.
+function extractString(message){ // (Noun: 0, 5) 앞 부분만 추출하는 함수.
     var result = message.substring(0,message.indexOf("("));
-    if(result.indexOf(" ")==-1){ // 띄어쓰기 있으면 결과값에 안 넣음. 위에서 예) "text의 결과값" 은 안 넣음.
+    if(result.indexOf(" ")==-1){ // 띄어쓰기 있으면 결과값에 안 넣음. 위에서 예 - text의 결과값 은 안 넣음.
         resultMessageList.push(result);
     }
 }
