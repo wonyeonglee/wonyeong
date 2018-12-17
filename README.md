@@ -31,7 +31,7 @@ function ranking(){
       }
     });
   })
-  for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬 
+  for (var i=1; i<likeNumArr.length; i++){  //like_num의 내림차순으로 배열 정렬 
     var key= likeNumArr[i];
     var name=likeOwnerArr[i];
     for (var j=i-1; j>=0 && likeNumArr[j]<key; j--){
@@ -44,9 +44,9 @@ function ranking(){
   maxList=[];
   for(var i=0; i<5 ; i++){ 
     if(likeNumArr[i]) //데이터 있으면
-      maxList.push(likeOwnerArr[i],likeNumArr[i]);
+      maxList.push(likeOwnerArr[i],likeNumArr[i]);  //이름, 좋아요 수 저장
     else //빈 데이터면
-      maxList.push("순위 없음", null);
+      maxList.push("순위 없음", null);  //순위 없음, null 저장
   } 
   createChart();  //차트 생성
   $("#rankModal").modal('show');  //모달 띄우기
@@ -77,34 +77,44 @@ function createChart(){
       "name": maxList[8],
       "steps": maxList[9]
   }];
-  // 이하 생략 - 차트 데이터 표시 단위, 그래프 단위와 사이즈 등을 조절하는 부분임
+  // 이하 생략 - 차트 데이터 표시 단위, 그래프 단위와 사이즈 등을 조절하는 부분임. amChart에서 참고했음
 }
 ```
 ### - Submit Image
 
-사진 파일 전송 기능. 먼저 Firebase Cloud Storage에 이미지를 먼저 업로드하고 이미지 파일로부터 만든 URL을 메세지로 보여준다.
+사진 파일 전송 기능. File Picker를 통해 파일이 선택되면 먼저 Firebase Cloud Storage에 이미지를 먼저 업로드하고 이미지 파일로부터 만든 URL을 메세지로 보여준다.
 
 ```
+function onMediaFileSelected(event) { // media picker를 통해 파일이 선택되었을 때 호출
+  event.preventDefault();
+  var file = event.target.files[0];
+  // picker의 인풋 부분을 초기화 
+  imageFormElement.reset();
+  // 유저가 가입된 유저인지 확인 후에 이미지 파일 저장을 위해 saveImageMessage 호출
+  if (checkSignedInWithMessage()) {
+    saveImageMessage(file);
+  }
+}
 function saveImageMessage(file) {
-  // 1 -메세지 placeholder
+  // 1 -메세지 placeholder : 사용자 이름, 임시로 보여줄 로딩 아이콘, 전송 시각 저장하여 firebase에 추가
   firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
     user: getUserUid(),
-    imageUrl: LOADING_IMAGE_URL, //기다리는 동안 보여줄 로딩 아이콘
+    imageUrl: LOADING_IMAGE_URL,
     createdAt: new Date()
   }).then(function(messageRef) {
-    // 2 - Cloud Storage에 이미지를 업로드
+    // 2 - Cloud Storage의 사용자 Uid 아래에 이미지를 업로드
     var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
     return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
       // 3 - 이미지 파일로부터 public URL 만들기
       return fileSnapshot.ref.getDownloadURL().then((url) => {
-        // 4 - 이미지 URL로 메세지 placeholder 업데이트
+        // 4 - 이미지 URL로 메세지 placeholder 업데이트 : 임시 로딩 아이콘을 이미지파일로 변경
         return messageRef.update({
           imageUrl: url,
           storageUri: fileSnapshot.metadata.fullPath
         });
       });
     });
-  }).catch(function(error) {
+  }).catch(function(error) {  //오류 처리
     console.error('Cloud Storage에 업로드하던 중 에러가 발생했습니다:', error);
   });
 }
@@ -113,27 +123,29 @@ function saveImageMessage(file) {
 ### - Delete Class
 채팅방 삭제 기능. 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제한다.
 ```
-
-// 해당 사용자의 room_list에서 해당 채팅방 삭제
-function deleteRoomListInMyInfo(name){ 
+function deleteRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 삭제 하기
   var keyVal;
   var ref = firebase.database().ref('user_list/'+getUserUid()+'/room_list');
   if (ref.orderByChild('room_name').equalTo(name).on("value", function(snapshot) {
-      snapshot.forEach((function(child) { keyVal=child.key;  })) }) )
+      snapshot.forEach((function(child) {
+        keyVal=child.key; // 해당 사용자의 room list 중 전달된 이름과 일치하는 것을 찾아 채팅방 key값을 저장
+      }
+    ))
+  }))
   {
       deleteMyInfoInChatRoom(name);
-      firebase.database().ref('user_list/'+getUserUid()+'/room_list/'+keyVal).remove();
+      firebase.database().ref('user_list/'+getUserUid()+'/room_list/'+keyVal).remove();   //채팅방 key값을 이용해 삭제
       $("#myModal2").modal('hide');
-      window.location.reload();
+      window.location.reload(); //삭제 후 페이지 새로고침 > 업데이트 된 채팅방 리스트 목록 확인
     }
-  else{
-    alert("존재하지 않는 채팅방입니다!");
+  else{ // 해당 사용자의 room list 중 전달된 이름과 일치하는 것이 없으면 
+    alert("존재하지 않는 채팅방입니다!"); //종료
     $("#myModal2").modal('hide');
   };
 }
-// 채팅방 리스트의 해당 채팅방 유저 목록에서 해당 유저 삭제
-function deleteMyInfoInChatRoom(chatKey){ 
-firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove();
+
+function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼기
+  firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove(); //chat list의 유저 정보들에서 해당 유저 정보 삭제
   firebase.database().ref('chat_list/'+chatKey+'/message/').push({
     text: getUserName()+"님이 퇴장하셨습니다.",
   });
