@@ -13,6 +13,41 @@
 ## 1.2 앱 설치 방법 및 사용법
 ## 1.3 주요기능및 관련 코드/API 설명
 
+Delete Class : 채팅방 삭제 기능. 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제한다.
+```
+
+// 해당 사용자의 room_list에서 해당 채팅방 삭제
+function deleteRoomListInMyInfo(name){ 
+
+  var keyVal;
+  var ref = firebase.database().ref('user_list/'+getUserUid()+'/room_list');
+  if (ref.orderByChild('room_name').equalTo(name).on("value", function(snapshot) {
+      snapshot.forEach((function(child) { keyVal=child.key;  })) }) )
+  {
+      deleteMyInfoInChatRoom(name);
+      firebase.database().ref('user_list/'+getUserUid()+'/room_list/'+keyVal).remove();
+      $("#myModal2").modal('hide');
+      window.location.reload();
+    }
+  else{
+    alert("존재하지 않는 채팅방입니다!");
+    $("#myModal2").modal('hide');
+  };
+
+}
+
+// 채팅방 리스트의 해당 채팅방 유저 목록에서 해당 유저 삭제
+function deleteMyInfoInChatRoom(chatKey){ 
+firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove();
+  firebase.database().ref('chat_list/'+chatKey+'/message/').push({
+    text: getUserName()+"님이 퇴장하셨습니다.",
+  });
+
+}
+
+```
+
+
 ## 2. 개발자 정보
 
 - 1415088 홍정수 (jsjs0) 
