@@ -153,7 +153,7 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
     currentChatKey = $(this).find(".name").text(); // 새로운 채팅방에 name 클래스(채팅방)를 가진 요소를 찾아서 그 텍스트를 currentChatKey에 넣음
     $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users" id="usersIcon"></i><span id="chatUserCount"></span>');
           // 채팅창 상단에 채팅방 이름 부분 + user 몇명인지 표시
-    document.getElementById('usersIcon').addEventListener('click', showUserList);
+    document.getElementById('usersIcon').addEventListener('click', showUserList); //usersIcon 누를 시 채팅참여자 목록 보여줄 함수 호출
     currentChatUserInfo = []; // 예전 채팅방의 유저 인포 리셋
     classClick(currentChatKey); // (새로운 채팅방에 존재하는)유저 리스트랑 메세지 리스트 불러옴
   });
@@ -164,9 +164,9 @@ function showUserList(){
   var str="";
   for (var i=0; i<currentChatUserInfo.length; i++){
       str+=(currentChatUserInfo[i].name+"<br>");
-  }
-  $('#usersModal-body').html(str);
-  $("#usersModal").modal('show')
+  } //현재 채팅방에 있는 user 정보에서 이름들만 가져와 str에 저장
+  $('#usersModal-body').html(str);  //모달 body에 str을 추가
+  $("#usersModal").modal('show')  //모달 띄우기
 }
 
 function addUserInfo(snap){ // DB에서 가져온 유저 정보 할당
