@@ -199,9 +199,9 @@ $("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창
 ```
 
 
-### - Delete Class
-채팅방 삭제 기능. 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제한다.
-```
+### - 채팅방 삭제 기능 (Delete Class)
+현재 들어가 있는 채팅방을 삭제할 수 있습니다. 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제하는 두 가지 과정을 .
+```javascript
 function deleteRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 삭제 하기
   var keyVal;
   var ref = firebase.database().ref('user_list/'+getUserUid()+'/room_list');
@@ -311,7 +311,7 @@ function loadMessages(chatKey) { // DB에서 메세지 리스트 불러오기
 
 사진 파일 전송 기능. File Picker를 통해 파일이 선택되면 먼저 Firebase Cloud Storage에 이미지를 먼저 업로드하고 이미지 파일로부터 만든 URL을 메세지로 보여준다.
 
-```
+```javascript
 function onMediaFileSelected(event) { // media picker를 통해 파일이 선택되었을 때 호출
   event.preventDefault();
   var file = event.target.files[0];
@@ -403,7 +403,7 @@ firebase.database().ref('/chat_list/'+data.room_name+'/user/'+getUserUid()+'/lik
 ### - Ranking 
 랭킹 표시 기능. 각 채팅방에 저장되어 있는 유저들의 좋아요 개수 목록을 불러와 내림차순으로 정렬 후 최댓값 5개 데이터의 사용자 이름, 받은 좋아요 개수를 저장한다. 이 데이터를 기반으로 랭킹 차트 생성하여 모달에 표시한다. 차트 생성하는 함수는 amChart에서 참고한 것으로, 
 
-```
+```javascript
 function ranking(){
   if(currentChatKey ==""){
   alert("채팅방에 접속 후 이용이 가능합니다.")
