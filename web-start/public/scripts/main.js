@@ -20,7 +20,7 @@ var currentChatKey = "";
 var currentChatUserInfo = [];
 
 // Signs-in Friendly Chat.
- 
+
 // Signs-out of Friendly Chat.
 function signOut() {
   firebase.auth().signOut();
@@ -53,6 +53,56 @@ rankElement.addEventListener('click', ranking);
 
 
 signOutButtonElement.addEventListener('click', signOut);
+
+
+messageListDiv.addEventListener('scroll', loadMoreMessage); //메세지가 들어가는 부분의 스크롤이 일어 났을 시 이벤트 리스너 달기
+
+function loadMoreMessage(e){ //스크롤 일어났을 시 실행 되는 부분
+  var element = e.target;
+  if(element.scrollTop==0){ //스크롤이 최상단으로 갔을때
+    var firstMessageKey = $("#message-box").children(":first").attr('id'); // 최상단에 위치한 메세지의 id값 가져오기
+    var index=0; //새로운 메세지가 들어갈 위치를 지정해 주는 변수
+    var callback = function(snap){
+      if(!(snap.key ==firstMessageKey)){ //최상단에 있는 메세지는 포함되어 있기 때문에 제외하기
+        var data = snap.val(); // snap의 데이터 불러와서 할당
+        for(var i = 0 ; i < currentChatUserInfo.length;i++){ // 메세지 내가 보냈는지(채팅창에서 오른쪽), 상대방이 보냈는지(채팅창에서 왼쪽)
+          if(currentChatUserInfo[i]['uid']==data.user){ // 현재 채팅방 유저의 리스트[i] == 현재 보낸 메세지의 유저 id 일 때 -> 메세지 보낸 사람이 누군지 알게됨.
+            var send = false; // 채팅방에서 왼쪽
+            if(data.user == getUserUid()){ // 보낸 사람이 본인일 때
+              send = true // 채팅방에서 오른쪽
+            }
+            var count;
+            if(data.likeUserList==null){ // 메세지 좋아요 없을 때
+              count = 0;
+            } else{ // 메세지 좋아요 있을 때
+              count = Object.keys(data.likeUserList).length; // 내 메세지를 좋아하는 유저 리스트 모두 세기
+            }
+              // 2018. 12. 15. 메세지 받아올 때 좋아요 눌렀던 메세지일 때 하트 색 빨간 색으로. - 이원영
+            var itsme = false;
+            if(data.likeUserList !== undefined && data.likeUserList[getUserUid()]){
+              itsme = true;
+            }
+            var first = true; //스크롤에 의해서 불러온건지 아닌지 확인하는 변수
+            // index를 사용한 이유는 firebase database에서 데이터를 불러올때 역순으로 불러오는데, 메세지 리스트에 넣을때 제대로 넣기위해서
+            // 예를들어 1,2,3,4,5,6,7,8,9,10 이있으면 1,2,3,4,5,6,7,8,9,10 순으로 불러옴 따라서 메세지에 보여줄때 1,2,3,4,5,6,7,8,9,10으로 넣기 위하여 필요한 변수
+            // 최상단 메세지
+            // 1 최상단 메세지
+            // 1 2 최상단 메세지
+            // 1 2 3 최상단 메세지
+            // 이런식으로 밖에 넣는 방법 없음 따라서 idnex 필요
+            // 파라메터 itsme 추가.
+            displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme, first,index); // HTML에 직접 적으로 할당,
+            ++index; //위치정보 index 추가
+            break;
+          }
+        }
+      }
+    }
+    firebase.database().ref('/chat_list/'+currentChatKey+'/message/').orderByKey().endAt(firstMessageKey).limitToLast(13).on('child_added', callback);// 최상단에 위치한 메세지의 id값을 기준으로 전에 12개 가져오기(13인 이유는 최상단 메세지 포함해서 가져오기때문에)
+    firebase.database().ref('/chat_list/'+currentChatKey+'/message/').orderByKey().endAt(firstMessageKey).limitToLast(13).on('child_changed', callback);// 최상단에 위치한 메세지의 id값을 기준으로 전에 12개 가져오기(13인 이유는 최상단 메세지 포함해서 가져오기때문에)
+  }
+}
+
 
 // Initiate firebase auth.
 function initFirebaseAuth() {
@@ -151,7 +201,7 @@ function displayChatlist(key,name) { // 채팅방 리스트에 채팅방 추가 
     $(this).addClass("active"); // 새로운 채팅방이 active 되도록
     $("#message-box").html('');
     currentChatKey = $(this).find(".name").text(); // 새로운 채팅방에 name 클래스(채팅방)를 가진 요소를 찾아서 그 텍스트를 currentChatKey에 넣음
-    $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users"></i> <span id="chatUserCount"></span>');  // 채팅창 상단에 채팅방 이름 부분
+    $("#chat-name").html(currentChatKey+" "+'&nbsp;&nbsp;<i class="fas fa-users"></i> <span id="chatUserCount"></span>');  // 채팅창 상단에 채팅방 이름 부분 + user 몇명인지 표시
     currentChatUserInfo = []; // 예전 채팅방의 유저 인포 리셋
     classClick(currentChatKey); // (새로운 채팅방에 존재하는)유저 리스트랑 메세지 리스트 불러옴
   });
@@ -169,7 +219,7 @@ function addUserInfo(snap){ // DB에서 가져온 유저 정보 할당
 
       //on에서 넘어온 유저 push될 때마다 length세서 참가인원수 표시.
       currentChatUserInfo.push(info); // 유저 정보를 currentChatUserInfo에 넣기
-      document.getElementById('chatUserCount').innerHTML = currentChatUserInfo.length;
+      document.getElementById('chatUserCount').innerHTML = currentChatUserInfo.length; //그 채팅방을 이용하는 user 수 얻기 -> 표시하기 위해
       // document.getElementById('chatUserCount').text('3');
 
 }
@@ -216,7 +266,8 @@ function loadMessages(chatKey) { // DB에서 메세지 리스트 불러오기
           itsme = true;
         }
         // 파라메터 itsme 추가.
-        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme); // HTML에 직접 적으로 할당
+        var first = false;
+        displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme,first); // HTML에 직접 적으로 할당
         break;
 
       }
@@ -226,7 +277,7 @@ function loadMessages(chatKey) { // DB에서 메세지 리스트 불러오기
   firebase.database().ref('/chat_list/'+chatKey+'/message/').limitToLast(12).on('child_changed', callback); // 좋아요 같은 경우(변화 있을 때 refresh)
 }
 
-function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid, itsme = false) { // 채팅방 HTML에 넣는 함수
+function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeNum,messageUid, itsme = false,first,index) { // 채팅방 HTML에 넣는 함수
   var li = document.getElementById(key);// 메세지 박스가 이미 있는지
   // If an element for that message does not exists yet we create it.
   if (!li) {
@@ -246,14 +297,31 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
     } else{ // 채팅창에서 왼쪽
       li.setAttribute('class','replies');
     }
-    messageListElement.appendChild(li);
+    if(first==true){ //스크롤 최상단으로 불러왔을 때
+      $("#messages-list").scrollTop(300); //스크롤의 위치를 위에서부터 300px 되는 부분에 넣으라는 의미
+      $("#message-box").children()[index].before(li) //우리가 넣으려는 메세지를 위에서부터 index번째에 넣으라는 의미
+
+      /*
+        이렇게 한 이유는 db에 시간순으로 들어가 있는게 1,2,3,4,5,6,7,8,9,10이라 가정하면
+        메세지가 불러져서 들어오는순서가 1,2,3,4,5,6,7,8,9,10 이기 때문에
+         순서를 생각하면 1을 넣고 1 앞에 2를 넣어야하기 때문에 index가 1인것
+                      1  최상단 메세지
+                     1 2 최상단 메세지
+                     1 2 3  최상단 메세지
+                     1 2 3 4  최상단 메세지
+                     1 2 3 4 5  최상단 메세지
+      $("#message-box").children()[1].before(li) <- 이것의 의미는 2번째 메세지의 앞부분에 지금 들어온 메세지를 넣으라는 의미
+      */
+    } else{
+      messageListElement.appendChild(li);
+    }
   }
-  var likeElement = li.querySelector('.like');// 좋아요
+  var likeElement = li.querySelector('.like'); // 좋아요
     likeElement.textContent = " "+likeNum;
 
     likeElement.onclick = function(e){ // 좋아요가 클릭 됐을 때 실행
-      var isUser = 0;
-      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/user/').transaction(function(user1){ // 해당 메세지의 좋아요 버튼 누른사람 리스트 불러오기
+      var isUser = 0; //본인 메세지인지 확인하기 위한 변수
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/user/').transaction(function(user1){ // 해당 메세지를 작성한 user불러오기
                                                                                                                                           // 좋아요의 동시성 해소를 위하여 트랜젝션 사용
 
         if(user1==getUserUid()){//본인 메세지인지 확인
@@ -264,31 +332,30 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
 
       });
 
-
       if(isUser==0){//본인 메세지가 아닌 경우에만 좋아요 버튼 누르면 효과 있음
 
-      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){   // 메세지의 좋아요 갯수(number) 불러오기
+      firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/').transaction(function(result){   // 해당 메세지의 좋아요 버튼 누른사람 리스트 불러오기
                                                                                                                                                     // 좋아요의 동시성 해소를 위하여 트랜젝션 사용
 
-        var plusminus = 1;
-        if(result){
+        var plusminus = 1;//좋아요를 누르면 총 incentive를 +1 해야한다
+        if(result){ // 좋아요를 누른 userlist의 내용이 존재
 
-          // 유저 리스트에 본인이 있는 경우
-          if(result[getUserUid()]){
 
-            likeElement.style.color="#32465a";
-            delete result[getUserUid()]; //리스트에서 본인 삭제
-            plusminus = -1;
-          } else{
-            likeElement.style.color="red";
-            result[getUserUid()] ={temp : 'temp'}; // 유저리스트에 본인이 없는 경우
+          if(result[getUserUid()]){// userlist가 존재하고 그 안에 본인이 있는 경우는 좋아요를 취소하는 것.
+
+            likeElement.style.color="#32465a"; //원래 하트 색깔로 되돌리고
+            delete result[getUserUid()]; //userlist에서 본인 삭제
+            plusminus = -1; // 좋아요를 취소하면 총 incentive -1 해야한다
+          } else{// 유저리스트에 본인이 없는 경우는 좋아요를 누르는 것.
+            likeElement.style.color="red"; //하트 색깔 빨간색으로 변경
+            result[getUserUid()] ={temp : 'temp'};
           }
 
 
-        } else{ // 좋아하는 유저가 아예 없을 때 -> 체크할 필요없이 본인만 넣음
+        } else{ // 좋아요를 누른 userlist의 내용이 존재하지 않을 때(아무도 그 메세지에 좋아요를 누르지 않음) -> 체크할 필요없이 본인만 넣음
           result = {};
-          likeElement.style.color="red";
-          result[getUserUid()] ={temp : 'temp'}; // 메세지에 좋아한 유저가 없었을 때
+          likeElement.style.color="red"; //하트 색깔 빨간색으로 변경
+          result[getUserUid()] ={temp : 'temp'};
 
 
         }
@@ -296,12 +363,12 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
 
         firebase.database().ref('/chat_list/'+currentChatKey+'/user/'+messageUid+'/like_num').transaction(function(number) { // 메세지의 좋아요 갯수(number) 불러오기.
                                                                                                                             // 좋아요의 동시성 해소를 위하여 트랜젝션 사용
-          if (number) {
+          if (number) {// 좋아요 개수가 있을 때
 
-              number = number + plusminus;
+              number = number + plusminus; // 취소하는 경우에는 -1을 더하고 좋아요를 하는 경우에는 +1
 
-          } else{
-            number = 1;
+          } else{ // 숫자가 없는 경우
+            number = 1; // 1이된다.
           }
           return number;
         });
@@ -345,7 +412,9 @@ function displayMessage(key, name, text, picUrl, send,imageUrl, createdAt, likeN
 
   // Show the card fading-in and scroll to view the new message.
   setTimeout(function() {li.classList.add('visible')}, 1); // 엔터치면 아래로 내려가는거
-  messageListDiv.scrollTop = messageListDiv.scrollHeight;
+  if(!(first==true)){
+    messageListDiv.scrollTop = messageListDiv.scrollHeight;
+  }
  // messageInputElement.focus();
 }
 
@@ -724,14 +793,15 @@ function updateMyInfoInChatRoom(chatKey){ // 룸 정보에 유저 정보 넣기
 
 
 
+
 var deleteClassElement = document.getElementById('deleteclass'); // delete class 버튼 불러오기
-deleteClassElement.addEventListener('click', function(e){ // delete class 버튼이 클릭됐을때 채팅방 추가하는 알림창 띄우기
+deleteClassElement.addEventListener('click', function(e){ // delete class 버튼이 클릭됐을때 채팅방 삭제 모달 띄우기
     $("#myModal2").modal('show')
 });
 
 $("#delete-class-modal-btn").on('click', function() { // 채팅방 삭제 알림창에서 삭제하기 버튼 클릭했을 시
   var chatListRef = firebase.database().ref('chat_list/'+$("#chatToDelete-name-input").val());
-  chatListRef.once('value', function(snapshot) { // 해당 목록에 존재하는 데이터 한번만 불러오기 https://firebase.google.com/docs/database/web/read-and-write?hl=ko
+  chatListRef.once('value', function(snapshot) { // 해당 목록에 존재하는 데이터 한번만 불러오기
     if(snapshot.val()!=null){ // 해당 이름을 가진 채팅방이 존재할 시
       deleteRoomListInMyInfo($("#chatToDelete-name-input").val());  //삭제
       }
@@ -742,29 +812,29 @@ $("#delete-class-modal-btn").on('click', function() { // 채팅방 삭제 알림
   });
 });
 
-
 function deleteRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 삭제 하기
-
   var keyVal;
-
   var ref = firebase.database().ref('user_list/'+getUserUid()+'/room_list');
   if (ref.orderByChild('room_name').equalTo(name).on("value", function(snapshot) {
-      snapshot.forEach((function(child) { keyVal=child.key;  })) }) )
+      snapshot.forEach((function(child) {
+        keyVal=child.key; // 해당 사용자의 room list 중 전달된 이름과 일치하는 것을 찾아 채팅방 key값을 저장
+      }
+    ))
+  }))
   {
       deleteMyInfoInChatRoom(name);
-      firebase.database().ref('user_list/'+getUserUid()+'/room_list/'+keyVal).remove();
+      firebase.database().ref('user_list/'+getUserUid()+'/room_list/'+keyVal).remove();   //채팅방 key값을 이용해 삭제
       $("#myModal2").modal('hide');
-      window.location.reload();
+      window.location.reload(); //삭제 후 페이지 새로고침 > 업데이트 된 채팅방 리스트 목록 확인
     }
-  else{
-    alert("존재하지 않는 채팅방입니다!");
+  else{ // 해당 사용자의 room list 중 전달된 이름과 일치하는 것이 없으면
+    alert("존재하지 않는 채팅방입니다!"); //종료
     $("#myModal2").modal('hide');
   };
-
 }
 
 function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼기
-  firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove();
+  firebase.database().ref('chat_list/'+chatKey+'/user/'+getUserUid()).remove(); //chat list의 유저 정보들에서 해당 유저 정보 삭제
   firebase.database().ref('chat_list/'+chatKey+'/message/').push({
     text: getUserName()+"님이 퇴장하셨습니다.",
   });
@@ -772,73 +842,69 @@ function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼�
 }
 
 //랭킹
-function ranking(){
+function ranking() {
   if(currentChatKey ==""){
-  alert("채팅방에 접속 후 이용이 가능합니다.")
-} else{
-  var likeNumArr = [];     // 좋아요 개수들의 배열
-  var likeOwnerArr=[];  //좋아요 주인이름의 배열
-  firebase.database().ref('/chat_list/'+currentChatKey+'/user/').once('value', function(snapshot){
-    snapshot.forEach(function(childSnapshot) {  //좋아요 개수들의 배열 불러오기
-      if(childSnapshot.val().like_num){  //좋아요 받은 기록이 있다면
-        likeNumArr.push(childSnapshot.val().like_num); //좋아요 배열에 좋아요 수 저장
-        likeOwnerArr.push(childSnapshot.val().name);  //이름 배열에 사람 이름 저장
+    alert("채팅방에 접속 후 이용이 가능합니다.")
+  } else{
+    var likeNumArr = [];     // 좋아요 개수들의 배열
+    var likeOwnerArr=[];  //좋아요 주인이름의 배열
+    firebase.database().ref('/chat_list/'+currentChatKey+'/user/').once('value', function(snapshot){
+      snapshot.forEach(function(childSnapshot) {  //좋아요 개수들의 배열 불러오기
+        if(childSnapshot.val().like_num){  //좋아요 받은 기록이 있다면
+          likeNumArr.push(childSnapshot.val().like_num); //좋아요 배열에 좋아요 수 저장
+          likeOwnerArr.push(childSnapshot.val().name);  //이름 배열에 사람 이름 저장
+        }
+      });
+    })
+    for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬
+      var key= likeNumArr[i];
+      var name=likeOwnerArr[i];
+      for (var j=i-1; j>=0 && likeNumArr[j]<key; j--){
+        likeNumArr[j+1]=likeNumArr[j];
+        likeOwnerArr[j+1]=likeOwnerArr[j];
       }
-    });
-  })
-  for (var i=1; i<likeNumArr.length; i++){  //like_num 내림차순으로 배열 정렬
-    var key= likeNumArr[i];
-    var name=likeOwnerArr[i];
-    for (var j=i-1; j>=0 && likeNumArr[j]<key; j--){
-      likeNumArr[j+1]=likeNumArr[j];
-      likeOwnerArr[j+1]=likeOwnerArr[j];
+      likeNumArr[j+1]=key;
+      likeOwnerArr[j+1]=name;
     }
-    likeNumArr[j+1]=key;
-    likeOwnerArr[j+1]=name;
+
+    maxList=[];
+    for(var i=0; i<5 ; i++){
+      if(likeNumArr[i]) //데이터 있으면
+        maxList.push(likeOwnerArr[i],likeNumArr[i]);  //이름, 좋아요 수 저장
+      else //빈 데이터면
+        maxList.push("순위 없음", null);  //순위 없음, null 저장
+    }
+    createChart();  //차트 생성
+    $("#rankModal").modal('show');  //띄우기
   }
-
-  maxList=[];
-  for(var i=0; i<5 ; i++){  //최댓값 5개 가져오기-> 배열 길이는 10개(이름, 좋아요수 순으로)가 됨
-    if(likeNumArr[i]) //데이터 있으면
-      maxList.push(likeOwnerArr[i],likeNumArr[i]);
-    else { //빈 데이터면
-      maxList.push("순위 없음", null);
-    }
-  } //좋아요 숫자에 접근하려면 2*i, 이름에 접근하려면 2*i+1 로 해야함
-
-  createChart();
-  $("#rankModal").modal('show');
-}
 }
 
-function createChart(){
+function createChart(){ //실제 차트 그리는 부분
 
-  $('#rankModal').modal({ //초기화..
-      refresh: true
+  $('#rankModal').modal({   // 채팅방마다 새로운 모달이 생성될 수 있도록
+      refresh: true // refresh 시키기
   });
-  var chart;
-  //chart 생성하기!!!!!!!!!!
-    am4core.useTheme(am4themes_animated);
-    chart = am4core.create("chartdiv", am4charts.XYChart);
-
-    chart.paddingBottom = 30;
-    chart.data = [{
-        "name": maxList[0],
-        "steps": maxList[1]
-    }, {
-        "name": maxList[2],
-        "steps": maxList[3]
-    }, {
-        "name": maxList[4],
-        "steps": maxList[5]
-    }, {
-        "name": maxList[6],
-        "steps": maxList[7]
-    }, {
-        "name": maxList[8],
-        "steps": maxList[9]
-    }];
-
+  var chart;  //chart 생성할 변수 선언
+  am4core.useTheme(am4themes_animated); // 애니메이션 효과 주기 위해 테마 설정
+  chart = am4core.create("chartdiv", am4charts.XYChart);  //차트 생성
+  chart.paddingBottom = 30;
+  chart.data = [{     // 해당 채팅방의 top 5 데이터(이름, 좋아요 수)를 차트 데이터로 넘겨줌
+      "name": maxList[0],
+      "steps": maxList[1]
+  }, {
+      "name": maxList[2],
+      "steps": maxList[3]
+  }, {
+      "name": maxList[4],
+      "steps": maxList[5]
+  }, {
+      "name": maxList[6],
+      "steps": maxList[7]
+  }, {
+      "name": maxList[8],
+      "steps": maxList[9]
+  }];
+  //실제 차트 그리는 부분
     var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.dataFields.category = "name";
     categoryAxis.renderer.grid.template.strokeOpacity = 0;
@@ -929,40 +995,36 @@ var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';  //로딩
 // Firebase에 image 메세지를 저장
 // Cloud Storage에 이미지를 먼저 저장함
 function saveImageMessage(file) {
-  // 1 -메세지 placeholder 만들어서 로딩 아이콘 보여주기
+  // 1 -메세지 placeholder : 사용자 이름, 임시로 보여줄 로딩 아이콘, 전송 시각 저장하여 firebase에 추가
   firebase.database().ref('/chat_list/'+currentChatKey+'/message/').push({
     user: getUserUid(),
     imageUrl: LOADING_IMAGE_URL,
-    createdAt: new Date().getUTCFullYear()+"."+ (new Date().getUTCMonth()+1) +"."+new Date().getUTCDate()+"   /   "+(new Date().getUTCHours()+9)%24+":"+new Date().getUTCMinutes()
-//    profilePicUrl: getProfilePicUrl()
+    createdAt: new Date()
   }).then(function(messageRef) {
-    // 2 - Cloud Storage에 이미지를 업로드
+    // 2 - Cloud Storage의 사용자 Uid 아래에 이미지를 업로드
     var filePath = firebase.auth().currentUser.uid + '/' + messageRef.key + '/' + file.name;
     return firebase.storage().ref(filePath).put(file).then(function(fileSnapshot) {
       // 3 - 이미지 파일로부터 public URL 만들기
       return fileSnapshot.ref.getDownloadURL().then((url) => {
-        // 4 - 이미지 URL로 메세지 placeholder 업데이트
+        // 4 - 이미지 URL로 메세지 placeholder 업데이트 : 임시 로딩 아이콘을 이미지파일로 변경
         return messageRef.update({
           imageUrl: url,
           storageUri: fileSnapshot.metadata.fullPath
         });
       });
     });
-  }).catch(function(error) {
+  }).catch(function(error) {  //오류 처리
     console.error('Cloud Storage에 업로드하던 중 에러가 발생했습니다:', error);
   });
 }
 
-// Triggered when a file is selected via the media picker.
+// media picker를 통해 파일이 선택되었을 때 호출
 function onMediaFileSelected(event) {
   event.preventDefault();
   var file = event.target.files[0];
-
-  // Clear the selection in the file picker input.
+  // picker의 인풋 부분을 초기화
   imageFormElement.reset();
-
-
-  // Check if the user is signed-in
+  // 유저가 가입된 유저인지 확인 후에 이미지 파일 저장을 위해 saveImageMessage 호출
   if (checkSignedInWithMessage()) {
     saveImageMessage(file);
   }
