@@ -64,7 +64,7 @@ https://openswteam.firebaseapp.com/
 
 
 ## d. 데이터 베이스 구조
-kinteract에서 사용한 데이터베이스 구조는 다음과 같습니다.
+kinteract에서 사용한 데이터베이스는 Firebase Realtime Database이며, 구조는 다음과 같습니다.
 
 
 ```sh
@@ -200,7 +200,8 @@ $("#add-class-modal-btn").on('click', function() { // 채팅방 추가 알림창
 
 
 ### - 채팅방 삭제 기능 (Delete Class)
-현재 들어가 있는 채팅방을 삭제할 수 있습니다. 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제하는 두 가지 과정을 .
+현재 들어가 있는 채팅방을 삭제할 수 있습니다. 채팅방 추가와 마찬가지로 채팅방의 이름을 key값으로 사용하여, 해당 채팅방이 존재 할 시 채팅방을 삭제할 수 있으며 삭제를 위해서는 Firebase database의 'chat_list'/해당 채팅방/'user'에서 해당 사용자를 삭제하고 'user_list'/해당 사용자/'room_list'에서 해당 채팅방을 삭제하는 두 가지 과정을 거칩니다.
+
 ```javascript
 function deleteRoomListInMyInfo(name){ // 내가 가지고 있는 룸 리스트에 채팅방 삭제 하기
   var keyVal;
@@ -231,8 +232,6 @@ function deleteMyInfoInChatRoom(chatKey){ // 룸 정보에서 유저 정보 빼�
 }
 
 ```
-
-
 
 ### - 채팅방 클릭 했을 시
 채팅방을 클릭 했을 시 실행되는 함수입니다. 채팅방을 클릭 했을 시 기존에 존재 했던 데이터베이스 옵저버를 해제하고 메세지들을 불러옵니다.
@@ -307,9 +306,34 @@ function loadMessages(chatKey) { // DB에서 메세지 리스트 불러오기
 
 ```
 
-### - Submit Image
+### - 채팅방 사용자 목록 (User List)
+채팅방 상단의 user 아이콘에서 현재 채팅방에 들어와 있는 유저 수를 확인할 수 있고 아이콘을 클릭 시 유저 목록을 확인할 수 있습니다. 
 
-사진 파일 전송 기능. File Picker를 통해 파일이 선택되면 먼저 Firebase Cloud Storage에 이미지를 먼저 업로드하고 이미지 파일로부터 만든 URL을 메세지로 보여준다.
+```javascript
+function addUserInfo(snap){ // DB에서 가져온 유저 정보 할당
+  var childData = snap.val();
+      var info = {
+        name : childData.name,
+        uid : snap.key,
+        picUrl : childData.profilePicUrl
+      }
+      //on에서 넘어온 유저 push될 때마다 length세서 참가인원수 표시.
+      currentChatUserInfo.push(info); // 유저 정보를 currentChatUserInfo에 넣기
+      document.getElementById('chatUserCount').innerHTML = currentChatUserInfo.length; //그 채팅방을 이용하는 user 수 얻기 -> 표시하기 위해
+}
+function showUserList(){
+  var str="";
+  for (var i=0; i<currentChatUserInfo.length; i++){
+      str+=(currentChatUserInfo[i].name+"<br>");
+  } //현재 채팅방에 있는 user 정보에서 이름들만 가져와 str에 저장
+  $('#usersModal-body').html(str);  //모달 body에 str을 추가
+  $("#usersModal").modal('show')  //모달 띄우기
+}
+```
+
+### - 사진 파일 전송 기능 (Submit Image)
+
+사진 파일을 전송할 수 있습니다. File Picker를 통해 파일이 선택되면 가입된 유저인지 확인한 후 임시로 로딩 아이콘을 메세지 형태로 채팅방에 보여줍니다. 먼저 Firebase Cloud Storage에 사용자 Uid 이름으로 이미지를 먼저 업로드한 후 이미지 파일에서 URL을 생성하고 띄워 두었던 로딩 아이콘을 이 URL로 교체합니다.
 
 ```javascript
 function onMediaFileSelected(event) { // media picker를 통해 파일이 선택되었을 때 호출
@@ -388,19 +412,21 @@ firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent(
 ```
 
 ### - 각 채팅방에서의 본인 좋아요 개수 집계 (My incentive)
-My incentive에서는 해당 채팅방에서 유저가 좋아요 개수를 총 몇개 받았는지 확인 할 수 있습니다.
+My incentive에서는 해당 채팅방에서 유저가 좋아요 개수를 총 몇 개 받았는지 확인할 수 있습니다.
 
 데이터 베이스에 Like_num 테이블을 활용해 구현 하였으며 위에 좋아요 버튼 클릭 시 실행되는 함수와 연관되어 있습니다.
 
 ```javascript
 firebase.database().ref('/chat_list/'+data.room_name+'/user/'+getUserUid()+'/like_num')
-    .on('value',function(snapshot){//채티방 리스트에 존재하는 자기 아이디의 좋아요 개수 불러오기
+    .on('value',function(snapshot){//채팅방 리스트에 존재하는 자기 아이디의 좋아요 개수 불러오기
       displayChatLikeList(snapshot.key, data.room_name,snapshot.val()); // 좋아요(My incentive) 리스트 불러오기
     });
 ```
 
-### - Ranking 
-랭킹 표시 기능. 각 채팅방에 저장되어 있는 유저들의 좋아요 개수 목록을 불러와 내림차순으로 정렬 후 최댓값 5개 데이터의 사용자 이름, 받은 좋아요 개수를 저장한다. 이 데이터를 기반으로 랭킹 차트 생성하여 모달에 표시한다. 차트 생성하는 함수는 amChart에서 참고한 것으로, 
+### - 좋아요 랭킹 차트 (Ranking) 
+각 채팅방마다 존재하는 랭킹 페이지를 통해 가장 많은 좋아요를 받은 사용자를 최대 5명까지 차트 형태로 확인할 수 있습니다.
+채팅방에 있는 사용자들이 받은 좋아요 개수와 사용자 이름을 각각 likeNumArr과 likeOwnerArr에 저장합니다. 좋아요 개수의 내림차순으로 배열을 정렬 후 최댓값 5개 데이터의 사용자 이름과 그 사용자가 받은 좋아요 개수를 다시 maxList 배열에 저장합니다. 이 데이터를 차트 생성 함수에 넘겨주면 차트 생성 함수는 그것을 기반으로 랭킹 차트를 생성하고 모달에 표시합니다.
+여기서 차트 생성하는 함수는 amChart에서 참고한 것으로, 그래프 도형 서식이나 각종 애니메이션을 설정합니다.
 
 ```javascript
 function ranking(){
@@ -427,9 +453,9 @@ function ranking(){
     likeNumArr[j+1]=key;
     likeOwnerArr[j+1]=name;
   }
-  maxList=[];
+  maxList=[]; // 최대값 저장할 배열 초기화
   for(var i=0; i<5 ; i++){ 
-    if(likeNumArr[i]) //데이터 있으면
+    if(likeNumArr[i]) // 유의미한 데이터가 있으면
       maxList.push(likeOwnerArr[i],likeNumArr[i]);  //이름, 좋아요 수 저장
     else //빈 데이터면
       maxList.push("순위 없음", null);  //순위 없음, null 저장
@@ -664,9 +690,20 @@ function computeFrequency(messageList){ // 단어의 빈도수 계산하는 함�
   * 최종 발표자
   
 - 1771016 김은지 (eun-g-kim) : eunjiBranch
-  * 기존 UI에서 불필요한 부분 삭제, 좋아요 및 word Cloud UI 구현, 랭킹 차트 UI 및 기능 구현, 채팅방 삭제 기능 구현, 채팅 시간 표시, 파일 전송 기능 구현
+  * 기존 UI에서 불필요한 부분 삭제
+  * 채팅방 UI 구현 : 좋아요 버튼, word Cloud 버튼, 랭킹 버튼 구현 
+  * 채팅방 기능 구현 : 채팅방 삭제하기(Delete Class), 채팅방 사용자 목록 확인
+  * 채팅창 기능 구현 : firebase cloud storage 이용한 파일 전송 기능 구현, 채팅 시간 표시
+  * 랭킹 차트 modal 및 기능 구현 : 좋아요 개수 top 5 데이터 기반으로 차트 생성(amChart)
+  * ppt 초안 제작
+  
 - 1771044 이원영 (wonyeonglee) : wonyeongbranch
-  *로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 기존 UI에서 불필요한 부분 삭제, 좋아요 취소 기능 구현, 좋아요 ( 본인 메세지 불가능) 기능 추가, ppt 제작, 시연 동영상 
+  * 기존 UI에서 불필요한 부분 삭제
+  * 채팅방 UI 구현 : 로그인창 UI, 팝업창 UI, 마이페이지 랭킹 UI, 좋아요 버튼 UI 구현, 랭킹 페이지 UI 구현(삭제), 채팅방 사용자 수 표시
+  * 좋아요 기능 구현 : 좋아요 취소 기능, 본인 메세지에 좋아요 누를 수 없도록 기능 추가
+  * ppt 제작
+  * 시연 동영상
+
 - 1771098 이가은 (gaeunleeandlee) : 
   * 기존 UI에서 불필요한 부분 삭제, 마이페이지 UI 수정, 버튼 UI 수정, 
 
@@ -677,6 +714,6 @@ See [LICENSE](LICENSE), Apache License 2.0
 + Firebase 웹 메신저 오픈소스 : https://github.com/firebase/friendlychat-web
 + 질문 데이터 시각화 d3 Word Cloud 오픈소스 : https://github.com/wvengen/d3-wordcloud
 + Main 채팅 창 UI 오픈소스 : https://bootsnipp.com/snippets/35mvD
-+ Twitter 형태소 분석기 Api : 
-https://github.com/open-korean-text/open-korean-text-api
++ Twitter 형태소 분석기 Api : https://github.com/open-korean-text/open-korean-text-api
++ amChart의 Column chart Api: https://www.amcharts.com/demos/column-chart-images-top/
 
