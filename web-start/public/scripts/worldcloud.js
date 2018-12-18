@@ -11,10 +11,12 @@ function myFunction() { // 페이지가 로드 되었을 때 실행되는 함수
     curChatKey = decodeURIComponent(getQueryVariable('chatkey')); // URL에 있는 chatkey 뽑아오기. -> 한글로 decode
     firebase.database().ref('/chat_list/'+curChatKey+'/message').limitToLast(100).once('value', function(snap){ // 현재 curChatKey로 최근 100개 메세지 불러오기.
         snap.forEach(function(childSnapshot) { // 한번에 가져온 메세지는 snap(100개 메세지). 각 1개의 메세지는 chlidSnapshot
-            if(childSnapshot.val().text.indexOf("님이 입장하셨습니다.")==-1){ // 결과값에 유저 입장 메세지 포함되던 문제 제거를 위해 -> 입장 메세지 없을 때만 넘김
-                allMessageList.push(childSnapshot.val().text) // allMessageList에 메세지 넣기
+            if(childSnapshot.val().hasOwnProperty('imageUrl')==false){//image가 없는 메세지만 word cloud로 
+            if(childSnapshot.val().text.indexOf("님이 입장하셨습니다.")==-1 ){ // 결과값에 유저 입장 메세지 포함되던 문제 제거를 위해 -> 입장 메세지 없을 때만 넘김
+                   allMessageList.push(childSnapshot.val().text) // allMessageList에 메세지 넣기
             }
-        })
+        }
+    })
     }).then(function(){
         maxLength = allMessageList.length-1; // allMessageList의 총 갯수
         for(var i = 0 ; i <allMessageList.length; i++){ // 각각의 메세지에 대해서 트위터 한글 형태소 분석 api로 요청 보내기.
