@@ -55,13 +55,13 @@ rankElement.addEventListener('click', ranking);
 signOutButtonElement.addEventListener('click', signOut);
 
 
-messageListDiv.addEventListener('scroll', loadMoreMessage); //메세지가 들어가는 부분의 스크롤이 일어 났을 시 이벤트 리스너 달기
+messageListDiv.addEventListener('scroll', loadMoreMessage); // 메세지가 들어가는 부분의 스크롤이 일어 났을 시 이벤트 리스너 달기
 
-function loadMoreMessage(e){ //스크롤 일어났을 시 실행 되는 부분
+function loadMoreMessage(e){ // 스크롤 일어났을 시 실행 되는 부분
   var element = e.target;
-  if(element.scrollTop==0){ //스크롤이 최상단으로 갔을때
+  if(element.scrollTop==0){ // 스크롤이 최상단으로 갔을때
     var firstMessageKey = $("#message-box").children(":first").attr('id'); // 최상단에 위치한 메세지의 id값 가져오기
-    var index=0; //새로운 메세지가 들어갈 위치를 지정해 주는 변수
+    var index=0; // 새로운 메세지가 들어갈 위치를 지정해 주는 변수
     var callback = function(snap){
       if(!(snap.key ==firstMessageKey)){ //최상단에 있는 메세지는 포함되어 있기 때문에 제외하기
         var data = snap.val(); // snap의 데이터 불러와서 할당
@@ -77,21 +77,24 @@ function loadMoreMessage(e){ //스크롤 일어났을 시 실행 되는 부분
             } else{ // 메세지 좋아요 있을 때
               count = Object.keys(data.likeUserList).length; // 내 메세지를 좋아하는 유저 리스트 모두 세기
             }
-              // 2018. 12. 15. 메세지 받아올 때 좋아요 눌렀던 메세지일 때 하트 색 빨간 색으로. - 이원영
-            var itsme = false;
+
+            var itsme = false; // 2018. 12. 15. 메세지 받아올 때 좋아요 눌렀던 메세지일 때 하트 색 빨간 색으로. - 이원영
             if(data.likeUserList !== undefined && data.likeUserList[getUserUid()]){
               itsme = true;
             }
             var first = true; //스크롤에 의해서 불러온건지 아닌지 확인하는 변수
-            // index를 사용한 이유는 firebase database에서 데이터를 불러올때 역순으로 불러오는데, 메세지 리스트에 넣을때 제대로 넣기위해서
-            // 예를들어 1,2,3,4,5,6,7,8,9,10 이있으면 1,2,3,4,5,6,7,8,9,10 순으로 불러옴 따라서 메세지에 보여줄때 1,2,3,4,5,6,7,8,9,10으로 넣기 위하여 필요한 변수
-            // 최상단 메세지
-            // 1 최상단 메세지
-            // 1 2 최상단 메세지
-            // 1 2 3 최상단 메세지
-            // 이런식으로 밖에 넣는 방법 없음 따라서 idnex 필요
-            // 파라메터 itsme 추가.
-            displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme, first,index); // HTML에 직접 적으로 할당,
+
+            /* index를 사용하는 이유는 firebase database에서 데이터를 불러올때 역순으로 불러오는데, 메세지 리스트에 넣을때 제대로 넣기위해서
+             예를들어 1,2,3,4,5,6,7,8,9,10 이있으면 1,2,3,4,5,6,7,8,9,10 순으로 불러옴 따라서 메세지에 보여줄때 1,2,3,4,5,6,7,8,9,10으로 넣기 위하여 필요한 변수
+                최상단 메세지
+                1 최상단 메세지
+                1 2 최상단 메세지
+                1 2 3 최상단 메세지
+             이런식으로 밖에 넣는 방법 없음. 따라서 index 필요
+            */
+
+            // 파라미터 itsme 추가.
+            displayMessage(snap.key,currentChatUserInfo[i]['name'],data.text,currentChatUserInfo[i]['picUrl'], send,data.imageUrl, data.createdAt, count,currentChatUserInfo[i]['uid'], itsme, first,index); // HTML에 직접적으로 할당,
             ++index; //위치정보 index 추가
             break;
           }
