@@ -802,7 +802,7 @@ function update(list) {
   * ppt 제작
   * 시연 동영상
 
-- 1771098 이가은 (gaeunleeandlee) : 
+- 1771098 이가은 (gaeunleeandlee) : gaeun
   * 기존 UI에서 불필요한 부분 삭제
   * 마이페이지 UI및 스크롤바 
   * 채팅창 내 버튼 UI 수정
