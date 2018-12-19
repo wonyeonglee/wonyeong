@@ -68,9 +68,11 @@ firebase deploy
 ![1](https://user-images.githubusercontent.com/43198923/50205785-ca038f80-03ac-11e9-8f2e-bd1560a5d922.png)
 ![default](https://user-images.githubusercontent.com/43198923/50206228-1c917b80-03ae-11e9-8a4d-787498a7a872.png)
 
-2. 채팅방 생성 및 삭제
+2-1. 채팅방 생성
 ![3](https://user-images.githubusercontent.com/43198923/50205843-0c2cd100-03ad-11e9-8872-a599849341b9.png)
 ![4](https://user-images.githubusercontent.com/43198923/50205871-1d75dd80-03ad-11e9-998a-dbfaca1e6cfb.png)
+
+2-2. 채팅방 삭제
 ![default](https://user-images.githubusercontent.com/43198923/50206791-dfc68400-03af-11e9-97c2-a2ce13ced994.PNG)
 
 3. 사진 전송
