@@ -705,7 +705,12 @@ function computeFrequency(messageList){ // 단어의 빈도수 계산하는 함�
   * 시연 동영상
 
 - 1771098 이가은 (gaeunleeandlee) : 
-  * 기존 UI에서 불필요한 부분 삭제, 마이페이지 UI 수정, 버튼 UI 수정, 
+  * 기존 UI에서 불필요한 부분 삭제
+  * 마이페이지 UI및 스크롤바 
+  * 채팅창 내 버튼 UI 수정
+  * ppt 최종본 작성및 수정
+  * 시연 동영상 편집
+  
 
 ## 3. 라이센스 정보
 See [LICENSE](LICENSE), Apache License 2.0
