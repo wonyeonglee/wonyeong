@@ -373,7 +373,7 @@ function saveImageMessage(file) {
 
 
 ### - 좋아요 버튼 처리
-유저 두명이 한개의 메세지에 동시에 좋아요 버튼을 눌렀을 시 카운트 오류가 생길 수 있는 여지가 있어 firebase database에서 제공하는 transaction 함수를 사용하여 구현하였습니다.
+좋아요는 1번만 누를 수 있고, 유저 두명이 한개의 메세지에 동시에 좋아요 버튼을 눌렀을 시 카운트 오류가 생길 수 있는 여지가 있어 firebase database에서 제공하는 transaction 함수를 사용하여 구현하였습니다.
 ```javascript
 firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent().attr('id')+'/likeUserList/')
       .transaction(function(result){   // 해당 메세지의 좋아요 버튼 누른사람 리스트 불러오기
