@@ -59,13 +59,13 @@ firebase deploy
 
 ## c. 사용 방법
 
-호스팅 주소 : https://openswteam.firebaseapp.com/
++ 호스팅 주소 : https://openswteam.firebaseapp.com/
 
-시연 영상 :
++ 시연 영상 :
 
 [![](http://img.youtube.com/vi/JcxVNpjbq7U/0.jpg)](http://www.youtube.com/watch?v=JcxVNpjbq7U "Kinteract")
 
-시연 캡처 :
++ 시연 캡처 :
 
 0. 로그인 화면
 ![13](https://user-images.githubusercontent.com/43198923/50206284-464aa280-03ae-11e9-8cdc-b902494ec345.png)
