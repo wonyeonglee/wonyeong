@@ -63,8 +63,11 @@ firebase deploy
 
 시연 영상 및 캡처 :
 
-
-<iframe width="640" height="360" src="https://www.youtube.com/watch?v=JcxVNpjbq7U" frameborder="0" gesture="media" allowfullscreen=""></iframe>
+<div align="center">
+    <iframe width="620" height="315"
+        src="https://www.youtube.com/watch?v=JcxVNpjbq7U">
+    </iframe>
+</div>
 
 0. 로그인 화면
 ![13](https://user-images.githubusercontent.com/43198923/50206284-464aa280-03ae-11e9-8cdc-b902494ec345.png)
