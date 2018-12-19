@@ -10,7 +10,7 @@ Kinteract는 K와 interact의 합성어로서, K= I(In) + C(Class)로 수업중 
 
 Kinteract의 이름에서 알 수 있듯이 In Class, 즉 수업 시간에 활용하거나 질문을 돕는 웹 채팅입니다. 
 
-Kinteract 채팅 웹을 통해 _좋아요-가산점 기능, 단체 채팅, word cloud_을 주요 기능으로 구현하였습니다.
+Kinteract 채팅 웹을 통해 _단체 채팅, 좋아요-가산점 기능, 좋아요 랭킹, 질문 데이터 분석 및 시각화를_ 주요 기능으로 구현하였습니다.
 
 
 ## b. 설치 방법
@@ -411,7 +411,7 @@ firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent(
 
 ```
 
-### - 각 채팅방에서의 본인 좋아요 개수 집계 (My incentive)
+### - 각 채팅방에서의 본인 좋아요 개수 집계 (My incentive-)
 My incentive에서는 해당 채팅방에서 유저가 좋아요 개수를 총 몇 개 받았는지 확인할 수 있습니다.
 
 데이터 베이스에 Like_num 테이블을 활용해 구현 하였으며 위에 좋아요 버튼 클릭 시 실행되는 함수와 연관되어 있습니다.
@@ -783,13 +783,13 @@ function update(list) {
   * 로그인 & 로그아웃 기능 구현
   * 채팅방 기능 구현 : 채팅방 생성하기(Add Class), 본인의 채팅방 리스트 불러오기
   * 채팅창 기능 구현 : 메세지 불러오기, 대화하기(텍스트), 채팅방 최상단에서 더 위로 스크롤 시 이전 메세지 로드하기
-  * 좋아요 기능 구현 : transaction, 각 채팅방에서의 본인 좋아요 개수 집계 (My incentive)
-  * 질문 데이터 시각화 기능 구현 UI & 기능 구현 : 형태소 분석(Twitter Api), 데이터 시각화(Word Cloud)
+  * 좋아요 기능 구현 : 좋아요 1번만 눌리게, transaction, 각 채팅방에서의 본인 좋아요 개수 집계 (My incentive-마이페이지)
+  * 질문 데이터 시각화 기능 구현 UI & 기능 구현 : 질문 데이터 전처리 과정(Twitter Api), 질문 데이터 시각화(Word Cloud)
   * 최종 발표자
   
 - 1771016 김은지 (eun-g-kim) : eunjiBranch
   * 기존 UI에서 불필요한 부분 삭제
-  * 채팅방 UI 구현 : 좋아요 버튼, word Cloud 버튼, 랭킹 버튼 구현 
+  * 채팅방 UI 구현 : 좋아요 버튼, Word Cloud 버튼, 랭킹 버튼 구현 
   * 채팅방 기능 구현 : 채팅방 삭제하기(Delete Class), 채팅방 사용자 목록 확인
   * 채팅창 기능 구현 : firebase cloud storage 이용한 파일 전송 기능 구현, 채팅 시간 표시
   * 랭킹 차트 modal 및 기능 구현 : 좋아요 개수 top 5 데이터 기반으로 차트 생성(amChart)
@@ -804,9 +804,9 @@ function update(list) {
 
 - 1771098 이가은 (gaeunleeandlee) : gaeun
   * 기존 UI에서 불필요한 부분 삭제
-  * 마이페이지 스크롤바 및 UI
+  * 마이페이지 UI및 스크롤바 
   * 채팅창 내 버튼 UI 수정
-  * ppt 최종본 제작및 수정
+  * ppt 최종본 작성 및 수정
   * 시연 동영상 편집
   
 
