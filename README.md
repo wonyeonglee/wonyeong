@@ -61,6 +61,8 @@ firebase deploy
 
 https://openswteam.firebaseapp.com/
 
+1. 로그인 & 로그아웃
+![1](https://user-images.githubusercontent.com/43198923/50205785-ca038f80-03ac-11e9-8f2e-bd1560a5d922.png)
 
 
 ## d. 데이터 베이스 구조
