@@ -804,9 +804,9 @@ function update(list) {
 
 - 1771098 이가은 (gaeunleeandlee) : gaeun
   * 기존 UI에서 불필요한 부분 삭제
-  * 마이페이지 UI및 스크롤바 
+  * 마이페이지 스크롤바 및 UI
   * 채팅창 내 버튼 UI 수정
-  * ppt 최종본 작성및 수정
+  * ppt 최종본 제작및 수정
   * 시연 동영상 편집
   
 
