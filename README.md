@@ -676,7 +676,7 @@ function computeFrequency(messageList){ // 단어의 빈도수 계산하는 함�
 
 ```
 
-### 질문 데이터 시각화 (Word Cloud)
+### - 질문 데이터 시각화 (Word Cloud)
 d3-wordcloud.js 기반으로 작성되었으며, 텍스트와 frequency가 적힌 배열을 입력값으로 시각화 해서 표현하였습니다.
 ```javascript
 
@@ -817,7 +817,7 @@ See [LICENSE](LICENSE), Apache License 2.0
 + Firebase 웹 메신저 오픈소스 : https://github.com/firebase/friendlychat-web
 + amChart의 Column chart Api: https://www.amcharts.com/demos/column-chart-images-top/
 + Twitter 형태소 분석기 Api : https://github.com/open-korean-text/open-korean-text-api
-+ 질문 데이터 시각화 d3 Word Cloud 오픈소스 : https://github.com/wvengen/d3-wordcloud
++ 질문 데이터 시각화 d3 Word Cloud 오픈소스 : https://github.com/jasondavies/d3-cloud
 + Main 채팅 창 UI 오픈소스 : https://bootsnipp.com/snippets/35mvD
 
 
