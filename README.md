@@ -61,6 +61,10 @@ firebase deploy
 
 호스팅 주소 : https://openswteam.firebaseapp.com/
 
+시연 영상 및 캡처 :
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JcxVNpjbq7U" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 0. 로그인 화면
 ![13](https://user-images.githubusercontent.com/43198923/50206284-464aa280-03ae-11e9-8cdc-b902494ec345.png)
 
