@@ -570,7 +570,7 @@ $("#message-box").children()[index].before(li) //우리가 넣으려는 메세�
 
 ```
 
-### - 질문 데이터 시각화 (Twitter API, Word Cloud)
+### - 질문 데이터 전처리 과정 (Twitter API)
 해당 채팅방에 존재하는 메세지를 분석하여 word cloud를 이용해 시각화 하여 보여줍니다. 가장 최신의 100개(임의의 값, 변동 가능) 메세지 만을 분석을 하며, 형태소 분석기를 활용해 핵심 키워드 만을 이용했습니다. word cloud에서, 단어의 빈도수가 높아질수록 해당 단어의 시각화 사이즈가 커집니다.
 
 형태소 분석기는 twitter api를 호스트 해놓은 서버를 활용해 이용하였으며, 데이터 시각화는 d3 wordcloud를 활용해 wordcloud를 표현 했습니다.
@@ -676,6 +676,104 @@ function computeFrequency(messageList){ // 단어의 빈도수 계산하는 함�
 
 ```
 
+### 질문 데이터 시각화 (Word Cloud)
+d3-wordcloud.js 기반으로 작성되었으며, 텍스트와 frequency가 적힌 배열을 입력값으로 시각화 해서 표현하였습니다.
+```javascript
+
+var fill = d3.scale.category20b();
+
+var w = window.innerWidth,
+        h = window.innerHeight;
+
+var max,
+        fontSize;
+
+var layout = d3.layout.cloud()
+        .timeInterval(Infinity)
+        .size([w, h])
+        .fontSize(function(d) {
+            return 10+(d.size-1)*10; // 글자 폰트 사이즈 알맞게 변경. 단어 size(빈도수)가 1이면 폰트 크기 10
+            //return fontSize(+d.size);
+        })
+        .text(function(d) {
+            return d.text;
+        })
+        .on("end", draw);
+
+var svg = d3.select("#myDiv").append("svg")  // myDiv를 가진 id에 svg 할당하게 id명 변경
+        .attr("width", w)
+        .attr("height", h);
+
+var vis = svg.append("g").attr("transform", "translate(" + [w >> 1, h >> 1] + ")");
+
+
+if(window.attachEvent) {
+    window.attachEvent('onresize', update);
+}
+else if(window.addEventListener) {
+    window.addEventListener('resize', update);
+}
+
+function draw(data, bounds) {
+    var w = window.innerWidth*(4/5), // 사이즈 적절하게 변경
+        h = window.innerHeight*(4/5);
+
+    svg.attr("width", w).attr("height", h);
+
+    scale = bounds ? Math.min(
+            w / Math.abs(bounds[1].x - w / 2),
+            w / Math.abs(bounds[0].x - w / 2),
+            h / Math.abs(bounds[1].y - h / 2),
+            h / Math.abs(bounds[0].y - h / 2)) / 2 : 1;
+
+    var text = vis.selectAll("text")
+            .data(data, function(d) {
+                return d.text.toLowerCase();
+            });
+    text.transition()
+            .duration(1000)
+            .attr("transform", function(d) {
+                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+            })
+            .style("font-size", function(d) {
+                return d.size + "px";
+            });
+    text.enter().append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", function(d) {
+                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+            })
+            .style("font-size", function(d) {
+                return d.size + "px";
+            })
+            .style("opacity", 1e-6)
+            .transition()
+            .duration(1000)
+            .style("opacity", 1);
+    text.style("font-family", function(d) {
+        return d.font;
+    })
+            .style("fill", function(d) {
+                return fill(d.text.toLowerCase());
+            })
+            .text(function(d) {
+                return d.text;
+            });
+
+    vis.transition().attr("transform", "translate(" + [w >> 1, h >> 1] + ")scale(" + scale + ")");
+}
+
+function update(list) {
+    layout.font('impact').spiral('archimedean');
+    fontSize = d3.scale['sqrt']().range([10, 100]);
+    if (list.length){
+        fontSize.domain([10, 100]); // 폰트 사이즈가 이상하게 나와서 폰트 사이즈 범위 10-100으로 고정
+    }
+    layout.stop().words(list).start();
+}
+
+```
+
 
 
 ## 2. 개발자 정보
@@ -717,8 +815,9 @@ See [LICENSE](LICENSE), Apache License 2.0
 
 ## 4. 사용 open source
 + Firebase 웹 메신저 오픈소스 : https://github.com/firebase/friendlychat-web
++ amChart의 Column chart Api: https://www.amcharts.com/demos/column-chart-images-top/
++ Twitter 형태소 분석기 Api : https://github.com/open-korean-text/open-korean-text-api
 + 질문 데이터 시각화 d3 Word Cloud 오픈소스 : https://github.com/wvengen/d3-wordcloud
 + Main 채팅 창 UI 오픈소스 : https://bootsnipp.com/snippets/35mvD
-+ Twitter 형태소 분석기 Api : https://github.com/open-korean-text/open-korean-text-api
-+ amChart의 Column chart Api: https://www.amcharts.com/demos/column-chart-images-top/
+
 
