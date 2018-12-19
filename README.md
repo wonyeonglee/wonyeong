@@ -61,20 +61,24 @@ firebase deploy
 
 https://openswteam.firebaseapp.com/
 
-1. 로그인 & 로그아웃
+0. 로그인 화면
+![13](https://user-images.githubusercontent.com/43198923/50206284-464aa280-03ae-11e9-8cdc-b902494ec345.png)
+
+1. 메인화면 및 로그아웃 화면
 ![1](https://user-images.githubusercontent.com/43198923/50205785-ca038f80-03ac-11e9-8f2e-bd1560a5d922.png)
+![default](https://user-images.githubusercontent.com/43198923/50206228-1c917b80-03ae-11e9-8a4d-787498a7a872.png)
 
 2. 채팅방 생성 및 삭제
 ![3](https://user-images.githubusercontent.com/43198923/50205843-0c2cd100-03ad-11e9-8872-a599849341b9.png)
 ![4](https://user-images.githubusercontent.com/43198923/50205871-1d75dd80-03ad-11e9-998a-dbfaca1e6cfb.png)
 
 3. 사진 전송
-![10](https://user-images.githubusercontent.com/43198923/50205905-38485200-03ad-11e9-972b-35ae1cb90b4d.png)
+![11](https://user-images.githubusercontent.com/43198923/50206090-aab93200-03ad-11e9-881a-af3de3a5e363.png)
 ![5](https://user-images.githubusercontent.com/43198923/50205888-2b2b6300-03ad-11e9-9e4f-c11f27cba864.png)
 
 4. 좋아요 기능 및 마이페이지에서 좋아요 합계 확인
 ![6](https://user-images.githubusercontent.com/43198923/50205986-688ff080-03ad-11e9-8383-82597815dddf.png)
-![7](https://user-images.githubusercontent.com/43198923/50205992-69c11d80-03ad-11e9-9b61-56b5c3978036.png)
+![12](https://user-images.githubusercontent.com/43198923/50206091-ab51c880-03ad-11e9-8e41-685f7981c125.png)
 
 5. 좋아요 랭킹 페이지
 ![8](https://user-images.githubusercontent.com/43198923/50206009-75acdf80-03ad-11e9-837a-c21ea18083af.png)
