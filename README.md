@@ -64,6 +64,24 @@ https://openswteam.firebaseapp.com/
 1. 로그인 & 로그아웃
 ![1](https://user-images.githubusercontent.com/43198923/50205785-ca038f80-03ac-11e9-8f2e-bd1560a5d922.png)
 
+2. 채팅방 생성 및 삭제
+![3](https://user-images.githubusercontent.com/43198923/50205843-0c2cd100-03ad-11e9-8872-a599849341b9.png)
+![4](https://user-images.githubusercontent.com/43198923/50205871-1d75dd80-03ad-11e9-998a-dbfaca1e6cfb.png)
+
+3. 사진 전송
+![10](https://user-images.githubusercontent.com/43198923/50205905-38485200-03ad-11e9-972b-35ae1cb90b4d.png)
+![5](https://user-images.githubusercontent.com/43198923/50205888-2b2b6300-03ad-11e9-9e4f-c11f27cba864.png)
+
+4. 좋아요 기능 및 마이페이지에서 좋아요 합계 확인
+![6](https://user-images.githubusercontent.com/43198923/50205986-688ff080-03ad-11e9-8383-82597815dddf.png)
+![7](https://user-images.githubusercontent.com/43198923/50205992-69c11d80-03ad-11e9-9b61-56b5c3978036.png)
+
+5. 좋아요 랭킹 페이지
+![8](https://user-images.githubusercontent.com/43198923/50206009-75acdf80-03ad-11e9-837a-c21ea18083af.png)
+
+6. Word Cloud 데이터 시각화
+![9](https://user-images.githubusercontent.com/43198923/50206010-76de0c80-03ad-11e9-9309-43191a9af08d.png)
+
 
 ## d. 데이터 베이스 구조
 kinteract에서 사용한 데이터베이스는 Firebase Realtime Database이며, 구조는 다음과 같습니다.
