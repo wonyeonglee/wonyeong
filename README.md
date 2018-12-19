@@ -411,7 +411,7 @@ firebase.database().ref('/chat_list/'+currentChatKey+'/message/'+$(this).parent(
 
 ```
 
-### - 각 채팅방에서의 본인 좋아요 개수 집계 (My incentive-)
+### - 각 채팅방에서의 본인 좋아요 개수 집계 (My incentive-마이페이지)
 My incentive에서는 해당 채팅방에서 유저가 좋아요 개수를 총 몇 개 받았는지 확인할 수 있습니다.
 
 데이터 베이스에 Like_num 테이블을 활용해 구현 하였으며 위에 좋아요 버튼 클릭 시 실행되는 함수와 연관되어 있습니다.
